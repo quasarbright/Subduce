@@ -1,6 +1,7 @@
-{:toc}
 # Subduce
 A programming language based on python and lisp
+* TOC
+{:toc}
 # Syntax
 ## Example:
 ```
