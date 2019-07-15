@@ -17,5 +17,5 @@ doubled = (map (lam (e) (* e 2)) arr)
 ## variable names
 variable names can include any characters except for:  
 whitespace (space, tab, newline, return, etc)  
-`#\[\]()"=:`  
+`\#[]()"=:`  
 Variables cannot be named `print` or `return`
