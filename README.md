@@ -1,21 +1,5 @@
 # Subduce
 A programming language based on python and lisp
-# Types
-## `boolean`
-`true` or `false`
-## `number`
-integers and floating point numbers  
-ex: `234` `-1.2` `-.3` `4.`  
-  
-These will end up as python floats or integers, so they have the same properties
-## `string`
-ex: `"hello"`
-## `function`
-ex: `(lam (x) (+ x 1))`
-## `list`
-ex: `[1 2 true "lisp"]` `(cons 1 (cons 2 (cons true (cons "lisp" (cons empty)))))` `empty`  
-  
-`[...]` is syntactic sugar for `cons`. The first two examples are equivalent
 # Syntax
 ## Example:
 ```
@@ -35,4 +19,20 @@ Variable names can include any characters except for:
 `\#[]()"=:`  
 whitespace (space, tab, newline, return, etc)  
 Variables cannot have the same name as a keyword: `print`, `return`, `true`, `false`, `empty`
+# Types
+## `boolean`
+`true` or `false`
+## `number`
+integers and floating point numbers  
+ex: `234` `-1.2` `-.3` `4.`  
+  
+These will end up as python floats or integers, so they have the same properties
+## `string`
+ex: `"hello"`
+## `function`
+ex: `(lam (x) (+ x 1))`
+## `list`
+ex: `[1 2 true "lisp"]` `(cons 1 (cons 2 (cons true (cons "lisp" (cons empty)))))` `empty`  
+  
+`[...]` is syntactic sugar for `cons`. The first two examples are equivalent
 # Built-in Functions
