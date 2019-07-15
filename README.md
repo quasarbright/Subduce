@@ -22,18 +22,18 @@ Variable names can include any characters except for:
 whitespace (space, tab, newline, return, etc)  
 Variables cannot have the same name as a keyword: `print`, `return`, `true`, `false`, `empty`
 # Types
-## `boolean`
+## boolean
 `true` or `false`
-## `number`
+## number
 integers and floating point numbers  
 ex: `234` `-1.2` `-.3` `4.`  
   
 These will end up as python floats or integers, so they have the same properties
-## `string`
+## string
 ex: `"hello"`
-## `function`
+## function
 ex: `(lam (x) (+ x 1))`
-## `list`
+## list
 ex: `[1 2 true "lisp"]` `(cons 1 (cons 2 (cons true (cons "lisp" (cons empty)))))` `empty`  
   
 `[...]` is syntactic sugar for `cons`. The first two examples are equivalent
