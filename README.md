@@ -21,7 +21,14 @@ Variable names can include any characters except for:
 `\#[]()"=:`  
 whitespace (space, tab, newline, return, etc)  
 Variables cannot have the same name as a keyword: `print`, `return`  
-You are allowed to override builtins, but be careful!
+Built-ins are treated as variables, so they cannot be overridden unless as arguments to a function. Ex:  
+```
+def (use-custom-add + a b):
+  return (+ a b)
+def (double-add a b):
+  return (+ (+ a b) (+ a b))
+print (use-custom-add double-add 2 4) # prints 12, not 6
+```
 # Types
 ## boolean
 `true` or `false`
@@ -40,7 +47,14 @@ ex: `[1 2 true "lisp"]` `(cons 1 (cons 2 (cons true (cons "lisp" (cons empty))))
 `[...]` is syntactic sugar for `cons`. The first two examples are equivalent
 # Built-in Functions
 ## if
-
+`(if condition:boolean expr1:any expr2:any)`
+`expr1` is returned if condition evaluates to `true`. `expr2` is returned if condition evaluates to `false`. If `condition` is not a boolean, an error is thrown  
+Example:  
+```
+# absolute value
+def (abs num):
+  return (if (< num 0) (* -1 num) num)
+```
 # Scope
 Although arguments can share names with global variables, you cannot create local variables with the same name as a global variable (or a variable outside of current scope). Ex:    
 ```
@@ -56,4 +70,14 @@ sum = 3
 def (add a b):
   sum = (+ a b) # will throw an error
   return sum
+```  
+Variables in independent scopes can share the same name. Ex:  
+```
+def (square num):
+  ans = (* num num)
+  return ans
+
+def (double num):
+  ans = (+ num num)
+  return ans
 ```
