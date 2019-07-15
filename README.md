@@ -56,20 +56,47 @@ def (abs num):
   return (if (< num 0) (* -1 num) num)
 ```
 # Scope
-Although arguments can share names with global variables, you cannot create local variables with the same name as a global variable (or a variable outside of current scope). Ex:    
+Any variables declared in a local scope can override the name of, but can not change the contents of a variable in the outer scope.  
 ```
 name = "Mike"
 def (greet name):
   print name
   return (+ "Hello, " name)
-print (greet "Joey") # prints "Joey" then "Hello, Joey"
+greeting = (greet "Joey") # prints "Joey" 
+print greeting # prints "Hello, Joey"
 print name # prints "Mike"
 ```
 ```
 sum = 3
 def (add a b):
-  sum = (+ a b) # will throw an error
+  sum = (+ a b)
   return sum
+print sum # prints 3
+print (add 5 6) # prints 11
+print sum # prints 3
+```  
+A function's arguments and locals are in the same scope, so you can't override the name of an argument
+```
+def (not-mult a b):
+  a = 9 # error: variable is already defined in local scope
+  return (* a b)
+print (mult 2 3)
+```  
+However, you can if you go into a scope inside of the function:  
+```
+def (foo f):
+  def (bar b):
+    f = 2
+    return f
+  
+```  
+Variables do not "bubble up" out of the scope they were defined in  
+```
+def (add a b):
+  sum = (+ a b)
+  return sum
+print (add 1 2) # prints 3
+print sum # error: undefined
 ```  
 Variables in independent scopes can share the same name. Ex:  
 ```
@@ -81,3 +108,4 @@ def (double num):
   ans = (+ num num)
   return ans
 ```
+
