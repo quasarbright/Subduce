@@ -20,7 +20,8 @@ doubled = (map (lam (e) (* e 2)) arr)
 Variable names can include any characters except for:    
 `\#[]()"=:`  
 whitespace (space, tab, newline, return, etc)  
-Variables cannot have the same name as a keyword: `print`, `return`, `true`, `false`, `empty`
+Variables cannot have the same name as a keyword: `print`, `return`  
+You are allowed to override builtins, but be careful!
 # Types
 ## boolean
 `true` or `false`
@@ -38,3 +39,21 @@ ex: `[1 2 true "lisp"]` `(cons 1 (cons 2 (cons true (cons "lisp" (cons empty))))
   
 `[...]` is syntactic sugar for `cons`. The first two examples are equivalent
 # Built-in Functions
+## if
+
+# Scope
+Although arguments can share names with global variables, you cannot create local variables with the same name as a global variable (or a variable outside of current scope). Ex:    
+```
+name = "Mike"
+def (greet name):
+  print name
+  return (+ "Hello, " name)
+print (greet "Joey") # prints "Joey" then "Hello, Joey"
+print name # prints "Mike"
+```
+```
+sum = 3
+def (add a b):
+  sum = (+ a b) # will throw an error
+  return sum
+```
