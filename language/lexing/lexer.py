@@ -42,5 +42,11 @@ class InputStream:
         return self.index < len(self.text) - 1
 
 class Token:
-    def __init__(self):
-        pass
+    def __init__(self, type, lineNumber, startPosition, endPosition, value=None):
+        self.type = type
+        self.lineNumber = lineNumber
+        self.startPosition = startPosition
+        self.endPosition = endPosition
+        self.value = value
+    def __eq__(self, other: Token) -> bool:
+        return vars(self) == vars(other)
