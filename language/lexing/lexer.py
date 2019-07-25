@@ -3,6 +3,7 @@ The job of the lexer is to tokenize everything
 This doesn't include building parsing trees.
 That is the job of the parser
 '''
+from typing import List
 class InputStream:
     def __init__(self, text):
         self.text = text
@@ -50,3 +51,7 @@ class Token:
         self.value = value
     def __eq__(self, other: Token) -> bool:
         return vars(self) == vars(other)
+
+
+def tokenize(text: str) -> List[Token]:
+    pass

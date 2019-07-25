@@ -2,7 +2,7 @@ import unittest
 from lexer import *
 
 class TestExpression(unittest.TestCase):
-    def testNumber():
+    def testAddition(self):
         code = '(+ 1 24)'
         expected = [
             Token('<start file>', 1, 0, 1),
@@ -13,3 +13,6 @@ class TestExpression(unittest.TestCase):
             Token('<end function>', 1, 8, 9),
             Token('<end file>', 1, 9, 10)
         ]
+        self.assertEqual(tokenize(code), expected)
+    def testAssignment(self):
+        code = 'var = '
