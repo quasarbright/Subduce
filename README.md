@@ -18,9 +18,10 @@ doubled = (map (lam (e) (* e 2)) arr)
 ```
 ## Variable Naming
 Variable names can include any characters except for:    
-`\#[]()"=:`  
+`#[]()"=:`  
 whitespace (space, tab, newline, return, etc)  
-Variables cannot have the same name as a keyword: `print`, `return`  
+Variables cannot have the same name as a keyword: `def`, `return`  
+Variables cannot start with the characters `-.0123456789`  
 Built-ins are treated as variables, so they cannot be overridden unless as arguments to a function. Ex:  
 ```
 def (use-custom-add + a b):
