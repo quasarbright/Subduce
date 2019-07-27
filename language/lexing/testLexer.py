@@ -2,7 +2,7 @@ import unittest
 from lexer import *
 
 class TestExpression(unittest.TestCase):
-    def testNumber(self):
+    def testInt(self):
         code = '123'
         expected = [
             Token('<start file>', 1),
@@ -10,7 +10,58 @@ class TestExpression(unittest.TestCase):
             Token('<end file>', 2)
         ]
         actual = tokenize(code)
-        self.assertEqual(tokenize(code), expected)
+        self.assertEqual(actual, expected)
+    
+    def testNegativeInt(self):
+        code = '-123'
+        expected = [
+            Token('<start file>', 1),
+            Token('<number>', 1, 1, 5, -123),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
+    def testFloat(self):
+        code = '3.14'
+        expected = [
+            Token('<start file>', 1),
+            Token('<number>', 1, 1, 5, 3.14),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
+    def testNegativeFloat(self):
+        code = '-6.28'
+        expected = [
+            Token('<start file>', 1),
+            Token('<number>', 1, 1, 6, -6.28),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
+    def testNegativeStartPoint(self):
+        code = '-.28'
+        expected = [
+            Token('<start file>', 1),
+            Token('<number>', 1, 1, 5, -.28),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
+    def testNegativeEndPoint(self):
+        code = '-6.'
+        expected = [
+            Token('<start file>', 1),
+            Token('<number>', 1, 1, 4, -6.),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
     def testString(self):
         code = '"hello"'
         expected = [
@@ -59,6 +110,7 @@ class TestExpression(unittest.TestCase):
             Token('<end function>', 3, 3, 4),
             Token('<end file>', 4)
         ]
+        self.assertEqual(tokenize(code), expected)
 
 class TestIndentation(unittest.TestCase):
     pass
