@@ -9,6 +9,7 @@ class TestExpression(unittest.TestCase):
             Token('<number>', 1, 1, 4, 123),
             Token('<end file>', 2)
         ]
+        actual = tokenize(code)
         self.assertEqual(tokenize(code), expected)
     def testString(self):
         code = '"hello"'
@@ -40,7 +41,7 @@ class TestExpression(unittest.TestCase):
             Token('<start function>', 1, 1, 2),
             Token('<identifier>', 1, 2, 3, '+'),
             Token('<number>', 1, 4, 5, 1),
-            Token('<number>', 1, 6, 8, 24, 24),
+            Token('<number>', 1, 6, 8, 24),
             Token('<end function>', 1, 8, 9),
             Token('<end file>', 2)
         ]
@@ -72,3 +73,7 @@ class TestAssignment(unittest.TestCase):
             Token('<number>', 1, 7, 8, 2),
             Token('<end file>', 2)
         ]
+        self.assertEqual(tokenize(code), expected)
+
+if __name__ == '__main__':
+    unittest.main()

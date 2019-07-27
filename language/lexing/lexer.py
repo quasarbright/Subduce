@@ -33,8 +33,8 @@ class InputStream:
         if not self.hasNext():
             raise RuntimeError('no next')
         self.index += 1
-        self.character = text[index]
-        if character == '\n':
+        self.character = self.text[self.index]
+        if self.character == '\n':
             self.lineNumber += 1
             self.characterPosition = 0
         else:
@@ -65,8 +65,8 @@ class Token:
         self.startPosition = startPosition
         self.endPosition = endPosition
         self.value = value
-    def __eq__(self, other: Token) -> bool:
-        return vars(self) == vars(other)
+    def __eq__(self, other: 'Token') -> bool:
+        return self.type == other.type and self.lineNumber == other.lineNumber and self.startPosition == other.startPosition and self.endPosition == other.endPosition and self.value == other.value
 
 
 def getTokenType(startCharacter: str) -> str:
@@ -98,15 +98,29 @@ def tokenizeNumber(stream: InputStream) -> Token:
     alters stream
     '''
     state = stream.peek()
+    lineNumber = state['lineNumber']
+    startCharacterPosition = state['characterPosition']
     character = state['character']
     valueStr = ''
     while character in '-.0123456789':
         valueStr += character
-        state = stream.peek()
-        character = state['character']
         if not stream.hasNext():
             break
         stream.advance()
+        state = stream.peek()
+        character = state['character']
+    endCharacterPosition = state['characterPosition'] + 1
+
+    validRegex = r'-?\d+\.?\d*|-?\d*\.?\d+'
+    validMatch = re.fullmatch(validRegex, valueStr)
+    if validMatch is None:
+        raise SyntaxError('invalid number syntax') # TODO change
+    else:
+        if '.' in valueStr:
+            value = float(valueStr)
+        else:
+            value = int(valueStr)
+    return Token('<number>', lineNumber, startCharacterPosition, endCharacterPosition, value)
     ### left off here about to process the number
     # maybe you want to do this while consuming so you can get character-perfect
     # syntax error location. But that's messy. I'm thinking just throw it at the
@@ -142,5 +156,9 @@ def tokenize(text: str) -> List[Token]:
                 tokens.append(tokenizeNumber(stream))
             elif tokenType == '<identifier>':
                 tokens.append(tokenizeIdentifier(stream))
-        stream.advance()
-    tokens.append('<end file>', lineNumber+1)
+        if stream.hasNext():
+            stream.advance()
+        else:
+            break
+    tokens.append(Token('<end file>', lineNumber+1))
+    return tokens
