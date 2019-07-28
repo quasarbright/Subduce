@@ -48,12 +48,19 @@ class InputStream:
     
     def advanceLine(self) -> None:# needs testing
         '''move to next line (advances to newline then stops without passing it)'''
-        character = self.peek()['character']
-        while self.hasNext():
+        # character = self.peek()['character']
+        # while self.hasNext():
+        #     if character == '\n':
+        #         return None
+        #     character = self.getNext()['character']
+        while not self.isDone():
+            state = self.peek()
+            character = state['character']
             if character == '\n':
-                return None
-            character = self.getNext()['character']
-        return None
+                # stop, we're on a newline
+                break
+            else:
+                self.advance()
         
     def getNext(self) -> dict:
         '''returns state and moves on to next character'''
@@ -266,7 +273,7 @@ def tokenize(text: str) -> List[Token]:
             continue
         elif character == '#':
             # if comment, go to next line
-            stream.advance()
+            stream.advanceLine()
             continue
         elif character in oneLengthTokens:
             tokenType = getTokenType(character)

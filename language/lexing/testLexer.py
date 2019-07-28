@@ -179,5 +179,43 @@ class TestAssignment(unittest.TestCase):
         ]
         self.assertEqual(tokenize(code), expected)
 
+class TestComments(unittest.TestCase):
+    def testAllComment(self):
+        code = '# comment'
+        expected = [
+            Token('<start file>', 1),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    def testTwoComments(self):
+        code = '# comment1\n# comment2'
+        expected = [
+            Token('<start file>', 1),
+            Token('<newline>', 2),
+            Token('<end file>', 3)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    def testAnnotatedLine(self):
+        code = '123 # a number'
+        expected = [
+            Token('<start file>', 1),
+            Token('<number>', 1, 1, 4, 123),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
+    def testAnnotatedMultiLine(self):
+        code = '14 # a number\nvar#an identifier'
+        expected = [
+            Token('<start file>', 1),
+            Token('<number>', 1, 1, 3, 14),
+            Token('<newline>', 2),
+            Token('<identifier>', 2, 1, 4, 'var'),
+            Token('<end file>', 2)
+        ]
+
 if __name__ == '__main__':
     unittest.main()
