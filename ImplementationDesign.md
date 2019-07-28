@@ -4,48 +4,29 @@
 3. parser
 4. interpreter
 # example
-## text
-```
-name = "Yoshikage Kira"
-age = 33
-stands = ["Killer Queen" "Sheer Heart Attack" "Bites the Dust"]
-
-def (greeting name age):
-  ans = (string+ "My name is " name ". I am " age " years old.")
-  return ans
+## source code
+```scheme
+def (add1 x):
+  return (+ x 1)
 ```
 ## lexer
-```json
-[
-    {
-        "type": "identifier",
-        "name": "name",
-        "line number": 1,
-        "start position": 1,
-        "end position": 5
-    },
-    {
-        "type": "assign",
-        "line number": 1,
-        "start position": 6,
-        "end position": 7
-    },
-    {
-        "type": "string",
-        "value": "Yoshikage Kira",
-        "line number": 1,
-        "start position": 8,
-        "end position": 24
-    },
-    {
-        "type": "identifier",
-        "name": "age",
-        "line number": 2,
-        "start position": 1,
-        "end position": 4
-    },
-    ...
-]
+```
+<start file> at 1
+<keyword> at 1:1-4. value: def
+<start function> at 1:5-6
+<identifier> at 1:6-10. value: add1
+<identifier> at 1:11-12. value: x
+<end function> at 1:12-13
+<end signature> at 1:13-14
+<newline> at 2
+<indent> at 2
+<keyword> at 2:2-8. value: return
+<start function> at 2:9-10
+<identifier> at 2:10-11. value: +
+<identifier> at 2:12-13. value: x
+<number> at 2:14-15. value: 1
+<end function> at 2:15-16
+<end file> at 3
 ```
 ## parser
-![parse tree example](https://quasarbright.github.io/Subduce/figures/parseTreeExample.PNG)
+
