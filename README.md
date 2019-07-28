@@ -18,6 +18,7 @@ doubled = (map (lam (e) (* e 2)) arr)
 ```
 ## Indentation and multi-line expressions
 **Tab-based indentation only.** Spaces are completely ignored in indentation  
+Function bodies must be indented 1 level from their header.  
 Expressions can be multiline, and indentation within expressions is ignored, as long as they don't go below their starting indentation. For example:  
 ```scheme
 # ok
