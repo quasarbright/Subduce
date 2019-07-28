@@ -138,6 +138,7 @@ class TestExpression(unittest.TestCase):
             Token('<start function>', 1, 1, 2),
             Token('<identifier>', 1, 2, 3, '+'),
             Token('<newline>', 2),
+            Token('<indent>', 2),
             Token('<number>', 2, 2, 3, 1),
             Token('<newline>', 3),
             Token('<number>', 3, 2, 3, 2),

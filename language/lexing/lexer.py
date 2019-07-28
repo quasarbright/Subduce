@@ -277,8 +277,10 @@ def getIndentationLevels(text: str) -> List[int]:
 def tokenize(text: str) -> List[Token]:
     stream = InputStream(text)
     lineNumber = 1
-    indentations = [] # list of indentation levels by line
+    indentations = [0] # list of indentation levels by line
     # excludes whitespace lines
+    indentationLevel = 0
+    inNewLine = True
     tokens = [Token('<start file>', 1)]
     while not stream.isDone():
         state = stream.peek()
@@ -286,20 +288,46 @@ def tokenize(text: str) -> List[Token]:
         lineNumber = state['lineNumber']
         characterPosition = state['characterPosition']
         # handle whitespace
-        if character in whitespace:
-            # skip whitespace
+        # tab indentation
+        if character == '\t':
+            indentationLevel += 1
+            stream.advance()
+            continue
+        if character == ' ':
+            # ignore spaces
             stream.advance()
             continue
         elif character == '#':
             # if comment, go to next line
             stream.advanceLine()
             continue
-        elif character in oneLengthTokens:
+        elif character == '\n':
+            # new line
+            tokens.append(Token('<newline>', lineNumber))
+            inNewLine = True
+            indentationLevel = 0
+            stream.advance()
+            continue
+        
+        # now it's a statement for sure
+        # handle indentation
+        inNewLine = False
+        previousIndentationLevel = indentations[-1]
+        indentations.append(indentationLevel)
+        if indentationLevel > previousIndentationLevel:
+            # indentation level increased
+            difference = indentationLevel - previousIndentationLevel
+            for level in range(difference):
+                tokens.append(Token('<indent>', lineNumber))
+        elif previousIndentationLevel < indentationLevel:
+            difference = previousIndentationLevel - indentationLevel
+            for level in range(difference):
+                tokens.append(Token('<unindent>', lineNumber))
+        
+        # handle statements and expressions
+        if character in oneLengthTokens:
             tokenType = getTokenType(character)
-            if tokenType == '<newline>':
-                tokens.append(Token(tokenType, lineNumber))
-            else:
-                tokens.append(Token(tokenType, lineNumber, characterPosition, characterPosition+1))
+            tokens.append(Token(tokenType, lineNumber, characterPosition, characterPosition+1))
             stream.advance()
             continue
         else:
