@@ -16,6 +16,65 @@ n = 2
 arr = [1 2 3 4]
 doubled = (map (lam (e) (* e 2)) arr)
 ```
+## Indentation and multi-line expressions
+**Tab-based indentation only.** Spaces are completely ignored in indentation  
+Expressions can be multiline, and indentation within expressions is ignored, as long as they don't go below their starting indentation. For example:  
+```scheme
+# ok
+def (put-in-list x):
+  ans = [
+    x
+  ]
+  return ans
+```
+```scheme
+# ok
+def (put-in-list x):
+  ans = [
+  x
+  ]
+  return ans
+```
+```scheme
+# ok
+def (double x):
+ans = (+
+        x
+        x)
+return ans
+```
+```scheme
+# ok
+seven = (+
+          1
+          (*
+            2
+            3))
+```
+```scheme
+# NOT ok
+def (put-in-list x):
+  ans = [
+x
+  ]
+  return ans
+```
+```scheme
+# NOT ok
+def (put-in-list x):
+  ans = [
+    x
+]
+  return ans
+```
+```scheme
+# NOT ok
+seven = (+
+      1
+      (*
+    2 # the two went below the indentation of the (* 
+      3))
+```
 ## Variable Naming
 Variable names can include any characters except for:    
 `#[]()"=:`  
