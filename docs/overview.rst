@@ -1,3 +1,5 @@
+:navigation_depth: -1
+
 ****************
 Subduce Overview
 ****************
