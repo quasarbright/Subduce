@@ -18,7 +18,7 @@ doubled = (map (lam (e) (* e 2)) arr)
 ```
 ## Indentation and multi-line expressions
 **Tab-based indentation only.** Spaces are completely ignored in indentation  
-Function bodies must be indented 1 level from their header.  
+Function bodies must be indented 1 level from their header (header is `def (fun arg1 arg2):`). Headers must be on one line  
 Expressions can be multiline, and indentation within expressions is ignored, as long as they don't go below their starting indentation. For example:  
 ```scheme
 # ok
@@ -80,7 +80,7 @@ seven = (+
 Variable names can include any characters except for:    
 `#[]()"=:`  
 whitespace (space, tab, newline, return, etc)  
-Variables cannot have the same name as a keyword: `def`, `return`, `true`, `false`  
+Variables cannot have the same name as a keyword: `def`, `return`, `print`, `true`, `false`  
 Variables cannot start with the characters `-.0123456789`  
 Built-ins are treated as variables, so they cannot be overridden unless as arguments to a function. Ex:  
 ```scheme
