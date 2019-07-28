@@ -6,6 +6,24 @@ That is the job of the parser
 from typing import List
 import re
 
+# token types
+START_FILE = '<start file>'
+END_FILE = '<end file>'
+NEWLINE = '<newline>'
+INDENT = '<indent>'
+UNINDENT = '<unindent>'
+NUMBER = '<number>'
+STRING = '<string>'
+BOOLEAN = '<boolean>'
+IDENTIFIER = '<identifier>'
+KEYWORD = '<keyword>'
+EQUALS = '<equals>'
+END_SIGNATURE = '<end signature>'
+START_FUNCTION = '<start function>'
+END_FUNCTION = '<end function>'
+START_LIST = '<start list>'
+END_LIST = '<end list>'
+# utility variables
 specialCharacters = '#()[]:"=\n\t '  # can't be in variables
 oneLengthTokens = '()[]:=\n'  # characters that are tokens of length 1
 keywords = ['def', 'return']
@@ -89,8 +107,8 @@ class Token:
         return self.type == other.type and self.lineNumber == other.lineNumber and self.startPosition == other.startPosition and self.endPosition == other.endPosition and self.value == other.value
     def __str__(self):
         ans = f'{self.type} at {self.lineNumber}'
-        if startPosition is not None:
-            assert endPosition is not None
+        if self.startPosition is not None:
+            assert self.endPosition is not None
             ans += f':{self.startPosition}-{self.endPosition}'
         if self.value is not None:
             ans += f'. value: {self.value}'
@@ -102,23 +120,23 @@ def getTokenType(startCharacter: str) -> str:
     '''determine token type based on its first character'''
     assert len(startCharacter) == 1
     charDict = {
-        '(': '<start function>',
-        ')': '<end function>',
-        '[': '<start list>',
-        ']': '<end list>',
-        ':': '<end signature>',
-        '"': '<string>',
-        '=': '<equals>',
-        '\n': '<newline>',
+        '(': START_FUNCTION,
+        ')': END_FUNCTION,
+        '[': START_LIST,
+        ']': END_LIST,
+        ':': END_SIGNATURE,
+        '"': STRING,
+        '=': EQUALS,
+        '\n': NEWLINE,
     }
     if startCharacter in charDict:
         return charDict[startCharacter]
     else:
         # it's either an identifier, keyword or a number
         if startCharacter in '-.0123456789':
-            return '<number>'
+            return NUMBER
         else:
-            return '<identifier>'
+            return IDENTIFIER
             # should probably validate that it's what you expect for an identifier and error 
             # otherwise
 
@@ -151,7 +169,7 @@ def tokenizeNumber(stream: InputStream) -> Token:
             value = float(valueStr)
         else:
             value = int(valueStr)
-    return Token('<number>', lineNumber, startCharacterPosition, endCharacterPosition, value)
+    return Token(NUMBER, lineNumber, startCharacterPosition, endCharacterPosition, value)
         
 def tokenizeString(stream: InputStream) -> Token:
     '''consume number and return token. May raise syntax error
@@ -226,7 +244,7 @@ def tokenizeString(stream: InputStream) -> Token:
         # we hit the end of the file and the string didn't end
         raise SyntaxError('Unexpected <end file> while parsing') # TODO change
     endPosition = startPosition + length
-    return Token('<string>', lineNumber, startPosition, endPosition, valueStr)
+    return Token(STRING, lineNumber, startPosition, endPosition, valueStr)
 
 def tokenizeIdentifier(stream: InputStream) -> Token:
     '''consume number and return token. May raise syntax error
@@ -250,13 +268,13 @@ def tokenizeIdentifier(stream: InputStream) -> Token:
         character = state['character']
     endPosition = startPosition + length
     if name == 'true':
-        return Token('<boolean>', lineNumber, startPosition, endPosition, True)
+        return Token(BOOLEAN, lineNumber, startPosition, endPosition, True)
     elif name == 'false':
-        return Token('<boolean>', lineNumber, startPosition, endPosition, False)
+        return Token(BOOLEAN, lineNumber, startPosition, endPosition, False)
     if name in keywords:
-        return Token('<keyword>', lineNumber, startPosition, endPosition, name)
+        return Token(KEYWORD, lineNumber, startPosition, endPosition, name)
     else:
-        return Token('<identifier>', lineNumber, startPosition, endPosition, name)
+        return Token(IDENTIFIER, lineNumber, startPosition, endPosition, name)
 
 def getIndentationLevels(text: str) -> List[int]:
     '''returns the indentation levels of the lines of
@@ -281,7 +299,7 @@ def tokenize(text: str) -> List[Token]:
     # excludes whitespace lines
     indentationLevel = 0
     inNewLine = True
-    tokens = [Token('<start file>', 1)]
+    tokens = [Token(START_FILE, 1)]
     while not stream.isDone():
         state = stream.peek()
         character = state['character']
@@ -303,7 +321,7 @@ def tokenize(text: str) -> List[Token]:
             continue
         elif character == '\n':
             # new line
-            tokens.append(Token('<newline>', lineNumber))
+            tokens.append(Token(NEWLINE, lineNumber))
             inNewLine = True
             indentationLevel = 0
             stream.advance()
@@ -318,11 +336,11 @@ def tokenize(text: str) -> List[Token]:
             # indentation level increased
             difference = indentationLevel - previousIndentationLevel
             for level in range(difference):
-                tokens.append(Token('<indent>', lineNumber))
+                tokens.append(Token(INDENT, lineNumber))
         elif indentationLevel < previousIndentationLevel:
             difference = previousIndentationLevel - indentationLevel
             for level in range(difference):
-                tokens.append(Token('<unindent>', lineNumber))
+                tokens.append(Token(UNINDENT, lineNumber))
         
         # handle statements and expressions
         if character in oneLengthTokens:
@@ -332,21 +350,36 @@ def tokenize(text: str) -> List[Token]:
             continue
         else:
             tokenType = getTokenType(character)
-            if tokenType == '<string>':
+            if tokenType == STRING:
                 tokens.append(tokenizeString(stream))
                 continue
-            elif tokenType == '<number>':
+            elif tokenType == NUMBER:
                 tokens.append(tokenizeNumber(stream))
                 continue
-            elif tokenType == '<identifier>':
+            elif tokenType == IDENTIFIER:
                 tokens.append(tokenizeIdentifier(stream))
                 continue
         stream.advance()
         continue
-    tokens.append(Token('<end file>', lineNumber+1))
+    tokens.append(Token(END_FILE, lineNumber+1))
     return tokens
 
 '''
 for indentation, when you tokenize a newline, put it into indentation
 detection mode and count how many tabs until you hit something meaningful
 '''
+
+def main():
+    import sys
+    if len(sys.argv) < 2:
+        sys.exit('must provide file path to lexer')
+    else:
+        path = sys.argv[1]
+        with open(path, 'r') as f:
+            code = f.read()
+            tokens = tokenize(code)
+            strTokens = [str(token) for token in tokens]
+            print('\n'.join(strTokens))
+
+if __name__ == '__main__':
+    main()
