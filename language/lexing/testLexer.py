@@ -218,6 +218,16 @@ class TestComments(unittest.TestCase):
         ]
         actual = tokenize(code)
         self.assertEqual(actual, expected)
+    
+    def testCommentInString(self):
+        code = '"hello # comment"'
+        expected = [
+            Token('<start file>', 1),
+            Token('<string>', 1, 1, len(code)+1, 'hello # comment'),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
 
 if __name__ == '__main__':
     unittest.main()
