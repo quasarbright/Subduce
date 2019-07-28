@@ -13,6 +13,7 @@ whitespace = '\t '
 
 class InputStream:
     def __init__(self, text):
+        self.done = False
         self.text = text
         self.index = 0
         self.lineNumber = 1
@@ -20,8 +21,12 @@ class InputStream:
         self.character = None
         if len(text) > 0:
             self.character = text[0]
+        else:
+            self.done = True
     def peek(self) -> dict:
-        '''returns state without moving to the next character'''
+        '''returns current state without moving to the next character'''
+        if self.isDone():
+            raise RuntimeError('peeked finished stream')
         return {
             "index": self.index,
             "lineNumber": self.lineNumber,
@@ -31,7 +36,8 @@ class InputStream:
     def advance(self) -> None:
         '''move to the next character'''
         if not self.hasNext():
-            raise RuntimeError('no next')
+            self.done = True
+            return None
         self.index += 1
         self.character = self.text[self.index]
         if self.character == '\n':
@@ -54,9 +60,14 @@ class InputStream:
         state = self.peek()
         self.advance()
         return state
+
     def hasNext(self) -> bool:
         '''does the stream have a next character?'''
         return self.index < len(self.text) - 1
+    
+    def isDone(self) -> bool:
+        '''is the stream done? (already passed the last character)?'''
+        return self.done
 
 class Token:
     def __init__(self, tokenType, lineNumber, startPosition=None, endPosition=None, value=None):
@@ -114,10 +125,10 @@ def tokenizeNumber(stream: InputStream) -> Token:
     ranOut = False
     while character in '-.0123456789':
         valueStr += character
-        if not stream.hasNext():
+        stream.advance()
+        if stream.isDone():
             ranOut = True
             break
-        stream.advance()
         state = stream.peek()
         character = state['character']
     endCharacterPosition = state['characterPosition']
@@ -139,20 +150,21 @@ def tokenizeString(stream: InputStream) -> Token:
     '''consume number and return token. May raise syntax error
     alters stream
     '''
-    state = stream.getNext()
+    state = stream.peek()
+    stream.advance()
     character = state['character']
     if character != '"':
         raise SyntaxError('expected "') # TODO change
     lineNumber = state['lineNumber']
     startPosition = state['characterPosition']
     valueStr = '' # don't want " in value
-    if not stream.hasNext():
+    if stream.isDone():
         raise SyntaxError('Unexpected <end file> while parsing') # TODO change
     escaping = False
     stringEnded = False
+    state = stream.peek()
+    character = state['character']
     while True:
-        state = stream.peek()
-        character = state['character']
         if escaping:
             if character == 'n':
                 # newline
@@ -185,24 +197,25 @@ def tokenizeString(stream: InputStream) -> Token:
         elif character == '"':
             # string is closing
             stringEnded = True
+            stream.advance()
             break
         elif character == '\n':
             raise SyntaxError(f'Unexpected token <newline> at {state["lineNumber"]}:{state["characterPosition"]}')
         else:
             # normal character
             valueStr += character
-        if stream.hasNext():
-            stream.advance()
+        stream.advance()
+        if not stream.isDone():
+            state = stream.peek()
+            character = state['character']
         else:
             break
     if not stringEnded:
         # we hit the end of the file and the string didn't end
         raise SyntaxError('Unexpected <end file> while parsing') # TODO change
     endPosition = state['characterPosition'] + 1
-    if stream.hasNext():
-        stream.advance()
     return Token('<string>', lineNumber, startPosition, endPosition, valueStr)
-        
+
 def tokenizeIdentifier(stream: InputStream) -> Token:
     '''consume number and return token. May raise syntax error
     alters stream
@@ -216,13 +229,12 @@ def tokenizeIdentifier(stream: InputStream) -> Token:
     ranOut = False
     while character not in specialCharacters:
         name += character
-        if stream.hasNext():
-            stream.advance()
-            state = stream.peek()
-            character = state['character']
-        else:
+        stream.advance()
+        if stream.isDone():
             ranOut = True
             break
+        state = stream.peek()
+        character = state['character']
     endPosition = state['characterPosition']
     if ranOut:
         endPosition += 1
@@ -238,8 +250,9 @@ def tokenizeIdentifier(stream: InputStream) -> Token:
 
 def tokenize(text: str) -> List[Token]:
     stream = InputStream(text)
+    lineNumber = 1
     tokens = [Token('<start file>', 1)]
-    while True:
+    while not stream.isDone():
         state = stream.peek()
         character = state['character']
         lineNumber = state['lineNumber']
@@ -247,32 +260,29 @@ def tokenize(text: str) -> List[Token]:
         # handle whitespace
         if character in whitespace:
             # skip whitespace
-            if stream.hasNext():
-                stream.advance()
-                continue
-            else:
-                break
+            stream.advance()
+            continue
         elif character == '#':
             # if comment, go to next line
-            if stream.hasNext():
-                stream.advanceLine()
-                continue
-            else:
-                break
+            stream.advance()
+            continue
         elif character in oneLengthTokens:
             tokenType = getTokenType(character)
             tokens.append(Token(tokenType, lineNumber, characterPosition, characterPosition+1))
+            stream.advance()
+            continue
         else:
             tokenType = getTokenType(character)
             if tokenType == '<string>':
                 tokens.append(tokenizeString(stream))
+                continue
             elif tokenType == '<number>':
                 tokens.append(tokenizeNumber(stream))
+                continue
             elif tokenType == '<identifier>':
                 tokens.append(tokenizeIdentifier(stream))
-        if stream.hasNext():
-            stream.advance()
-        else:
-            break
+                continue
+        stream.advance()
+        continue
     tokens.append(Token('<end file>', lineNumber+1))
     return tokens

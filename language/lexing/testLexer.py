@@ -152,6 +152,15 @@ class TestExpression(unittest.TestCase):
         ]
         actual = tokenize(code)
         self.assertEqual(actual, expected)
+    
+    def testEmpty(self):
+        code = ''
+        expected = [
+            Token('<start file>', 1),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
 
 class TestIndentation(unittest.TestCase):
     pass
