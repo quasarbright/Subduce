@@ -2,14 +2,14 @@
 name = "yoshikage kira"
 age = 33
 stands = [
-    "killer queen"
-    "sheer heart attack"
-    "stray cat"
-    "bites the dust"
+	"killer queen"
+	"sheer heart attack"
+	"stray cat"
+	"bites the dust"
 ]
 
 def (greet name age):
-    ans = (str+ "My name is " name ". I am " age " years old.")
-    return ans
+	ans = (str+ "My name is " name ". I am " age " years old.")
+	return ans
 
 print (greet name age)
