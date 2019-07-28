@@ -192,6 +192,8 @@ def tokenizeString(stream: InputStream) -> Token:
     character = state['character']
     length = 1 # 1 from the quote
     while True:
+        if character == '\n':
+            raise SyntaxError('Unexpected token <newline>') # TODO change
         if escaping:
             if character == 'n':
                 # newline
