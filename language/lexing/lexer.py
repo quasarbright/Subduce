@@ -23,6 +23,7 @@ class InputStream:
             self.character = text[0]
         else:
             self.done = True
+    
     def peek(self) -> dict:
         '''returns current state without moving to the next character'''
         if self.isDone():
@@ -33,6 +34,7 @@ class InputStream:
             "characterPosition": self.characterPosition,
             "character": self.character
         }
+    
     def advance(self) -> None:
         '''move to the next character'''
         if not self.hasNext():
@@ -61,7 +63,7 @@ class InputStream:
                 break
             else:
                 self.advance()
-        
+
     def getNext(self) -> dict:
         '''returns state and moves on to next character'''
         state = self.peek()

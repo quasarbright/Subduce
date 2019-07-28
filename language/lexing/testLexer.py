@@ -70,6 +70,7 @@ class TestExpression(unittest.TestCase):
             Token('<end file>', 2)
         ]
         self.assertEqual(tokenize(code), expected)
+    
     def testEscapeQuote(self):
         code = r'"quote \" ok"'
         expected = [
@@ -115,6 +116,7 @@ class TestExpression(unittest.TestCase):
             Token('<end file>', 2)
         ]
         self.assertEqual(tokenize(code), expected)
+    
     def testAddition(self):
         code = '(+ 1 24)'
         expected = [
@@ -188,6 +190,7 @@ class TestComments(unittest.TestCase):
         ]
         actual = tokenize(code)
         self.assertEqual(actual, expected)
+    
     def testTwoComments(self):
         code = '# comment1\n# comment2'
         expected = [
@@ -197,6 +200,7 @@ class TestComments(unittest.TestCase):
         ]
         actual = tokenize(code)
         self.assertEqual(actual, expected)
+    
     def testAnnotatedLine(self):
         code = '123 # a number'
         expected = [
