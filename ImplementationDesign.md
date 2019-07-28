@@ -29,4 +29,4 @@ def (add1 x):
 <end file> at 3
 ```
 ## parser
-
+![parse tree example](https://quasarbright.github.io/Subduce/figures/parseTreeExample.PNG)
