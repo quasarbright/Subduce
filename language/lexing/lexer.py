@@ -319,7 +319,7 @@ def tokenize(text: str) -> List[Token]:
             difference = indentationLevel - previousIndentationLevel
             for level in range(difference):
                 tokens.append(Token('<indent>', lineNumber))
-        elif previousIndentationLevel < indentationLevel:
+        elif indentationLevel < previousIndentationLevel:
             difference = previousIndentationLevel - indentationLevel
             for level in range(difference):
                 tokens.append(Token('<unindent>', lineNumber))

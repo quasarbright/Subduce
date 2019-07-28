@@ -168,7 +168,84 @@ class TestExpression(unittest.TestCase):
         self.assertEqual(actual, expected)
 
 class TestIndentation(unittest.TestCase):
-    pass
+    def testFirstLineIndented(self):
+        code = '\th'
+        expected = [
+            Token('<start file>', 1),
+            Token('<indent>', 1),
+            Token('<identifier>', 1, 2, 3, 'h'),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
+    def testManyLevels(self):
+        code = '0\n\t1\n\t1\n\t\t2\n\t1\n\t\t\t3\n\t1\n0\n\t1'
+        '''
+        0
+            1
+            1
+                2
+            1
+                    3
+            1
+        0
+            1
+        '''
+        expected = [
+            Token('<start file>', 1),
+            Token('<number>', 1, 1, 2, 0),
+            
+            Token('<newline>', 2),
+            Token('<indent>', 2),
+            Token('<number>', 2, 2, 3, 1),
+            
+            Token('<newline>', 3),
+            Token('<number>', 3, 2, 3, 1),
+            
+            Token('<newline>', 4),
+            Token('<indent>', 4),
+            Token('<number>', 4, 3, 4, 2),
+
+            Token('<newline>', 5),
+            Token('<unindent>', 5),
+            Token('<number>', 5, 2, 3, 1),
+
+            Token('<newline>', 6),
+            Token('<indent>', 6),
+            Token('<indent>', 6),
+            Token('<number>', 6, 4, 5, 3),
+
+            Token('<newline>', 7),
+            Token('<unindent>', 7),
+            Token('<unindent>', 7),
+            Token('<number>', 7, 2, 3, 1),
+
+            Token('<newline>', 8),
+            Token('<unindent>', 8),
+            Token('<number>', 8, 1, 2, 0),
+
+            Token('<newline>', 9),
+            Token('<indent>', 9),
+            Token('<number>', 9, 2, 3, 1),
+            
+            Token('<end file>', 10)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
+    def testIgnoreCommentIndent(self):
+        code = '0\n\t#1\n0'
+        expected = [
+            Token('<start file>', 1),
+            Token('<number>', 1, 1, 2, 0),
+            Token('<newline>', 2),
+            Token('<newline>', 3),
+            Token('<number>', 3, 1, 2, 0),
+            Token('<end file>', 4)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
     
 class TestAssignment(unittest.TestCase):
     def testAssignment(self):
