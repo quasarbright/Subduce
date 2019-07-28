@@ -66,22 +66,52 @@ class TestExpression(unittest.TestCase):
         code = '"hello"'
         expected = [
             Token('<start file>', 1),
-            Token('<string>', 1, 1, 4, "hello"),
+            Token('<string>', 1, 1, 8, "hello"),
             Token('<end file>', 2)
         ]
         self.assertEqual(tokenize(code), expected)
+    def testEscapeQuote(self):
+        code = r'"quote \" ok"'
+        expected = [
+            Token('<start file>', 1),
+            Token('<string>', 1, 1, len(code)+1, 'quote " ok'),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
+    def testEscapeBackslash(self):
+        code = r'"quote \\\" ok"'
+        expected = [
+            Token('<start file>', 1),
+            Token('<string>', 1, 1, len(code)+1, 'quote \\" ok'),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
+    def testEscapeCharacter(self):
+        code = r'"\a\n\t\r\b"'
+        expected = [
+            Token('<start file>', 1),
+            Token('<string>', 1, 1, len(code)+1, '\a\n\t\r\b'),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
     def testBool(self):
         code = 'true'
         expected = [
             Token('<start file>', 1),
-            Token('<bool>', 1, 1, 4, True),
+            Token('<boolean>', 1, 1, 5, True),
             Token('<end file>', 2)
         ]
         self.assertEqual(tokenize(code), expected)
-        code = 'False'
+        code = 'false'
         expected = [
             Token('<start file>', 1),
-            Token('<bool>', 1, 1, 4, True),
+            Token('<boolean>', 1, 1, 6, False),
             Token('<end file>', 2)
         ]
         self.assertEqual(tokenize(code), expected)
@@ -96,8 +126,9 @@ class TestExpression(unittest.TestCase):
             Token('<end function>', 1, 8, 9),
             Token('<end file>', 2)
         ]
-        self.assertEqual(tokenize(code), expected)
-    
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+
     def testMultiline(self):
         code = '(+\n\t1\n\t2)'
         expected = [
@@ -111,6 +142,16 @@ class TestExpression(unittest.TestCase):
             Token('<end file>', 4)
         ]
         self.assertEqual(tokenize(code), expected)
+    
+    def testOneCharacter(self):
+        code = '1'
+        expected = [
+            Token('<start file>', 1),
+            Token('<number>', 1, 1, 2, 1),
+            Token('<end file>', 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
 
 class TestIndentation(unittest.TestCase):
     pass

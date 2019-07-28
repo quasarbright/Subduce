@@ -67,7 +67,16 @@ class Token:
         self.value = value
     def __eq__(self, other: 'Token') -> bool:
         return self.type == other.type and self.lineNumber == other.lineNumber and self.startPosition == other.startPosition and self.endPosition == other.endPosition and self.value == other.value
-
+    def __str__(self):
+        ans = f'{self.type} at {self.lineNumber}'
+        if startPosition is not None:
+            assert endPosition is not None
+            ans += f':{self.startPosition}-{self.endPosition}'
+        if self.value is not None:
+            ans += f'. value: {self.value}'
+        return ans
+    def __repr__(self):
+        return f'Token({self.type}, {self.lineNumber}, {self.startPosition}, {self.endPosition}, {self.value})'
 
 def getTokenType(startCharacter: str) -> str:
     '''determine token type based on its first character'''
@@ -102,14 +111,18 @@ def tokenizeNumber(stream: InputStream) -> Token:
     startCharacterPosition = state['characterPosition']
     character = state['character']
     valueStr = ''
+    ranOut = False
     while character in '-.0123456789':
         valueStr += character
         if not stream.hasNext():
+            ranOut = True
             break
         stream.advance()
         state = stream.peek()
         character = state['character']
-    endCharacterPosition = state['characterPosition'] + 1
+    endCharacterPosition = state['characterPosition']
+    if ranOut:
+        endCharacterPosition += 1
 
     validRegex = r'-?\d+\.?\d*|-?\d*\.?\d+'
     validMatch = re.fullmatch(validRegex, valueStr)
@@ -121,18 +134,112 @@ def tokenizeNumber(stream: InputStream) -> Token:
         else:
             value = int(valueStr)
     return Token('<number>', lineNumber, startCharacterPosition, endCharacterPosition, value)
-    ### left off here about to process the number
-    # maybe you want to do this while consuming so you can get character-perfect
-    # syntax error location. But that's messy. I'm thinking just throw it at the
-    # beginning of the number and say syntax error. But that is vague
         
+def tokenizeString(stream: InputStream) -> Token:
+    '''consume number and return token. May raise syntax error
+    alters stream
+    '''
+    state = stream.getNext()
+    character = state['character']
+    if character != '"':
+        raise SyntaxError('expected "') # TODO change
+    lineNumber = state['lineNumber']
+    startPosition = state['characterPosition']
+    valueStr = '' # don't want " in value
+    if not stream.hasNext():
+        raise SyntaxError('Unexpected <end file> while parsing') # TODO change
+    escaping = False
+    stringEnded = False
+    while True:
+        state = stream.peek()
+        character = state['character']
+        if escaping:
+            if character == 'n':
+                # newline
+                valueStr += '\n'
+            elif character == 't':
+                # tab
+                valueStr += '\t'
+            elif character == 'r':
+                # carriage return
+                valueStr += '\r'
+            elif character == 'a':
+                # bell
+                valueStr += '\a'
+            elif character == 'b':
+                # backspace
+                valueStr += '\b'
+            elif character == '"':
+                # quote
+                valueStr += '"'
+            elif character == '\\':
+                # backslash
+                valueStr += '\\'
+            else:
+                # dummy escape. Just do the character straight up
+                valueStr += character
+            escaping = False
+        elif character == '\\':
+            # escape the next character
+            escaping = True
+        elif character == '"':
+            # string is closing
+            stringEnded = True
+            break
+        elif character == '\n':
+            raise SyntaxError(f'Unexpected token <newline> at {state["lineNumber"]}:{state["characterPosition"]}')
+        else:
+            # normal character
+            valueStr += character
+        if stream.hasNext():
+            stream.advance()
+        else:
+            break
+    if not stringEnded:
+        # we hit the end of the file and the string didn't end
+        raise SyntaxError('Unexpected <end file> while parsing') # TODO change
+    endPosition = state['characterPosition'] + 1
+    if stream.hasNext():
+        stream.advance()
+    return Token('<string>', lineNumber, startPosition, endPosition, valueStr)
         
+def tokenizeIdentifier(stream: InputStream) -> Token:
+    '''consume number and return token. May raise syntax error
+    alters stream
+    may return keyword token or identifier token
+    '''
+    state = stream.peek()
+    character = state['character']
+    lineNumber = state['lineNumber']
+    startPosition = state['characterPosition']
+    name = ''
+    ranOut = False
+    while character not in specialCharacters:
+        name += character
+        if stream.hasNext():
+            stream.advance()
+            state = stream.peek()
+            character = state['character']
+        else:
+            ranOut = True
+            break
+    endPosition = state['characterPosition']
+    if ranOut:
+        endPosition += 1
+    if name == 'true':
+        return Token('<boolean>', lineNumber, startPosition, endPosition, True)
+    elif name == 'false':
+        return Token('<boolean>', lineNumber, startPosition, endPosition, False)
+    if name in keywords:
+        return Token('<keyword>', lineNumber, startPosition, endPosition, name)
+    else:
+        return Token('<identifier>', lineNumber, startPosition, endPosition, name)
 
 
 def tokenize(text: str) -> List[Token]:
     stream = InputStream(text)
     tokens = [Token('<start file>', 1)]
-    while stream.hasNext():
+    while True:
         state = stream.peek()
         character = state['character']
         lineNumber = state['lineNumber']
@@ -140,13 +247,20 @@ def tokenize(text: str) -> List[Token]:
         # handle whitespace
         if character in whitespace:
             # skip whitespace
-            stream.advance()
-            continue
+            if stream.hasNext():
+                stream.advance()
+                continue
+            else:
+                break
         elif character == '#':
             # if comment, go to next line
-            stream.advanceLine()
+            if stream.hasNext():
+                stream.advanceLine()
+                continue
+            else:
+                break
         elif character in oneLengthTokens:
-            tokenType = character
+            tokenType = getTokenType(character)
             tokens.append(Token(tokenType, lineNumber, characterPosition, characterPosition+1))
         else:
             tokenType = getTokenType(character)
