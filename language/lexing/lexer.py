@@ -258,10 +258,27 @@ def tokenizeIdentifier(stream: InputStream) -> Token:
     else:
         return Token('<identifier>', lineNumber, startPosition, endPosition, name)
 
+def getIndentationLevels(text: str) -> List[int]:
+    '''returns the indentation levels of the lines of
+    the file
+    '''
+    lines = text.splitlines()
+    indentLevels = []
+    for line in lines:
+        level = 0
+        for character in line:
+            if character == '\t':
+                level += 1
+            else:
+                break
+        indentLevels.append(level)
+    return indentLevels
 
 def tokenize(text: str) -> List[Token]:
     stream = InputStream(text)
     lineNumber = 1
+    indentations = [] # list of indentation levels by line
+    # excludes whitespace lines
     tokens = [Token('<start file>', 1)]
     while not stream.isDone():
         state = stream.peek()
