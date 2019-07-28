@@ -196,6 +196,41 @@ class TestExpression(unittest.TestCase):
         ]
         actual = tokenize(code)
         self.assertEqual(actual, expected)
+    
+    def testList(self):
+        code = '[1 2 3]'
+        expected = [
+            Token(START_FILE, 1),
+            Token(START_LIST, 1, 1, 2),
+            Token(NUMBER, 1, 2, 3, 1),
+            Token(NUMBER, 1, 4, 5, 2),
+            Token(NUMBER, 1, 6, 7, 3),
+            Token(END_LIST, 1, 7, 8),
+            Token(END_FILE, 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
+    def testListMultiline(self):
+        code = '[\n\t1\n]'
+        '''
+        [
+            1
+        ]
+        '''
+        expected = [
+            Token(START_FILE, 1),
+            Token(START_LIST, 1, 1, 2),
+            Token(NEWLINE, 2),
+            Token(INDENT, 2),
+            Token(NUMBER, 2, 2, 3, 1),
+            Token(NEWLINE, 3),
+            Token(UNINDENT, 3),
+            Token(END_LIST, 3, 1, 2),
+            Token(END_FILE, 4)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
 
 class TestFunctionDefinition(unittest.TestCase):
     def testHeader(self):
