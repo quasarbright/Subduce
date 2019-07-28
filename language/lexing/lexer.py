@@ -122,18 +122,16 @@ def tokenizeNumber(stream: InputStream) -> Token:
     startCharacterPosition = state['characterPosition']
     character = state['character']
     valueStr = ''
-    ranOut = False
+    length = 0
     while character in '-.0123456789':
         valueStr += character
+        length += 1
         stream.advance()
         if stream.isDone():
-            ranOut = True
             break
         state = stream.peek()
         character = state['character']
-    endCharacterPosition = state['characterPosition']
-    if ranOut:
-        endCharacterPosition += 1
+    endCharacterPosition = startCharacterPosition + length
 
     validRegex = r'-?\d+\.?\d*|-?\d*\.?\d+'
     validMatch = re.fullmatch(validRegex, valueStr)
@@ -164,6 +162,7 @@ def tokenizeString(stream: InputStream) -> Token:
     stringEnded = False
     state = stream.peek()
     character = state['character']
+    length = 1 # 1 from the quote
     while True:
         if escaping:
             if character == 'n':
@@ -190,13 +189,16 @@ def tokenizeString(stream: InputStream) -> Token:
             else:
                 # dummy escape. Just do the character straight up
                 valueStr += character
+            length += 1
             escaping = False
         elif character == '\\':
             # escape the next character
             escaping = True
+            length += 1
         elif character == '"':
             # string is closing
             stringEnded = True
+            length += 1
             stream.advance()
             break
         elif character == '\n':
@@ -204,6 +206,7 @@ def tokenizeString(stream: InputStream) -> Token:
         else:
             # normal character
             valueStr += character
+            length += 1
         stream.advance()
         if not stream.isDone():
             state = stream.peek()
@@ -213,7 +216,7 @@ def tokenizeString(stream: InputStream) -> Token:
     if not stringEnded:
         # we hit the end of the file and the string didn't end
         raise SyntaxError('Unexpected <end file> while parsing') # TODO change
-    endPosition = state['characterPosition'] + 1
+    endPosition = startPosition + length
     return Token('<string>', lineNumber, startPosition, endPosition, valueStr)
 
 def tokenizeIdentifier(stream: InputStream) -> Token:
@@ -226,18 +229,17 @@ def tokenizeIdentifier(stream: InputStream) -> Token:
     lineNumber = state['lineNumber']
     startPosition = state['characterPosition']
     name = ''
-    ranOut = False
+    length = 0
     while character not in specialCharacters:
         name += character
+        length += 1
         stream.advance()
         if stream.isDone():
             ranOut = True
             break
         state = stream.peek()
         character = state['character']
-    endPosition = state['characterPosition']
-    if ranOut:
-        endPosition += 1
+    endPosition = startPosition + length
     if name == 'true':
         return Token('<boolean>', lineNumber, startPosition, endPosition, True)
     elif name == 'false':
@@ -268,7 +270,10 @@ def tokenize(text: str) -> List[Token]:
             continue
         elif character in oneLengthTokens:
             tokenType = getTokenType(character)
-            tokens.append(Token(tokenType, lineNumber, characterPosition, characterPosition+1))
+            if tokenType == '<newline>':
+                tokens.append(Token(tokenType, lineNumber))
+            else:
+                tokens.append(Token(tokenType, lineNumber, characterPosition, characterPosition+1))
             stream.advance()
             continue
         else:
@@ -286,3 +291,8 @@ def tokenize(text: str) -> List[Token]:
         continue
     tokens.append(Token('<end file>', lineNumber+1))
     return tokens
+
+'''
+for indentation, when you tokenize a newline, put it into indentation
+detection mode and count how many tabs until you hit something meaningful
+'''

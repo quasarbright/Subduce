@@ -134,6 +134,7 @@ class TestExpression(unittest.TestCase):
         expected = [
             Token('<start file>', 1),
             Token('<start function>', 1, 1, 2),
+            Token('<identifier>', 1, 2, 3, '+'),
             Token('<newline>', 2),
             Token('<number>', 2, 2, 3, 1),
             Token('<newline>', 3),
@@ -141,7 +142,8 @@ class TestExpression(unittest.TestCase):
             Token('<end function>', 3, 3, 4),
             Token('<end file>', 4)
         ]
-        self.assertEqual(tokenize(code), expected)
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
     
     def testOneCharacter(self):
         code = '1'
