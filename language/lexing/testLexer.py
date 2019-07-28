@@ -166,6 +166,53 @@ class TestExpression(unittest.TestCase):
         ]
         actual = tokenize(code)
         self.assertEqual(actual, expected)
+    
+    def testKeyWords(self):
+        code = 'def return print'
+        expected = [
+            Token(START_FILE, 1),
+            Token(KEYWORD, 1, 1, 4, 'def'),
+            Token(KEYWORD, 1, 5, 11, 'return'),
+            Token(KEYWORD, 1, 12, len(code)+1, 'print'),
+            Token(END_FILE, 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+    
+    def testStartFunNoSpace(self):
+        code = '(+ 1(* 2 33))'
+        expected = [
+            Token(START_FILE, 1),
+            Token(START_FUNCTION, 1, 1, 2),
+            Token(IDENTIFIER, 1, 2, 3, '+'),
+            Token(NUMBER, 1, 4, 5, 1),
+            Token(START_FUNCTION, 1, 5, 6),
+            Token(IDENTIFIER, 1, 6, 7, '*'),
+            Token(NUMBER, 1, 8, 9, 2),
+            Token(NUMBER, 1, 10, 12, 33),
+            Token(END_FUNCTION, 1, 12, 13),
+            Token(END_FUNCTION, 1, 13, 14),
+            Token(END_FILE, 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
+
+class TestFunctionDefinition(unittest.TestCase):
+    def testHeader(self):
+        code = 'def (fun x y):'
+        expected = [
+            Token(START_FILE, 1),
+            Token(KEYWORD, 1, 1, 4, 'def'),
+            Token(START_FUNCTION, 1, 5, 6),
+            Token(IDENTIFIER, 1, 6, 9, 'fun'),
+            Token(IDENTIFIER, 1, 10, 11, 'x'),
+            Token(IDENTIFIER, 1, 12, 13, 'y'),
+            Token(END_FUNCTION, 1, 13, 14),
+            Token(END_SIGNATURE, 1, 14, 15),
+            Token(END_FILE, 2)
+        ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
 
 class TestIndentation(unittest.TestCase):
     def testFirstLineIndented(self):

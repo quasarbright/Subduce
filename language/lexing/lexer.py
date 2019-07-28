@@ -26,7 +26,7 @@ END_LIST = '<end list>'
 # utility variables
 specialCharacters = '#()[]:"=\n\t '  # can't be in variables
 oneLengthTokens = '()[]:=\n'  # characters that are tokens of length 1
-keywords = ['def', 'return']
+keywords = ['def', 'return', 'print']
 whitespace = '\t '
 
 class InputStream:
