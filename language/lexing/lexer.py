@@ -1,7 +1,8 @@
 '''
-The job of the lexer is to tokenize everything
-This doesn't include building parsing trees.
-That is the job of the parser
+The job of the lexer is to tokenize the source code
+The lexer takes the source code, and converts it to a list of tokens.
+The lexer doesn't build parsing trees.
+That is the job of the parser.
 '''
 from typing import List
 import re
@@ -363,11 +364,6 @@ def tokenize(text: str) -> List[Token]:
         continue
     tokens.append(Token(END_FILE, lineNumber+1))
     return tokens
-
-'''
-for indentation, when you tokenize a newline, put it into indentation
-detection mode and count how many tabs until you hit something meaningful
-'''
 
 def main():
     import sys
