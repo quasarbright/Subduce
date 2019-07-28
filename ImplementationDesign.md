@@ -1,4 +1,4 @@
-# order
+# pipeline
 1. source (file or code string)
 2. lexer
 3. parser
