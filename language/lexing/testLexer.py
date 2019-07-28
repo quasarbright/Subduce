@@ -214,8 +214,10 @@ class TestComments(unittest.TestCase):
             Token('<number>', 1, 1, 3, 14),
             Token('<newline>', 2),
             Token('<identifier>', 2, 1, 4, 'var'),
-            Token('<end file>', 2)
+            Token('<end file>', 3)
         ]
+        actual = tokenize(code)
+        self.assertEqual(actual, expected)
 
 if __name__ == '__main__':
     unittest.main()
