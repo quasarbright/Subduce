@@ -101,7 +101,12 @@ These will end up as python floats or integers, so they have the same properties
 ## string
 ex: `"hello"`
 ## function
-ex: `(lam (x) (+ x 1))`
+ex: `(lam (x) (+ x 1))`  
+```scheme
+# same as the lam
+def (add1 x):
+  return (+ x 1)
+```
 ## list
 ex:  
 ```scheme
