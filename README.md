@@ -1,3 +1,5 @@
+**NOTE**  
+This readme is out of date. See the readthedocs page for up-to-date documentation
 # Subduce
 A programming language based on python and lisp
 * TOC
