@@ -150,7 +150,7 @@ Ex:
 .. code-block:: scheme
 
     [1 2 true "lisp"]
-    (cons 1 (cons 2 (cons true (cons "lisp" (cons empty)))))
+    (cons 1 (cons 2 (cons true (cons "lisp" empty))))
     empty
 
 The first two lists are equivalent. ``[]`` syntax is syntactic sugar for ``cons``
