@@ -6,7 +6,7 @@
 Subduce Documentation
 ===================================
 
-Subduce is a functional programming language based on python and scheme. It is functional and has expressions similar to scheme, but with some more python-like syntax to make code look nicer.
+Subduce is a functional programming language based on python and scheme. It is functional and has scheme-like expression syntax and python-like variable assignment and function definitions.
 
 .. toctree::
    :maxdepth: 3
