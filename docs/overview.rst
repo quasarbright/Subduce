@@ -14,10 +14,10 @@ Example
 
     # returns the product - the sum of two numbers
     def (func a1 a2):
-    sum = (+ a1 a2)
-    prod = (* a1 a2)
-    print (+ "prod " (number->string prod))
-    return (- prod sum)
+        sum = (+ a1 a2)
+        prod = (* a1 a2)
+        print (+ "prod " (number->string prod))
+        return (- prod sum)
     n = 2
     (func n 3) # prints 6 and outputs 1
     arr = [1 2 3 4]
@@ -34,17 +34,17 @@ Expressions can be multiline, and indentation within expressions is ignored, as 
 
     # ok
     def (put-in-list x):
-    ans = [
-        x
-    ]
-    return ans
+        ans = [
+            x
+        ]
+        return ans
     
     # ok
     def (put-in-list x):
-    ans = [
-    x
-    ]
-    return ans
+        ans = [
+        x
+        ]
+        return ans
     
     # ok
     def (double x):
@@ -55,31 +55,31 @@ Expressions can be multiline, and indentation within expressions is ignored, as 
     
     # ok
     seven = (+
-            1
-            (*
-                2
-                3))
+                1
+                (*
+                    2
+                    3))
     
     # NOT ok
     def (put-in-list x):
-    ans = [
+        ans = [
     x
-    ]
-    return ans
+        ]
+        return ans
     
     # NOT ok
     def (put-in-list x):
-    ans = [
-        x
+        ans = [
+            x
     ]
-    return ans
+        return ans
     
     # NOT ok
     seven = (+
-        1
-        (*
-        2 # the two went below the indentation of the (* 
-        3))
+                1
+                (*
+            2 # the two went below the indentation of the (* 
+                3))
 
 variable naming
 ---------------
@@ -98,9 +98,9 @@ Built-ins are treated as variables, so they cannot be overridden unless as argum
 .. code-block:: scheme
 
     def (use-custom-add + a b):
-    return (+ a b)
+        return (+ a b)
     def (double-add a b):
-    return (+ (+ a b) (+ a b))
+        return (+ (+ a b) (+ a b))
     print (use-custom-add double-add 2 4) # prints 12, not 6
 
 Types
@@ -150,7 +150,7 @@ Ex:
 .. code-block:: scheme
 
     [1 2 true "lisp"]
-    (cons 1 (cons 2 (cons true (cons "lisp" (cons empty)))))
+    (cons 1 (cons 2 (cons true (cons "lisp" empty))))
     empty
 
 The first two lists are equivalent. ``[]`` syntax is syntactic sugar for ``cons``
