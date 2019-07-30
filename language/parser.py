@@ -1,7 +1,6 @@
 from typing import List
 import lexer
 from lexer import Token
-from lexer import tokenize
 
 # expressions
 class Expression:
