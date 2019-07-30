@@ -1,3 +1,8 @@
+'''
+This file contains the class structure for the parse tree.
+The only functionality is __str__ functions.
+There is type enforcement, fields, and inheritance.
+'''
 from typing import List
 import lexer
 from lexer import Token
