@@ -53,7 +53,7 @@ class VariableReference(Atom):
     def __init__(self, token: Token):
         super().__init__(token)
 
-class List(Expression):
+class ListExpression(Expression):
     '''Represents a List expression, which contains Expressions
     '''
     def __init__(self, expressions: List[Expression]):
@@ -69,6 +69,9 @@ class List(Expression):
     
     def __str__(self):
         return str(self.expressions)
+
+    def __eq__(self, other: 'ListExpression'):
+        return self.expressions == other.expressions
 
 class HasArguments(Expression):
     '''An expression which has arguments, like a function call or lambda function definition
@@ -91,6 +94,9 @@ class HasArguments(Expression):
         '''
         return ' '.join([argument.value for argument in arguments])
 
+    def __eq__(self, other: 'HasArguments'):
+        return self.arguments == other.arguments
+
 class FunctionCall(Expression):
     '''Represents a function call
     '''
@@ -107,14 +113,22 @@ class FunctionCall(Expression):
 
     def __str__(self):
         '''return what the call may have looked like in code'''
-        return f'({self.functionName} {super().__str__()})'        
+        return f'({self.functionName} {super().__str__()})'    
+
+    def __eq__(self, other: 'FunctionCall'):
+        # check args
+        if not super().__eq__(other):
+            return False    
+        if self.arguments != other.arguments:
+            return False
+        return True
         
         
 class LambdaDefinition(Expression):
     '''Represents a lambda (anonymous) function definition
     '''
     def __init__(self, arguments: 'List[Token]', body: Expression):
-        # enforce arguments is a list of 
+        # enforce arguments is a list of arguments 
         super().__init__(arguments)
         if not isinstance(body, Expression):
             raise TypeError(f'Expected expression for lambda body: {body}') # TODO change
@@ -122,6 +136,14 @@ class LambdaDefinition(Expression):
     
     def __str__(self):
         return f'(lam ({super().__str__()}) {self.body()})'
+
+    def __eq__(self, other: 'Expression'):
+        # arguments
+        if not super().__eq__(other):
+            return False
+        if self.body != other.body:
+            return False
+        return True
 
 # statements
 class Statement:
@@ -142,6 +164,13 @@ class Assignment(Statement):
     
     def __str__(self):
         return f'{variable.value} = {value}'
+    
+    def __eq__(self, other: 'Assignment'):
+        if self.variable != other.variable:
+            return False
+        if self.value != other.value:
+            return False
+        return True
 
 class FunctionDefinition(Statement):
     '''Represents a function definition statement
@@ -161,6 +190,13 @@ class FunctionDefinition(Statement):
         ans = f'{header}\n{indentedLines}'
         return ans
 
+    def __eq__(self, other: 'FunctionDefinition'):
+        if not self.signature == other.signature:
+            return False
+        if not self.body == other.body:
+            return False
+        return True
+
 class Return(Statement):
     '''Represents a return Statement
     '''
@@ -172,6 +208,9 @@ class Return(Statement):
     def __str__(self):
         return f'return {self.value}'
 
+    def __eq__(self, other: 'Return'):
+        return self.value == other.value
+
 class Print(Statement):
     '''Represents a print Statement
     '''
@@ -182,6 +221,9 @@ class Print(Statement):
     
     def __str__(self):
         return f'print {self.value}'
+    
+    def __eq__(self, other: 'Print'):
+        return self.value == other.value
 
 class Body:
     '''Represents a list of statements.
@@ -201,3 +243,9 @@ class Body:
         '''try to reproduce source code
         '''
         return '\n'.join(self.statements)
+    
+    def __eq__(self, other: 'Body'):
+        return self.statements == other.statements
+
+def MainBody(Body):
+    pass
