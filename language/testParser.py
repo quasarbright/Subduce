@@ -1,6 +1,20 @@
 import unittest
+from lexer import *
 from parser import *
+from parseTree import *
+
+identifier = Token(lexer.IDENTIFIER, 1, 1, 2, 'var')
+number = Token(lexer.NUMBER, 1, 1, 2, 123)
+equals = Token(lexer.EQUALS, 1, 1, 2)
+
 
 class TestAssignment(unittest.TestCase):
     def testNumberAssignment(self):
-        code = 'var = 2'
+        tokens = [
+            identifier,
+            equals,
+            number
+        ]
+        expected = Assignment(identifier, number)
+        actual = parseTokens(tokens)
+        self.assertEqual(actual, expected)
