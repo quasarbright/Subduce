@@ -4,6 +4,7 @@ from parse import *
 from parseTree import *
 
 identifier = Token(lexer.IDENTIFIER, 1, 1, 2, 'var')
+lam = Token(lexer.IDENTIFIER, 1, 1, 2, 'lam')
 number = Token(lexer.NUMBER, 1, 1, 2, 123)
 equals = Token(lexer.EQUALS, 1, 1, 2)
 string = Token(lexer.STRING, 1, 1, 2, 'hello')
@@ -60,7 +61,10 @@ class TestExpressions(unittest.TestCase):
         actual = parseFunctionCall(stream)
         self.assertEqual(actual, expected)
     def testLambda(self):
-        self.assertTrue(False)
+        # (lam (var var) 123)
+        stream = TokenStream([startFunction, lam, startFunction, identifier, identifier, endFunction, number, endFunction])
+        expected = LambdaDefinition([VariableReference(lam), VariableReference(lam)], Number(number))
+
 
 class TestAssignment(unittest.TestCase):
     def testNumberAssignment(self):
