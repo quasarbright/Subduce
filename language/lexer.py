@@ -27,6 +27,26 @@ END_LIST = '<end list>'
 # utility variables
 specialCharacters = '#()[]:"=\n\t '  # can't be in variables
 oneLengthTokens = '()[]:=\n'  # characters that are tokens of length 1
+charToType = {
+    '(': START_FUNCTION,
+    ')': END_FUNCTION,
+    '[': START_LIST,
+    ']': END_LIST,
+    ':': END_SIGNATURE,
+    '"': STRING,
+    '=': EQUALS,
+    '\n': NEWLINE,
+}
+typeToChar = {
+    START_FUNCTION: '(',
+    END_FUNCTION: ')',
+    START_LIST: '[',
+    END_LIST: ']',
+    END_SIGNATURE: ':',
+    STRING: '"',
+    EQUALS: '=',
+    NEWLINE: '\n'
+}
 keywords = ['def', 'return', 'print']
 whitespace = '\t '
 
@@ -120,18 +140,8 @@ class Token:
 def getTokenType(startCharacter: str) -> str:
     '''determine token type based on its first character'''
     assert len(startCharacter) == 1
-    charDict = {
-        '(': START_FUNCTION,
-        ')': END_FUNCTION,
-        '[': START_LIST,
-        ']': END_LIST,
-        ':': END_SIGNATURE,
-        '"': STRING,
-        '=': EQUALS,
-        '\n': NEWLINE,
-    }
-    if startCharacter in charDict:
-        return charDict[startCharacter]
+    if startCharacter in charToType:
+        return charToType[startCharacter]
     else:
         # it's either an identifier, keyword or a number
         if startCharacter in '-.0123456789':

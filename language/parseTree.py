@@ -9,7 +9,8 @@ from lexer import Token
 
 # expressions
 class Expression:
-    pass
+    def __repr__(self):
+        return str(self)
 
 class Atom(Expression):
     '''An abstract class representing an atomic expression
@@ -76,23 +77,21 @@ class ListExpression(Expression):
 class HasArguments(Expression):
     '''An expression which has arguments, like a function call or lambda function definition
     '''
-    def __init__(self, arguments: 'List[Token]'):
+    def __init__(self, arguments: 'List[VariableReference]'):
         # enforce arguments is a list of identifiers
         try:
             iter(arguments)
         except TypeError:
-            raise TypeError(f'Expected a list of identifiers for function arguments: {arguments}') # TODO change
+            raise TypeError(f'Expected a list of variable references for function arguments: {arguments}') # TODO change
         for argument in arguments:
-            if not isinstance(argument, Token):
-                raise TypeError(f'Expected a token for a function argument: {argument}') # TODO change
-            elif argument.type != lexer.IDENTIFIER:
-                raise TypeError(f'Expected an identifier for a function argument: {argument}') # TODO change
+            if not isinstance(argument, VariableReference):
+                raise TypeError(f'Expected a variable reference for a function argument: {argument}') # TODO change
         self.arguments = arguments
     
     def __str__(self):
         '''Ex: [arg1, arg2]
         '''
-        return ' '.join([argument.value for argument in arguments])
+        return str(self.arguments)
 
     def __eq__(self, other: 'HasArguments'):
         return self.arguments == other.arguments
@@ -100,34 +99,35 @@ class HasArguments(Expression):
 class FunctionCall(Expression):
     '''Represents a function call
     '''
-    def __init__(self, functionName: Token, arguments: 'List[Token]'):
-        # enforce arguments is a list of identifiers
-        super().__init__(self, arguments)
-
+    def __init__(self, functionName: Token, arguments: 'List[Expression]'):
         # enforce function name is an identifier
         if not isinstance(functionName, Token):
             raise TypeError(f'Expected a token for a function name: {functionName}') # TODO change
         elif functionName.type != lexer.IDENTIFIER:
             raise TypeError(f'Expected an identifier for a function name: {functionName}') # TODO change
         self.functionName = functionName
+        try:
+            iter(arguments)
+        except TypeError:
+            raise TypeError(f'Expected a list of Expressions for function call arguments: {arguments}')
+        for argument in arguments:
+            if not isinstance(argument, Expression):
+                raise TypeError(f'Expected an Expression for function call argument: {argument}')
+        self.arguments = arguments
 
     def __str__(self):
         '''return what the call may have looked like in code'''
-        return f'({self.functionName} {super().__str__()})'    
+        return f'({self.functionName} {str(self.arguments)})'
 
     def __eq__(self, other: 'FunctionCall'):
         # check args
-        if not super().__eq__(other):
-            return False    
-        if self.arguments != other.arguments:
-            return False
-        return True
+        return self.functionName == other.functionName and self.arguments == other.arguments
         
         
-class LambdaDefinition(Expression):
+class LambdaDefinition(HasArguments):
     '''Represents a lambda (anonymous) function definition
     '''
-    def __init__(self, arguments: 'List[Token]', body: Expression):
+    def __init__(self, arguments: 'List[VariableReference]', body: Expression):
         # enforce arguments is a list of arguments 
         super().__init__(arguments)
         if not isinstance(body, Expression):
@@ -135,11 +135,10 @@ class LambdaDefinition(Expression):
         self.body = body
     
     def __str__(self):
-        return f'(lam ({super().__str__()}) {self.body()})'
+        return f'(lam ({str(self.arguments)}) {self.body()})'
 
-    def __eq__(self, other: 'Expression'):
-        # arguments
-        if not super().__eq__(other):
+    def __eq__(self, other: 'LambdaDefinition'):
+        if self.arguments != other.arguments:
             return False
         if self.body != other.body:
             return False
@@ -149,7 +148,8 @@ class LambdaDefinition(Expression):
 class Statement:
     '''Abstract class for statements
     '''
-    pass
+    def __repr__(self):
+        return str(self)
 
 class Assignment(Statement):
     '''Represents an assignment statement
@@ -172,11 +172,24 @@ class Assignment(Statement):
             return False
         return True
 
+class FunctionSignature(FunctionCall, HasArguments):
+    '''only inherits from HasArguments for the validation, really
+    '''
+    def __init__(self, functionName: Token, arguments: 'List[VariableReference]'):
+        FunctionCall.__init__(self, functionName, arguments)
+        HasArguments.__init__(self, arguments)
+    
+    def __str__(self):
+        return FunctionCall.__str__(self)
+    
+    def __eq__(self, other: 'FunctionSignature'):
+        return FunctionCall.__eq__(self, other)
+
 class FunctionDefinition(Statement):
     '''Represents a function definition statement
     '''
-    def __init__(self, signature: FunctionCall, body: Body):
-        if not isinstance(signature, FunctionCall):
+    def __init__(self, signature: FunctionSignature, body: 'Body'):
+        if not isinstance(signature, FunctionSignature):
             raise TypeError(f'Expected function call for a function signature: {signature}') # TODO change
         self.signature = signature
         if not isinstance(body, Body):
@@ -243,6 +256,9 @@ class Body:
         '''try to reproduce source code
         '''
         return '\n'.join(self.statements)
+    
+    def __repr__(self):
+        return str(self)
     
     def __eq__(self, other: 'Body'):
         return self.statements == other.statements
