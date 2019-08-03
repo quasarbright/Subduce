@@ -126,6 +126,7 @@ def parseFunctionCall(stream: TokenStream) -> FunctionCall:
     while True:
         current = stream.peek()
         if current.type == END_FUNCTION:
+            stream.advance()
             break
         else:
             # assumes this will advance the stream
