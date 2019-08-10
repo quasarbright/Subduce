@@ -135,7 +135,8 @@ class LambdaDefinition(HasArguments):
         self.body = body
     
     def __str__(self):
-        return f'(lam ({str(self.arguments)}) {self.body()})'
+        strargs = map(str, self.arguments)
+        return f'(lam ({" ".join(strargs)}) {self.body})'
 
     def __eq__(self, other: 'LambdaDefinition'):
         if self.arguments != other.arguments:

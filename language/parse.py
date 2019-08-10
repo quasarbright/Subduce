@@ -81,7 +81,7 @@ def parseLambda(stream: TokenStream) -> LambdaDefinition:
     if stream.done:
         raise SyntaxError(f'Expected argument name or {typeToChar[END_FUNCTION]}')
     # get list of argument names
-    argumentNames = [] # identifiers
+    argumentVars = [] # variable references
     while True:
         current = stream.peek()
         if current.type == END_FUNCTION:
@@ -90,7 +90,8 @@ def parseLambda(stream: TokenStream) -> LambdaDefinition:
         # make sure it's an identifier
         if current.type != IDENTIFIER:
             raise SyntaxError(f'Expected argument name or {typeToChar[END_FUNCTION]}: {current}')
-        argumentNames.append(current)
+        argumentReference = VariableReference(current)
+        argumentVars.append(argumentReference)
         stream.advance()
         if stream.done:
             raise SyntaxError(f'Expected argument name or {typeToChar[END_FUNCTION]}')
@@ -102,7 +103,7 @@ def parseLambda(stream: TokenStream) -> LambdaDefinition:
     if current.type != END_FUNCTION:
         raise SyntaxError(f'Expected {typeToChar[END_FUNCTION]}')
     stream.advance()
-    return LambdaDefinition(argumentNames, returnedExpression)
+    return LambdaDefinition(argumentVars, returnedExpression)
 
 
 def parseFunctionCall(stream: TokenStream) -> FunctionCall:
@@ -155,7 +156,22 @@ def parseExpression(stream: TokenStream) -> Expression:
 
 
 def parseAssignment(stream: TokenStream) -> Assignment:
-    pass
+    # TODO multiline
+    current = stream.peek()
+    assert current.type == IDENTIFIER
+    variable = current
+    stream.advance()
+    if stream.done:
+        raise SyntaxError(f'Expected an {typeToChar[EQUALS]}')
+    current = stream.peek()
+    if current.type != EQUALS:
+        raise SyntaxError(f'Expected an {typeToChar[EQUALS]}')
+    stream.advance()
+    if stream.done:
+        raise SyntaxError('Expected an expression')
+    value = parseExpression(stream)
+    ans = Assignment(variable, value)
+    return ans
 
 def parseFunctionDefinition(Stream: TokenStream) -> FunctionDefinition:
     pass
