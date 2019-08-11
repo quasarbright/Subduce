@@ -304,6 +304,10 @@ def parseBody(stream: TokenStream) -> Body:
     current = stream.peek()
     statements = []
     while not stream.done:
+        current = stream.peek()
+        if current.type == UNINDENT:
+            stream.advance()
+            break
         statements.append(parseStatement(stream))
         if stream.done:
             break
@@ -312,9 +316,14 @@ def parseBody(stream: TokenStream) -> Body:
             stream.advance()
             break
         if current.type != NEWLINE:
-            raise SyntaxError(f'Expected newline: {current}')
+            # only expect a newline if the statement we just consumed wasn't a function definition
+            # this is because parsing a funciton defintion consumes the newline when it looks for
+            # the unindent that tells it when to end
+            if not isinstance(statements[-1], FunctionDefinition):
+                raise SyntaxError(f'Expected newline: {current}')
         else:
             stream.advance()
+    assert len(statements) > 0
     ans = Body(statements)
     return ans
 

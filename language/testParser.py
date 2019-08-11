@@ -293,6 +293,47 @@ class TestFunctionDefinition(unittest.TestCase):
         expected = FunctionDefinition(signature, body)
         actual = parseFunctionDefinition(stream)
         self.assertEqual(actual, expected)
-   
+    
+    def testFunctionInFunction(self):
+        '''
+        def (var var):
+            def (var var):
+                return 123
+            return "hello"
+        '''
+        stream = TokenStream([
+            defkw,
+            startFunction,
+            identifier,
+            identifier,
+            endFunction,
+            endSignature,
+            newline,
+            indent,
+            defkw,
+            startFunction,
+            identifier,
+            identifier,
+            endFunction,
+            endSignature,
+            newline,
+            indent,
+            returnkw,
+            number,
+            newline,
+            unindent,
+            returnkw,
+            string,
+            unindent
+        ])
+        signature = FunctionSignature(identifier, [VariableReference(identifier)])
+        body = Body([
+            FunctionDefinition(signature, Body([Return(Number(number))])),
+            Return(String(string))
+        ])
+        expected = FunctionDefinition(signature, body)
+        actual = parseFunctionDefinition(stream)
+        self.assertEqual(actual, expected)
+
 if __name__ == '__main__':
     unittest.main()
