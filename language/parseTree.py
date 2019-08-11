@@ -11,7 +11,7 @@ from lexer import Token
 # expressions
 class Expression:
     def __repr__(self):
-        return type(self).__name__ + str(self)
+        return f'{type(self).__name__}: {self}'
 
 class Atom(Expression):
     '''An abstract class representing an atomic expression
@@ -150,7 +150,7 @@ class Statement:
     '''Abstract class for statements
     '''
     def __repr__(self):
-        return type(self).__name__ + str(self)
+        return f'{type(self).__name__}: {self}'
 
 class Assignment(Statement):
     '''Represents an assignment statement
@@ -177,7 +177,12 @@ class FunctionSignature(FunctionCall, HasArguments):
     '''only inherits from HasArguments for the validation, really
     '''
     def __init__(self, functionName: Token, arguments: 'List[VariableReference]'):
-        FunctionCall.__init__(self, functionName, arguments)
+        if functionName.type != lexer.IDENTIFIER:
+            raise SyntaxError(f'Expected an identifier for a function name: {functionName}')
+        if functionName.value == 'lam':
+            raise SyntaxError('Function cannot be named lam')
+        function = VariableReference(functionName)
+        FunctionCall.__init__(self, function, arguments)
         HasArguments.__init__(self, arguments)
     
     def __str__(self):
@@ -259,7 +264,7 @@ class Body:
         return '\n'.join(self.statements)
     
     def __repr__(self):
-        return type(self).__name__ + str(self)
+        return f'{type(self).__name__}: {self}'
     
     def __eq__(self, other: 'Body'):
         return self.statements == other.statements
