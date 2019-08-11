@@ -4,13 +4,14 @@ The only functionality is __str__ functions.
 There is type enforcement, fields, and inheritance.
 '''
 from typing import List
+from typing import Union
 import lexer
 from lexer import Token
 
 # expressions
 class Expression:
     def __repr__(self):
-        return str(self)
+        return type(self).__name__ + str(self)
 
 class Atom(Expression):
     '''An abstract class representing an atomic expression
@@ -99,13 +100,11 @@ class HasArguments(Expression):
 class FunctionCall(Expression):
     '''Represents a function call
     '''
-    def __init__(self, functionName: Token, arguments: 'List[Expression]'):
+    def __init__(self, function: Expression, arguments: 'List[Expression]'):
         # enforce function name is an identifier
-        if not isinstance(functionName, Token):
-            raise TypeError(f'Expected a token for a function name: {functionName}') # TODO change
-        elif functionName.type != lexer.IDENTIFIER:
-            raise TypeError(f'Expected an identifier for a function name: {functionName}') # TODO change
-        self.functionName = functionName
+        if not isinstance(function, Expression):
+            raise TypeError(f'Expected an expression for a function: {function}') # TODO change
+        self.function = function
         try:
             iter(arguments)
         except TypeError:
@@ -117,11 +116,12 @@ class FunctionCall(Expression):
 
     def __str__(self):
         '''return what the call may have looked like in code'''
-        return f'({self.functionName} {str(self.arguments)})'
+        strargs = map(str, self.arguments)
+        return f'({self.function} {" ".join(strargs)})'
 
     def __eq__(self, other: 'FunctionCall'):
         # check args
-        return self.functionName == other.functionName and self.arguments == other.arguments
+        return self.function == other.function and self.arguments == other.arguments
         
         
 class LambdaDefinition(HasArguments):
@@ -150,7 +150,7 @@ class Statement:
     '''Abstract class for statements
     '''
     def __repr__(self):
-        return str(self)
+        return type(self).__name__ + str(self)
 
 class Assignment(Statement):
     '''Represents an assignment statement
@@ -259,7 +259,7 @@ class Body:
         return '\n'.join(self.statements)
     
     def __repr__(self):
-        return str(self)
+        return type(self).__name__ + str(self)
     
     def __eq__(self, other: 'Body'):
         return self.statements == other.statements

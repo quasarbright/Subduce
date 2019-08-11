@@ -112,17 +112,16 @@ def parseFunctionCall(stream: TokenStream) -> FunctionCall:
     assert current.type == START_FUNCTION
     stream.advance()
     if stream.done:
-        raise SyntaxError('Expected function name')
+        raise SyntaxError('Expected function')
     current = stream.peek()
-    if current.type != IDENTIFIER:
-        raise SyntaxError('Expected function name')
-    name = current
-    if name.value == 'lam':
+    # this might actually be a lambda definition
+    if current.value == 'lam':
         return parseLambda(stream)
-
-    stream.advance()
+    # this is a function call, the function is the current expression
+    function = parseExpression(stream)
+    # the stream should have been advanced by parseExpression
     if stream.done:
-        raise SyntaxError('Expected expression')
+        raise SyntaxError('Expected an expression')
     arguments = [] # expressions
     while True:
         current = stream.peek()
@@ -135,8 +134,14 @@ def parseFunctionCall(stream: TokenStream) -> FunctionCall:
             arguments.append(expression)
         if stream.done:
             raise SyntaxError(f'Expected expression or {typeToChar[END_FUNCTION]}')
-    return FunctionCall(name, arguments)
+    return FunctionCall(function, arguments)
 
+def parseVariableReference(stream: TokenStream) -> VariableReference:
+    current = stream.peek()
+    assert current.type == IDENTIFIER
+    ans = VariableReference(current)
+    stream.advance()
+    return ans
 
 def parseExpression(stream: TokenStream) -> Expression:
     # TODO multiline
@@ -145,7 +150,8 @@ def parseExpression(stream: TokenStream) -> Expression:
         START_LIST: parseList,
         NUMBER: parseAtom,
         STRING: parseAtom,
-        BOOLEAN: parseAtom
+        BOOLEAN: parseAtom,
+        IDENTIFIER: parseVariableReference
     }
     current = stream.peek()
     if current.type not in typeToFunc:

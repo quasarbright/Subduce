@@ -50,14 +50,14 @@ class TestParseList(unittest.TestCase):
     def testComplex(self):
         # ["hello" (var 123 123) True]
         stream = TokenStream([startList, string, startFunction, identifier, number, number, endFunction, boolean, endList])
-        expected = ListExpression([String(string), FunctionCall(identifier, [Number(number), Number(number)]), Boolean(boolean)])
+        expected = ListExpression([String(string), FunctionCall(VariableReference(identifier), [Number(number), Number(number)]), Boolean(boolean)])
         actual = parseList(stream)
         self.assertEqual(actual, expected)
 
 class TestExpressions(unittest.TestCase):
     def testFunctionCall(self):
         stream = TokenStream([startFunction, identifier, number, number, endFunction])
-        expected = FunctionCall(identifier, [Number(number), Number(number)])
+        expected = FunctionCall(VariableReference(identifier), [Number(number), Number(number)])
         actual = parseFunctionCall(stream)
         self.assertEqual(actual, expected)
     def testLambdaCall(self):
@@ -74,7 +74,7 @@ class TestExpressions(unittest.TestCase):
             string,
             endFunction
         ])
-        expected = FunctionCall(LambdaDefinition([VariableReference(identifier)], Number(number)), String(string))
+        expected = FunctionCall(LambdaDefinition([VariableReference(identifier)], Number(number)), [String(string)])
         actual = parseFunctionCall(stream)
         self.assertEqual(actual, expected)
     def testLambda(self):
@@ -83,7 +83,11 @@ class TestExpressions(unittest.TestCase):
         expected = LambdaDefinition([VariableReference(identifier), VariableReference(identifier)], Number(number))
         # use parseFunctionCall because parseLambda is only supposed to be called from in there
         actual = parseFunctionCall(stream)
-        str(actual)
+        self.assertEqual(actual, expected)
+    def testVariableReference(self):
+        stream = TokenStream([identifier])
+        expected = VariableReference(identifier)
+        actual = parseVariableReference(stream)
         self.assertEqual(actual, expected)
 
 
@@ -128,6 +132,7 @@ class TestAssignment(unittest.TestCase):
         actual = parseAssignment(stream)
         self.assertEqual(actual, expected)
     def testCallAssignment(self):
+        # var = (var 123)
         stream = TokenStream([
             identifier,
             equals,
@@ -136,7 +141,7 @@ class TestAssignment(unittest.TestCase):
             number,
             endFunction
         ])
-        expected = Assignment(identifier, FunctionCall(identifier, [Number(number)]))
+        expected = Assignment(identifier, FunctionCall(VariableReference(identifier), [Number(number)]))
         actual = parseAssignment(stream)
         self.assertEqual(actual, expected)
 
