@@ -28,58 +28,65 @@ Indentation and multiline expressions
 
 Tab-based indentation only. Spaces are completely ignored in indentation
 Function bodies must be indented 1 level from their header (header is def (fun arg1 arg2):). Headers must be on one line
-Expressions can be multiline, and indentation within expressions is ignored, as long as they don't go below their starting indentation. For example:
+Expressions can be multiline, and indentation within expressions is ignored.
+
+Examples of valid indentation:
 
 .. code-block:: scheme
 
-    # ok
     def (put-in-list x):
         ans = [
             x
         ]
         return ans
     
-    # ok
     def (put-in-list x):
         ans = [
         x
         ]
         return ans
     
-    # ok
     def (double x):
     ans = (+
             x
             x)
     return ans
     
-    # ok
     seven = (+
                 1
                 (*
                     2
                     3))
     
-    # NOT ok
     def (put-in-list x):
         ans = [
     x
         ]
         return ans
     
-    # NOT ok
     def (put-in-list x):
         ans = [
             x
     ]
         return ans
     
-    # NOT ok
     seven = (+
                 1
                 (*
-            2 # the two went below the indentation of the (* 
+            2
                 3))
+
+Examples of invalid indentation:
+
+.. code-block:: scheme
+
+    def (put-in-list x):
+        ans = [x]
+            return ans # this shouldn't be indented
+    
+    def (put-in-list x):
+    ans = [x] # this should be indented
+        return ans
 
 variable naming
 ---------------
