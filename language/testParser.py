@@ -335,5 +335,95 @@ class TestFunctionDefinition(unittest.TestCase):
         actual = parseFunctionDefinition(stream)
         self.assertEqual(actual, expected)
 
+class TestMultiline(unittest.TestCase):
+    def testMultilineFunctionCall(self):
+        '''
+        (var
+            123
+            "hello")
+        (var{123 "hello")}
+        '''
+        stream = TokenStream([
+            startFunction,
+            identifier,
+            newline,
+            indent,
+            number,
+            string,
+            endFunction,
+            unindent
+        ])
+        expected = FunctionCall(VariableReference(identifier), [Number(number), String(string)])
+        actual = parseFunctionCall(stream)
+        self.assertEqual(actual, expected)
+    
+    def testBig(self):
+        '''
+        def (var var):
+            var = (var
+                var)
+            return var
+        print var
+        '''
+        tokens = [
+            defkw,
+            startFunction,
+            identifier,
+            identifier,
+            endFunction,
+            endSignature,
+            newline,
+            indent,
+            identifier,
+            equals,
+            startFunction,
+            identifier,
+            newline,
+            indent,
+            identifier,
+            endFunction,
+            newline,
+            unindent,
+            returnkw,
+            identifier,
+            newline,
+            unindent,
+            printkw,
+            identifier
+        ]
+        signature = FunctionSignature(identifier, [VariableReference(identifier), VariableReference(identifier)])
+        body = Body([
+            Assignment(VariableReference(identifier), VariableReference(identifier)),
+            Return(VariableReference(identifier))
+        ])
+        expected = MainBody([
+            FunctionDefinition(signature, body),
+            Print(VariableReference(identifier))
+        ])
+        actual = parseTokens(tokens)
+        self.assertEqual(actual, expected)
+    
+    def testList(self):
+        '''
+        [
+            123
+            123
+        ]
+        '''
+        stream = TokenStream([
+            startList,
+            newline,
+            indent,
+            number,
+            newline,
+            number,
+            newline,
+            unindent,
+            endList
+        ])
+        expected = ListExpression([Number(number), Number(number)])
+        actual = parseList(stream)
+        self.assertEqual(actual, expected)
+
 if __name__ == '__main__':
     unittest.main()

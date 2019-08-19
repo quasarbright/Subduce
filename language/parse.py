@@ -349,4 +349,6 @@ def parseTokens(tokens: List[Token]) -> MainBody:
 
 '''
 maybe keep track of indentation in token stream
+
+here's what I'm thinking now: within each parsing function, just make sure the indentation goes back to zero and doesn't go negative. This means you'll end up consuming the newline-unindent at the end of some expressions. This violates the body parsers' assumptions, so you'll have to account for that
 '''
