@@ -425,6 +425,45 @@ class TestMultiline(unittest.TestCase):
         expected = ListExpression([Number(number), Number(number)])
         actual = parseList(stream)
         self.assertEqual(actual, expected)
+    
+    def testAssignment(self):
+        '''
+        var = 
+            123
+        '''
+        stream = TokenStream([
+            identifier,
+            equals,
+            newline,
+            indent,
+            number
+        ])
+        expected = Assignment(identifier, Number(number))
+        actual = parseAssignment(stream)
+        self.assertEqual(actual, expected)
+    
+    def testFirstLineInFuncEmpty(self):
+        '''
+        def (var var):
+
+            return var
+        '''
+        stream = TokenStream([
+            defkw,
+            startFunction,
+            identifier,
+            identifier,
+            endFunction,
+            endSignature,
+            newline,
+            newline,
+            indent,
+            returnkw,
+            identifier
+        ])
+        expected = FunctionDefinition(FunctionSignature(identifier, [VariableReference(identifier)]), Body([Return(VariableReference(identifier))]))
+        actual = parseFunctionDefinition(stream)
+        self.assertEqual(actual, expected)
 
 if __name__ == '__main__':
     unittest.main()
