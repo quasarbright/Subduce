@@ -253,6 +253,7 @@ class TestFunctionDefinition(unittest.TestCase):
             indent,
             returnkw,
             string,
+            newline,
             unindent
         ])
         expected = FunctionDefinition(FunctionSignature(identifier, [VariableReference(identifier), VariableReference(identifier)]), Body([Return(String(string))]))
@@ -324,6 +325,7 @@ class TestFunctionDefinition(unittest.TestCase):
             unindent,
             returnkw,
             string,
+            newline,
             unindent
         ])
         signature = FunctionSignature(identifier, [VariableReference(identifier)])
@@ -341,7 +343,6 @@ class TestMultiline(unittest.TestCase):
         (var
             123
             "hello")
-        (var{123 "hello")}
         '''
         stream = TokenStream([
             startFunction,
@@ -393,7 +394,7 @@ class TestMultiline(unittest.TestCase):
         ]
         signature = FunctionSignature(identifier, [VariableReference(identifier), VariableReference(identifier)])
         body = Body([
-            Assignment(VariableReference(identifier), VariableReference(identifier)),
+            Assignment(identifier, VariableReference(identifier)),
             Return(VariableReference(identifier))
         ])
         expected = MainBody([

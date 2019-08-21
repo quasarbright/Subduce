@@ -1,8 +1,17 @@
+'''
+This module is responsible for converting from a list of tokens to a structured parse tree
+
+Each parsing function expects to be started on the first token associated with its language feature. Except for lambda definitions, which expect to start on the 'lam' after the (
+
+All parsing functions leave the stream on the token after the last token associated with its languange feature. Except for function definitions and bodies, which consume a newline(s) and unindent(s) following the final statement
+
+This module handles indentation. It does this by keeping track of the indentation level associated with a body, and ensuring every statement within that body starts on that indentation level. Within a statement/expression, newlines, indents, and unindents are ignored. Except for function definitions, in which the header must be on one line
+'''
 from typing import List
 from lexer import *
 from parseTree import *
 
-
+WHITESPACE_TYPES = [NEWLINE, INDENT, UNINDENT]
 
 class TokenStream:
     def __init__(self, tokens: List[Token]):
@@ -13,6 +22,7 @@ class TokenStream:
             self.done = False
             self.index = 0
             self.current = self.tokens[self.index]
+            self.indentationLevel = 0
     def peek(self) -> Token:
         if self.done:
             raise RuntimeError('cant peek done token stream')
@@ -28,6 +38,17 @@ class TokenStream:
                 self.done = True
             else:
                 self.current = self.tokens[self.index]
+                if self.current.type == INDENT:
+                    self.indentationLevel += 1
+                elif self.current.type == UNINDENT:
+                    self.indentationLevel -= 1
+                # should be impossible
+                assert self.indentationLevel >= 0
+    def skipWhitespace(self) -> None:
+        '''advance the stream until it runs out or the current character is not whitespace
+        '''
+        while not self.done and self.current.type in WHITESPACE_TYPES:
+            self.advance()
 
 
 def parseAtom(stream: TokenStream) -> Atom:
@@ -49,6 +70,7 @@ def parseList(stream: TokenStream) -> ListExpression:
     current = stream.peek()
     assert current.type == START_LIST
     stream.advance()
+    stream.skipWhitespace()
     if stream.done:
         raise SyntaxError(f'Expected expression or {typeToChar[END_LIST]}')
     expressions = []
@@ -61,6 +83,7 @@ def parseList(stream: TokenStream) -> ListExpression:
             # assumes this will advance stream
             expression = parseExpression(stream)
             expressions.append(expression)
+            stream.skipWhitespace()
         if stream.done:
             raise SyntaxError(f'Expected expression or {typeToChar[END_LIST]}')
     return ListExpression(expressions)
@@ -72,12 +95,14 @@ def parseLambda(stream: TokenStream) -> LambdaDefinition:
     current = stream.peek()
     assert current.type == IDENTIFIER and current.value == 'lam'
     stream.advance()
+    stream.skipWhitespace()
     if stream.done:
         raise SyntaxError(f'Expected lambda arguments in {typeToChar[START_FUNCTION]}{typeToChar[END_FUNCTION]}')
     current = stream.peek()
     if current.type != START_FUNCTION:
         raise SyntaxError(f'Expected lambda arguments in {typeToChar[START_FUNCTION]}{typeToChar[END_FUNCTION]}: {current}')
     stream.advance()
+    stream.skipWhitespace()
     if stream.done:
         raise SyntaxError(f'Expected argument name or {typeToChar[END_FUNCTION]}')
     # get list of argument names
@@ -86,6 +111,7 @@ def parseLambda(stream: TokenStream) -> LambdaDefinition:
         current = stream.peek()
         if current.type == END_FUNCTION:
             stream.advance()
+            stream.skipWhitespace()
             break
         # make sure it's an identifier
         if current.type != IDENTIFIER:
@@ -93,12 +119,14 @@ def parseLambda(stream: TokenStream) -> LambdaDefinition:
         argumentReference = VariableReference(current)
         argumentVars.append(argumentReference)
         stream.advance()
+        stream.skipWhitespace()
         if stream.done:
             raise SyntaxError(f'Expected argument name or {typeToChar[END_FUNCTION]}')
     if len(argumentVars) == 0:
         raise SyntaxError('Functions must have at least one argument')
     # get return expression
     returnedExpression = parseExpression(stream)
+    stream.skipWhitespace()
     if stream.done:
         raise SyntaxError(f'Expected {typeToChar[END_FUNCTION]}')
     current = stream.peek()
@@ -113,6 +141,7 @@ def parseFunctionCall(stream: TokenStream) -> FunctionCall:
     current = stream.peek()
     assert current.type == START_FUNCTION
     stream.advance()
+    stream.skipWhitespace()
     if stream.done:
         raise SyntaxError('Expected function')
     current = stream.peek()
@@ -120,7 +149,9 @@ def parseFunctionCall(stream: TokenStream) -> FunctionCall:
     if current.value == 'lam':
         return parseLambda(stream)
     # this is a function call, the function is the current expression
+    # This will usually be a variable reference to a function, but might not be
     function = parseExpression(stream)
+    stream.skipWhitespace()
     # the stream should have been advanced by parseExpression
     if stream.done:
         raise SyntaxError('Expected an expression')
@@ -133,6 +164,7 @@ def parseFunctionCall(stream: TokenStream) -> FunctionCall:
         else:
             # assumes this will advance the stream
             expression = parseExpression(stream)
+            stream.skipWhitespace()
             arguments.append(expression)
         if stream.done:
             raise SyntaxError(f'Expected expression or {typeToChar[END_FUNCTION]}')
@@ -169,12 +201,14 @@ def parseAssignment(stream: TokenStream) -> Assignment:
     assert current.type == IDENTIFIER
     variable = current
     stream.advance()
+    stream.skipWhitespace()
     if stream.done:
         raise SyntaxError(f'Expected an {typeToChar[EQUALS]}')
     current = stream.peek()
     if current.type != EQUALS:
         raise SyntaxError(f'Expected an {typeToChar[EQUALS]}')
     stream.advance()
+    stream.skipWhitespace()
     if stream.done:
         raise SyntaxError('Expected an expression')
     value = parseExpression(stream)
@@ -183,6 +217,7 @@ def parseAssignment(stream: TokenStream) -> Assignment:
 
 def parseFunctionSignature(stream: TokenStream) -> FunctionSignature:
     '''parses from "(" to ")"
+    Enforces non-multiline
     '''
     # TODO multiline
     current = stream.peek()
@@ -238,6 +273,13 @@ def parseFunctionDefinition(stream: TokenStream) -> FunctionDefinition:
     if current.type != NEWLINE:
         raise SyntaxError(f'Expected a newline: {current}')
     stream.advance()
+    # skip any additional newlines before first statement
+    while not stream.done:
+        current = stream.peek()
+        if current.type == NEWLINE:
+            stream.advance()
+        else:
+            break
     if stream.done:
         raise SyntaxError('Expected an indent')
     current = stream.peek()
@@ -256,6 +298,7 @@ def parsePRHelp(stream: TokenStream, kw: str) -> 'Union[Print, Return]':
     current = stream.peek()
     assert current.type == KEYWORD and current.value == kw
     stream.advance()
+    stream.skipWhitespace()
     if stream.done:
         raise SyntaxError('Expected an expression')
     expression = parseExpression(stream)
@@ -298,6 +341,7 @@ def parseBody(stream: TokenStream) -> Body:
     current = stream.peek()
     if current.type != INDENT:
         raise SyntaxError(f'Expected an indent: {current}')
+    indentationLevel = stream.indentationLevel
     stream.advance()
     if stream.done:
         raise SyntaxError('Expected a variable assignment, function definition, print statement, or return statement')
@@ -305,26 +349,43 @@ def parseBody(stream: TokenStream) -> Body:
     statements = []
     while not stream.done:
         current = stream.peek()
-        if current.type == UNINDENT:
+        # handle indentation/whitespace
+        if current.type == UNINDENT and stream.indentationLevel == indentationLevel - 1:
+            # we unindented out of the body
             stream.advance()
             break
+        elif current.type == INDENT:
+            # we shouldn't see indents in the body
+            raise SyntaxError('Unexpected indent')
+        elif current.type in WHITESPACE_TYPES:
+            # skip whatever other whitespace we see
+            stream.advance()
+            continue
+        if stream.indentationLevel != indentationLevel:
+            raise SyntaxError('Indentation error')
+        
+        # parse a statement
+        # normally, we expect the pattern (statement newline)*
         statements.append(parseStatement(stream))
         if stream.done:
             break
         current = stream.peek()
-        if current.type in [UNINDENT, END_FILE]:
+        if current.type == END_FILE:
             stream.advance()
             break
-        if current.type != NEWLINE:
-            # only expect a newline if the statement we just consumed wasn't a function definition
-            # this is because parsing a funciton defintion consumes the newline when it looks for
-            # the unindent that tells it when to end
-            if not isinstance(statements[-1], FunctionDefinition):
+
+        lastWasFunctionDefinition = len(statements) > 0 and isinstance(statements[-1], FunctionDefinition)
+        if not lastWasFunctionDefinition:
+            if current.type != NEWLINE:
+                # unless we just parsed a function definition, we should get a newline
+                # This is because parsing a function definition consume the newline after it
+                # while checking for the closing unindent
                 raise SyntaxError(f'Expected newline: {current}')
-        else:
-            stream.advance()
+            else:
+                stream.advance() # advance over the newline
+    # should be impossible
     assert len(statements) > 0
-    ans = Body(statements)
+    ans = Body(statements, indentationLevel)
     return ans
 
 def parseTokens(tokens: List[Token]) -> MainBody:
@@ -333,19 +394,18 @@ def parseTokens(tokens: List[Token]) -> MainBody:
     statements = []
     while not stream.done:
         current = stream.peek()
-        assert current.type != UNINDENT # should be impossible unless there is a bug
         if current.type == KEYWORD and current.value == 'return':
             raise SyntaxError(f'Unexpected return')
         elif current.type == INDENT:
             raise SyntaxError('Unexpected indent')
         elif current.type == END_FILE:
             break
+        elif stream.indentationLevel != 0:
+            raise SyntaxError(f'Indentation Error: {current}')
         else:
-            parseStatement(stream)
+            statements.append(parseStatement(stream))
     ans = MainBody(statements)
     return ans
-    # expect the helper function to advance the stream
-    # stream.advance()
 
 '''
 maybe keep track of indentation in token stream

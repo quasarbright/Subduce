@@ -248,7 +248,7 @@ class Body:
     '''Represents a list of statements.
     The source code is a Body, the inside of a function is a Body
     '''
-    def __init__(self, statements: 'List[Statement]'):
+    def __init__(self, statements: 'List[Statement]', indentationLevel: int = 1):
         try:
             iter(statements)
         except TypeError:
@@ -257,6 +257,7 @@ class Body:
             if not isinstance(statement, Statement):
                 raise TypeError(f'Expected a statement for a body: {statement}')
         self.statements = statements
+        self.indentationLevel = indentationLevel
     
     def __str__(self):
         '''try to reproduce source code
@@ -270,4 +271,5 @@ class Body:
         return self.statements == other.statements
 
 def MainBody(Body):
-    pass
+    def __init__(self, statements: 'List[Statement]'):
+        super().__init__(statements, indentationLevel=0)
