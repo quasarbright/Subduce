@@ -7,13 +7,19 @@ from parseTree import *
 class SFunction:
     '''Subduce function
     '''
-    def __init__(self, scopes: 'ScopeStack', func: Union[function, FunctionDefinition]):
+    def __init__(self, scopeStack: 'ScopeStack', func: Union[function, FunctionDefinition]):
         self.func = func
 class SList:
     '''Subduce list
     '''
     def __init__(self, values: List['PyValue']):
         self.values = values
+
+class Placeholder:
+    def __init__(self):
+        pass
+    def __eq__(self, other):
+        return type(self) is type(other)
 
 def plus(arguments: List['PyAtom']):
     '''this is only to be called once arguments are evaluated to atoms
@@ -145,7 +151,7 @@ class Context:
 class ScopedBody(Body):
     '''A body with variable scope.
     Takes in an unscoped body and a scope stack containing the body.
-    Clones the scope stack, adds local variables, and recursively converts contained bodies to scoped bodies.
+    Clones the scope stack, adds local variables, and recursively converts contained function definitions to SFunctions.
     '''
     def __init__(self, mainBody: MainBody, scopeStack: ScopeStack):
         super().__init__(mainBody.statements, mainBody.indentationLevel)
@@ -158,7 +164,9 @@ class ScopedBody(Body):
             if isinstance(statement, FunctionDefinition):
                 # go into the function definition and convert its body to a scoped body
                 # wait a minute, how do you handle function arguments?
+                # maybe convert function definitions to 
                 ### left off here
+                pass
 
 def evaluateAtom(expression: Atom) -> PyAtom:
     return expression.value
