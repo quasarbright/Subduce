@@ -172,6 +172,9 @@ class Assignment(Statement):
         if self.value != other.value:
             return False
         return True
+    
+    def getName(self):
+        return str(self.variable.value)
 
 class FunctionSignature(FunctionCall, HasArguments):
     '''only inherits from HasArguments for the validation, really
@@ -215,6 +218,11 @@ class FunctionDefinition(Statement):
         if not self.body == other.body:
             return False
         return True
+    
+    def getName(self) -> str:
+        '''get this function's name
+        '''
+        return str(self.signature.function)
 
 class Return(Statement):
     '''Represents a return Statement
@@ -270,6 +278,10 @@ class Body:
     def __eq__(self, other: 'Body'):
         return self.statements == other.statements
 
-def MainBody(Body):
+class MainBody(Body):
     def __init__(self, statements: 'List[Statement]'):
         super().__init__(statements, indentationLevel=0)
+
+'''
+precompile a list of scope trees with chronological order
+'''

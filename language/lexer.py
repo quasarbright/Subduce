@@ -126,6 +126,10 @@ class Token:
         self.value = value
     def __eq__(self, other: 'Token') -> bool:
         return self.type == other.type and self.lineNumber == other.lineNumber and self.startPosition == other.startPosition and self.endPosition == other.endPosition and self.value == other.value
+    
+    def __hash__(self):
+        return hash(tuple(self.type, self.lineNumber, self.startPosition, self.endPosition, self.value))
+
     def __str__(self):
         ans = f'{self.type} at {self.lineNumber}'
         if self.startPosition is not None:
