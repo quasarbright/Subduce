@@ -164,7 +164,7 @@ class Assignment(Statement):
         self.value = value
     
     def __str__(self):
-        return f'{variable.value} = {value}'
+        return f'{self.variable.value} = {self.value}'
     
     def __eq__(self, other: 'Assignment'):
         if self.variable != other.variable:
@@ -283,5 +283,5 @@ class MainBody(Body):
         super().__init__(statements, indentationLevel=0)
 
 '''
-precompile a list of scope trees with chronological order
+precompile a scope tree with chronological order
 '''
