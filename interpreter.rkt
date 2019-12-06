@@ -90,7 +90,9 @@
 ; finds varname in env and returns its value
 ; checks in order such that the most recent definition is used
 (define ((lookup env) varname)
-  (local [(define ans (foldl (λ (association rest-ans) (if (and (false? rest-ans) (symbol=? (pair-left association) varname))
+  (local [(define ans (foldl (λ (association rest-ans) (if (and (false? rest-ans)
+                                                                (symbol=? (pair-left association)
+                                                                          varname))
                                                            (pair-right association)
                                                            (rest-ans)))
                              #false
