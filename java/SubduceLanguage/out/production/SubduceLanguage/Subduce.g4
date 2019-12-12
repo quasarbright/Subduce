@@ -29,26 +29,17 @@ expression
     | BOOLEAN
     ;
 
-lambdaDefinition : '(' 'lam' '(' IDENTIFIER* ')' expression ')';
+lambdaDefinition : '(' LAM '(' IDENTIFIER* ')' expression ')';
 
 functionCall : '(' expression expression+ ')';
 
 
-// tokens
-
-IDENTIFIER : [a-zA-Z_><=?+] [a-zA-Z0-9\-_><=?+]*;
-
-KEYWORD
-    : DEF
-    | PRINT
-    | RETURN;
-
+LAM : 'lam';
 DEF : 'def';
 PRINT : 'print';
 RETURN : 'return';
 
-// atomic types
-NUMBER : '-'? DIGIT+ ('.' DIGIT+); //1, -1, 1.0, -1.0, 0.1, -12334.12453253
+NUMBER : '-'? DIGIT+ ('.' DIGIT+)?; //1, -1, 1.0, -1.0, 0.1, -12334.12453253
 fragment DIGIT : [0-9];
 
 STRING : '"' CHARACTER* '"';
@@ -58,6 +49,12 @@ fragment ESCAPED_CHARACTER : '\\' .;
 
 BOOLEAN : 'true' | 'false';
 
-// whitespace
-WS : ([\n\t\r ]+ | COMMENT) -> skip;
-fragment COMMENT : '#'*? '\n';
+IDENTIFIER : IDENTIFIER_START_CHARACTER IDENTIFIER_REST_CHARACTER*;
+fragment IDENTIFIER_START_CHARACTER : [a-zA-Z\-_><=?+*];
+fragment IDENTIFIER_REST_CHARACTER : IDENTIFIER_START_CHARACTER | [0-9];
+
+WS : ([\n\t\r ]+ | COMMENT | MULTILINE_COMMENT) -> skip;
+fragment COMMENT : '//' ~[\n\r]*? '\n';
+fragment MULTILINE_COMMENT : '/*' .*? '*/';
+
+test : 'a' | '{' test+ '}';
