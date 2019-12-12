@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public interface FunctionValueVisitor<R> {
-    R visitSubduceFunction(List<String> argnames, Expression body, Environment environment);
-    R visitJavaFunction(Function<List<Value>, Value> function);
+  R visitSubduceFunction(List<String> argnames, Expression body, Environment environment);
+
+  R visitJavaFunction(Function<List<Value>, Value> function);
 }
