@@ -1,9 +1,9 @@
 package language.interpreter.expression.value;
 
 public class NumberValue {
-    private final Double val;
+    private final double val;
 
-    public NumberValue(Double val) {
+    public NumberValue(double val) {
         this.val = val;
     }
 }
