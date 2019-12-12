@@ -112,7 +112,7 @@ public class BasicParseTreeTranslator extends SubduceBaseVisitor<Expression> imp
         throw new IllegalStateException();
     }
   }
-  
+
   @Override
   public Expression visitLambdaDefinition(SubduceParser.LambdaDefinitionContext ctx) {
     Expression body = ctx.expression().accept(this);

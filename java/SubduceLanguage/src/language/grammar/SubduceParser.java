@@ -18,7 +18,8 @@ public class SubduceParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, LAM=6, DEF=7, PRINT=8, RETURN=9, 
-		NUMBER=10, STRING=11, BOOLEAN=12, IDENTIFIER=13, WS=14;
+		NUMBER=10, STRING=11, CHARACTER=12, NORMAL_CHARACTER=13, ESCAPED_CHARACTER=14, 
+		BOOLEAN=15, IDENTIFIER=16, WS=17;
 	public static final int
 		RULE_program = 0, RULE_statement = 1, RULE_variableAssignment = 2, RULE_functionDefinition = 3, 
 		RULE_returnStatement = 4, RULE_printStatement = 5, RULE_expression = 6, 
@@ -41,7 +42,8 @@ public class SubduceParser extends Parser {
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, "LAM", "DEF", "PRINT", "RETURN", 
-			"NUMBER", "STRING", "BOOLEAN", "IDENTIFIER", "WS"
+			"NUMBER", "STRING", "CHARACTER", "NORMAL_CHARACTER", "ESCAPED_CHARACTER", 
+			"BOOLEAN", "IDENTIFIER", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -699,7 +701,7 @@ public class SubduceParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\20[\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\23[\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\3\2\7\2\26"+
 		"\n\2\f\2\16\2\31\13\2\3\3\3\3\3\3\5\3\36\n\3\3\4\3\4\3\4\3\4\3\5\3\5\3"+
 		"\5\3\5\6\5(\n\5\r\5\16\5)\3\5\3\5\3\5\7\5/\n\5\f\5\16\5\62\13\5\3\5\3"+
@@ -710,14 +712,14 @@ public class SubduceParser extends Parser {
 		"\2\2\2\20D\3\2\2\2\22Q\3\2\2\2\24\26\5\4\3\2\25\24\3\2\2\2\26\31\3\2\2"+
 		"\2\27\25\3\2\2\2\27\30\3\2\2\2\30\3\3\2\2\2\31\27\3\2\2\2\32\36\5\6\4"+
 		"\2\33\36\5\b\5\2\34\36\5\f\7\2\35\32\3\2\2\2\35\33\3\2\2\2\35\34\3\2\2"+
-		"\2\36\5\3\2\2\2\37 \7\17\2\2 !\7\3\2\2!\"\5\16\b\2\"\7\3\2\2\2#$\7\t\2"+
-		"\2$%\7\4\2\2%\'\7\17\2\2&(\7\17\2\2\'&\3\2\2\2()\3\2\2\2)\'\3\2\2\2)*"+
+		"\2\36\5\3\2\2\2\37 \7\22\2\2 !\7\3\2\2!\"\5\16\b\2\"\7\3\2\2\2#$\7\t\2"+
+		"\2$%\7\4\2\2%\'\7\22\2\2&(\7\22\2\2\'&\3\2\2\2()\3\2\2\2)\'\3\2\2\2)*"+
 		"\3\2\2\2*+\3\2\2\2+,\7\5\2\2,\60\7\6\2\2-/\5\4\3\2.-\3\2\2\2/\62\3\2\2"+
 		"\2\60.\3\2\2\2\60\61\3\2\2\2\61\63\3\2\2\2\62\60\3\2\2\2\63\64\5\n\6\2"+
 		"\64\65\7\7\2\2\65\t\3\2\2\2\66\67\7\13\2\2\678\5\16\b\28\13\3\2\2\29:"+
-		"\7\n\2\2:;\5\16\b\2;\r\3\2\2\2<C\5\20\t\2=C\5\22\n\2>C\7\17\2\2?C\7\f"+
-		"\2\2@C\7\r\2\2AC\7\16\2\2B<\3\2\2\2B=\3\2\2\2B>\3\2\2\2B?\3\2\2\2B@\3"+
-		"\2\2\2BA\3\2\2\2C\17\3\2\2\2DE\7\4\2\2EF\7\b\2\2FJ\7\4\2\2GI\7\17\2\2"+
+		"\7\n\2\2:;\5\16\b\2;\r\3\2\2\2<C\5\20\t\2=C\5\22\n\2>C\7\22\2\2?C\7\f"+
+		"\2\2@C\7\r\2\2AC\7\21\2\2B<\3\2\2\2B=\3\2\2\2B>\3\2\2\2B?\3\2\2\2B@\3"+
+		"\2\2\2BA\3\2\2\2C\17\3\2\2\2DE\7\4\2\2EF\7\b\2\2FJ\7\4\2\2GI\7\22\2\2"+
 		"HG\3\2\2\2IL\3\2\2\2JH\3\2\2\2JK\3\2\2\2KM\3\2\2\2LJ\3\2\2\2MN\7\5\2\2"+
 		"NO\5\16\b\2OP\7\5\2\2P\21\3\2\2\2QR\7\4\2\2RT\5\16\b\2SU\5\16\b\2TS\3"+
 		"\2\2\2UV\3\2\2\2VT\3\2\2\2VW\3\2\2\2WX\3\2\2\2XY\7\5\2\2Y\23\3\2\2\2\t"+

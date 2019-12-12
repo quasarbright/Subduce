@@ -44,8 +44,8 @@ fragment DIGIT : [0-9];
 
 STRING : '"' CHARACTER* '"';
 fragment CHARACTER : NORMAL_CHARACTER | ESCAPED_CHARACTER;
-fragment NORMAL_CHARACTER : ~[\r\n\\];
-fragment ESCAPED_CHARACTER : '\\' .;
+fragment NORMAL_CHARACTER : ~[\r\n\\"];
+fragment ESCAPED_CHARACTER : '\\' ~[\n\r];
 
 BOOLEAN : 'true' | 'false';
 
