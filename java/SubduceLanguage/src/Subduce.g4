@@ -56,5 +56,3 @@ fragment IDENTIFIER_REST_CHARACTER : IDENTIFIER_START_CHARACTER | [0-9];
 WS : ([\n\t\r ]+ | COMMENT | MULTILINE_COMMENT) -> skip;
 fragment COMMENT : '//' ~[\n\r]*? '\n';
 fragment MULTILINE_COMMENT : '/*' .*? '*/';
-
-test : 'a' | '{' test+ '}';
