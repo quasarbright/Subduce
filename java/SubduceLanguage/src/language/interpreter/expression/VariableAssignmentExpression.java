@@ -1,11 +1,16 @@
 package language.interpreter.expression;
 
-public class VariableAssignmentExpression {
+public class VariableAssignmentExpression implements Expression {
     private final String name;
-    private final Expression value;
+    private final Expression expression;
 
-    public VariableAssignmentExpression(String name, Expression value) {
+    public VariableAssignmentExpression(String name, Expression expression) {
         this.name = name;
-        this.value = value;
+        this.expression = expression;
+    }
+
+    @Override
+    public <R> R accept(ExpressionVisitor<R> visitor) {
+        return visitor.visitVariableAssignment(name, expression);
     }
 }
