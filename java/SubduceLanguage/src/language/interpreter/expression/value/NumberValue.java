@@ -11,4 +11,9 @@ public class NumberValue implements Value {
   public <R> R accept(ValueVisitor<R> visitor) {
     return visitor.visitNumber(val);
   }
+
+  @Override
+  public String toString() {
+    return Double.toString(val);
+  }
 }

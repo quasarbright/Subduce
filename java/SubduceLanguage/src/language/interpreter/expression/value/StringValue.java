@@ -11,4 +11,9 @@ public class StringValue implements Value {
     public <R> R accept(ValueVisitor<R> visitor) {
         return visitor.visitString(val);
     }
+
+    @Override
+    public String toString() {
+        return '"'+val+'"';
+    }
 }

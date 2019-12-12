@@ -3,6 +3,7 @@ package language.interpreter.expression.value.functionValue;
 import language.interpreter.expression.value.Value;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class JavaFunctionValue implements FunctionValue {
@@ -15,5 +16,10 @@ public class JavaFunctionValue implements FunctionValue {
   @Override
   public <R> R accept(FunctionValueVisitor<R> visitor) {
     return visitor.visitJavaFunction(function);
+  }
+
+  @Override
+  public String toString() {
+    return "[function "+hashCode()+"]";
   }
 }

@@ -30,4 +30,9 @@ public class SubduceFunctionValue implements FunctionValue {
   public void setEnvironment(Environment<String, Value> environment) {
     this.environment = environment;
   }
+
+  @Override
+  public String toString() {
+    return "[function "+hashCode()+"]";
+  }
 }

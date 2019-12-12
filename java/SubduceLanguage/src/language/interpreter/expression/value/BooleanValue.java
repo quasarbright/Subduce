@@ -11,4 +11,9 @@ public class BooleanValue implements Value {
     public <R> R accept(ValueVisitor<R> visitor) {
         return visitor.visitBoolean(val);
     }
+
+    @Override
+    public String toString() {
+        return Boolean.toString(val);
+    }
 }
