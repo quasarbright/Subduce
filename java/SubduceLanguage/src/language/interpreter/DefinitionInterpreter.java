@@ -1,16 +1,52 @@
 package language.interpreter;
 
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.TokenStream;
+
 import java.util.Scanner;
 
+import language.grammar.SubduceLexer;
+import language.grammar.SubduceParser;
+import language.interpreter.builtins.BuiltinUtilities;
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.Value;
 
-public class DefinitionInterpreter extends ExpressionInterpreter {
+public class DefinitionInterpreter implements Interpreter<Value> {
   private final Scanner in;
+  Environment<String, Value> baseEnvironment;
 
   public DefinitionInterpreter() {
-    super();
+    baseEnvironment = new BuiltinUtilities().getBaseEnvironment();
     in = new Scanner(System.in);
+    // TODO add builtins like addition, cons, if, etc
+  }
+
+  SubduceParser getParser(String source) {
+    CharStream stream = CharStreams.fromString(source);
+    SubduceLexer lexer = new SubduceLexer(stream);
+    TokenStream tokenStream = new CommonTokenStream(lexer);
+    return new SubduceParser(tokenStream);
+  }
+
+  Expression parseProgram(String source) {
+//    SubduceParser parser = getParser(source);
+//    SubduceParser.ProgramContext ctx = parser.program();
+//    return ctx.accept(new BasicParseTreeTranslator());
+    CharStream stream = CharStreams.fromString(source);
+    SubduceLexer lexer = new SubduceLexer(stream);
+    TokenStream tokenStream = new CommonTokenStream(lexer);
+    SubduceParser parser = new SubduceParser(tokenStream);
+    SubduceParser.ProgramContext ctx = parser.program();
+    Expression expression = ctx.accept(new BasicParseTreeTranslator());
+    return expression;
+  }
+
+  Expression parseExpression(String expressionString) {
+    SubduceParser parser = getParser(expressionString);
+    SubduceParser.ExpressionContext ctx = parser.expression();
+    return ctx.accept(new BasicParseTreeTranslator());
   }
 
   @Override

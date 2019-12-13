@@ -1,15 +1,7 @@
 package language;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.TokenStream;
-
-import language.interpreter.BasicParseTreeTranslator;
 import language.interpreter.DefinitionInterpreter;
-import language.interpreter.ExpressionInterpreter;
 import language.interpreter.Interpreter;
-import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.Value;
 
 public class Subduce {
