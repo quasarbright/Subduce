@@ -10,6 +10,7 @@ statement // doesn't include return statements
     : variableAssignment
     | functionDefinition
     | printStatement
+    | expression
     ;
 
 variableAssignment : IDENTIFIER EQ expression;

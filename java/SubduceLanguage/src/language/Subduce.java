@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 
 import language.interpreter.BasicParseTreeTranslator;
+import language.interpreter.DefinitionInterpreter;
 import language.interpreter.ExpressionInterpreter;
 import language.interpreter.Interpreter;
 import language.interpreter.expression.Expression;
@@ -35,9 +36,10 @@ public class Subduce {
 //    SubduceParser parser = new SubduceParser(tokenStream);
 //    SubduceParser.ProgramContext ctx = parser.program();
 //    Expression expression = ctx.accept(new BasicParseTreeTranslator());
-    Interpreter<Value> interpreter = new ExpressionInterpreter();
-    interpreter.run(source);
+    Interpreter<Value> interpreter = new DefinitionInterpreter();
+    interpreter.runWithInteraction(source);
     // "\"string\" \nnewline"
     System.out.println(interpreter.eval("\"\\\"string\\\" \\nnewline\""));
+    interpreter.run("add = (lam (a b) (+ a b))\nprint (add 1 2)");
   }
 }

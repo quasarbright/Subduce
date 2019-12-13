@@ -23,21 +23,21 @@ import language.interpreter.expression.value.NumberValue;
 import language.interpreter.expression.value.Value;
 
 public class ExpressionInterpreter implements Interpreter<Value> {
-  private Environment<String, Value> baseEnvironment;
+  Environment<String, Value> baseEnvironment;
 
   public ExpressionInterpreter() {
      baseEnvironment = new BuiltinUtilities().getBaseEnvironment();
      // TODO add builtins like addition, cons, if, etc
   }
 
-  private SubduceParser getParser(String source) {
+  SubduceParser getParser(String source) {
     CharStream stream = CharStreams.fromString(source);
     SubduceLexer lexer = new SubduceLexer(stream);
     TokenStream tokenStream = new CommonTokenStream(lexer);
     return new SubduceParser(tokenStream);
   }
 
-  private Expression parseProgram(String source) {
+  Expression parseProgram(String source) {
 //    SubduceParser parser = getParser(source);
 //    SubduceParser.ProgramContext ctx = parser.program();
 //    return ctx.accept(new BasicParseTreeTranslator());
@@ -50,7 +50,7 @@ public class ExpressionInterpreter implements Interpreter<Value> {
     return expression;
   }
 
-  private Expression parseExpression(String expressionString) {
+  Expression parseExpression(String expressionString) {
     SubduceParser parser = getParser(expressionString);
     SubduceParser.ExpressionContext ctx = parser.expression();
     return ctx.accept(new BasicParseTreeTranslator());

@@ -9,11 +9,14 @@ import language.interpreter.builtins.IfFunction;
 import language.interpreter.builtins.LazyIfFunction;
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
+import language.interpreter.expression.FunctionDefinitionExpression;
+import language.interpreter.expression.VariableAssignmentExpression;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
 import language.interpreter.expression.value.functionValue.FunctionValue;
 import language.interpreter.expression.value.functionValue.FunctionValueVisitor;
 import language.interpreter.expression.value.functionValue.JavaFunctionValue;
+import language.interpreter.expression.value.functionValue.SubduceFunctionValue;
 
 /**
  * Evaluates expressions.
@@ -49,7 +52,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
    * @param environment the environment containing variable values to be used in the evaluation.
    * @return the value the expression evaluates to
    */
-  private Value evaluate(Expression expression, Environment<String, Value> environment) {
+  public Value evaluate(Expression expression, Environment<String, Value> environment) {
     return expression.accept(new ExpressionEvaluator(environment));
   }
 
@@ -59,7 +62,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
    * @param expression expression to be evaluated
    * @return the value the expression evaluates to
    */
-  private Value evaluate(Expression expression) {
+  public Value evaluate(Expression expression) {
     return expression.accept(this);
   }
 
@@ -144,12 +147,15 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
 
   @Override
   public Value visitFunctionDefinition(String name, List<String> argnames, Expression body) {
-    throw new IllegalStateException();
+    SubduceFunctionValue functionValue = new SubduceFunctionValue(argnames, body, environment);
+    Environment<String, Value> newEnvironment = environment.withNewVariable(name, functionValue);
+    functionValue.setEnvironment(newEnvironment);
+    return functionValue;
   }
 
   @Override
   public Value visitLambdaDefinition(List<String> argnames, Expression body) {
-    return null;
+    return new SubduceFunctionValue(argnames, body, environment);
   }
 
   @Override
@@ -163,7 +169,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
     for(int i = 0; i < expressions.size()-1; i++) {
       Expression currentExpression = expressions.get(i);
       Environment<String, Value> finalAccumulatedEnvironment = accumulatedEnvironment;
-      accumulatedEnvironment = currentExpression.accept(new DefinitionEvaluator(accumulatedEnvironment, (Expression e) -> evaluate(e, finalAccumulatedEnvironment)));
+      accumulatedEnvironment = currentExpression.accept(new DefinitionEvaluator(accumulatedEnvironment, this));
     }
     Expression returnExpression = expressions.get(expressions.size()-1);
     return evaluate(returnExpression, accumulatedEnvironment);
@@ -171,7 +177,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
 
   @Override
   public Value visitVariableAssignment(String name, Expression expression) {
-    throw new IllegalStateException();
+    return evaluate(expression);
   }
 
   @Override
