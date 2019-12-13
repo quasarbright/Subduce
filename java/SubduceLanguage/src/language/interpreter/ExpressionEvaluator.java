@@ -3,12 +3,10 @@ package language.interpreter;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import language.interpreter.builtins.IfFunction;
 import language.interpreter.builtins.LazyIfFunction;
-import language.interpreter.expression.DefinitionEvaluator;
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
 import language.interpreter.expression.value.Value;

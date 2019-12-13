@@ -1,9 +1,11 @@
-package language.interpreter.expression;
+package language.interpreter;
 
 import java.util.List;
 import java.util.function.Function;
 
 import language.interpreter.Environment;
+import language.interpreter.expression.Expression;
+import language.interpreter.expression.ExpressionVisitor;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.SubduceFunctionValue;
 
