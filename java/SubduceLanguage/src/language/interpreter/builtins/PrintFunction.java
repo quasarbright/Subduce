@@ -8,7 +8,7 @@ import java.util.function.Function;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.JavaFunctionValue;
 
-public class PrintFunction implements Function<List<Value>, Value> {
+public class PrintFunction extends JavaFunctionImplementation {
   @Override
   public Value apply(List<Value> valueList) {
     if(valueList.size() == 0) {
@@ -16,15 +16,5 @@ public class PrintFunction implements Function<List<Value>, Value> {
     }
     valueList.forEach(System.out::println);
     return valueList.get(0);
-  }
-
-  @Override
-  public boolean equals(Object other) {
-    return other != null && getClass() == other.getClass();
-  }
-
-  @Override
-  public int hashCode() {
-    return getClass().hashCode();
   }
 }

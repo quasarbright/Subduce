@@ -11,6 +11,7 @@ import java.util.List;
 import language.Subduce;
 import language.grammar.SubduceLexer;
 import language.grammar.SubduceParser;
+import language.interpreter.builtins.BuiltinUtilities;
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
 import language.interpreter.expression.FunctionCallExpression;
@@ -26,7 +27,7 @@ public class ExpressionInterpreter implements Interpreter<Value> {
   private Environment<String, Value> baseEnvironment;
 
   public ExpressionInterpreter() {
-     baseEnvironment = new ImmutableVariableEnvironment();
+     baseEnvironment = new BuiltinUtilities().getBaseEnvironment();
      // TODO add builtins like addition, cons, if, etc
   }
 

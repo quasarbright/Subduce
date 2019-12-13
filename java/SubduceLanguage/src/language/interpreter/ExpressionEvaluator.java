@@ -6,6 +6,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import language.interpreter.builtins.IfFunction;
+import language.interpreter.builtins.LazyIfFunction;
 import language.interpreter.expression.DefinitionEvaluator;
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
@@ -13,6 +15,7 @@ import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
 import language.interpreter.expression.value.functionValue.FunctionValue;
 import language.interpreter.expression.value.functionValue.FunctionValueVisitor;
+import language.interpreter.expression.value.functionValue.JavaFunctionValue;
 
 /**
  * Evaluates expressions.
@@ -127,10 +130,27 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
       }
     });
 
+    if(shouldLazyEvaluate(functionValue)) {
+      return lazyEvaluate(functionValue, arguments);
+    }
+
     List<Value> evaluatedArguments = arguments.stream()
             .map(this::evaluate)
             .collect(Collectors.toList());
     return applyFunction(functionValue, evaluatedArguments);
+  }
+
+  private boolean shouldLazyEvaluate(FunctionValue function) {
+    // TODO
+    return function.equals(new JavaFunctionValue(new IfFunction()));
+  }
+
+  private Value lazyEvaluate(FunctionValue function, List<Expression> arguments) {
+    if(function.equals(new JavaFunctionValue(new IfFunction()))) {
+      return new LazyIfFunction(this::evaluate).apply(arguments);
+    } else {
+      throw new IllegalStateException();
+    }
   }
 
   @Override

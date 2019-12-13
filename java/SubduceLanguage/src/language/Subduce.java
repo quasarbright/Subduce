@@ -22,6 +22,13 @@ public class Subduce {
             "  return b\n" +
             "}\n" +
             "print x\n";
+    source =
+            "def (make-false bool) {\n" +
+            "  return (if bool (make-false false) false)\n" +
+            "}\n" +
+            "print (make-false false)\n" +
+            "print (make-false true)\n";
+    source = "def (sum-range min max) { return (if (== min max) min (+ min (sum-range (+ 1 min) max)))} print (sum-range 0 100)";
     //    System.out.println(source);
     String exp = "2";
     CharStream stream = CharStreams.fromString(source);

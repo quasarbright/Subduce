@@ -1,7 +1,7 @@
 package language.interpreter.expression.value;
 
 public class NumberValue implements Value {
-  private final double val;
+  public final double val;
 
   public NumberValue(double val) {
     this.val = val;

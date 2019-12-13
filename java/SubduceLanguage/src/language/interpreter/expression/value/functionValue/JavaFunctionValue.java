@@ -22,4 +22,17 @@ public class JavaFunctionValue implements FunctionValue {
   public String toString() {
     return "[function "+hashCode()+"]";
   }
+
+  @Override
+  public boolean equals(Object other) {
+    if(other == null || getClass() != other.getClass()) {
+      return false;
+    }
+    return function.equals(((JavaFunctionValue) other).function);
+  }
+
+  @Override
+  public int hashCode() {
+    return function.hashCode();
+  }
 }
