@@ -36,15 +36,6 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
   }
 
   /**
-   * Constructs an evaluator with an empty environment of the given type.
-   *
-   * @param environmentSupplier creates a base environment to use
-   */
-  public ExpressionEvaluator(Supplier<Environment<String, Value>> environmentSupplier) {
-    this(environmentSupplier.get());
-  }
-
-  /**
    * Constructs an evaluator which uses the given environment.
    *
    * @param environment the environment containing variable values to be used in evaluation.

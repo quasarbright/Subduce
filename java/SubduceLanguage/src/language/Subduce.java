@@ -5,8 +5,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 
-import language.grammar.SubduceLexer;
-import language.grammar.SubduceParser;
 import language.interpreter.BasicParseTreeTranslator;
 import language.interpreter.ExpressionInterpreter;
 import language.interpreter.Interpreter;
@@ -31,14 +29,15 @@ public class Subduce {
     source = "def (sum-range min max) { return (if (== min max) min (+ min (sum-range (+ 1 min) max)))} print (sum-range 0 100)";
     //    System.out.println(source);
     String exp = "2";
-    CharStream stream = CharStreams.fromString(source);
-    SubduceLexer lexer = new SubduceLexer(stream);
-    TokenStream tokenStream = new CommonTokenStream(lexer);
-    SubduceParser parser = new SubduceParser(tokenStream);
-    SubduceParser.ProgramContext ctx = parser.program();
-    Expression expression = ctx.accept(new BasicParseTreeTranslator());
+//    CharStream stream = CharStreams.fromString(source);
+//    SubduceLexer lexer = new SubduceLexer(stream);
+//    TokenStream tokenStream = new CommonTokenStream(lexer);
+//    SubduceParser parser = new SubduceParser(tokenStream);
+//    SubduceParser.ProgramContext ctx = parser.program();
+//    Expression expression = ctx.accept(new BasicParseTreeTranslator());
     Interpreter<Value> interpreter = new ExpressionInterpreter();
     interpreter.run(source);
-    System.out.println();
+    // "\"string\" \nnewline"
+    System.out.println(interpreter.eval("\"\\\"string\\\" \\nnewline\""));
   }
 }

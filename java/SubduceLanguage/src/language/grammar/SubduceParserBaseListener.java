@@ -1,4 +1,4 @@
-// Generated from /Users/mdelmonaco/Documents/GitHub/Subduce/java/SubduceLanguage/src/Subduce.g4 by ANTLR 4.7.2
+// Generated from /Users/mdelmonaco/Documents/GitHub/Subduce/java/SubduceLanguage/src/SubduceParser.g4 by ANTLR 4.7.2
 package language.grammar;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -6,11 +6,11 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
- * This class provides an empty implementation of {@link SubduceListener},
+ * This class provides an empty implementation of {@link SubduceParserListener},
  * which can be extended to create a listener which only needs to handle a subset
  * of the available methods.
  */
-public class SubduceBaseListener implements SubduceListener {
+public class SubduceParserBaseListener implements SubduceParserListener {
 	/**
 	 * {@inheritDoc}
 	 *
@@ -119,6 +119,30 @@ public class SubduceBaseListener implements SubduceListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFunctionCall(SubduceParser.FunctionCallContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterString(SubduceParser.StringContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitString(SubduceParser.StringContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStringContents(SubduceParser.StringContentsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStringContents(SubduceParser.StringContentsContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

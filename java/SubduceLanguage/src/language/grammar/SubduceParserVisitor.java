@@ -1,4 +1,4 @@
-// Generated from /Users/mdelmonaco/Documents/GitHub/Subduce/java/SubduceLanguage/src/Subduce.g4 by ANTLR 4.7.2
+// Generated from /Users/mdelmonaco/Documents/GitHub/Subduce/java/SubduceLanguage/src/SubduceParser.g4 by ANTLR 4.7.2
 package language.grammar;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  * @param <T> The return type of the visit operation. Use {@link Void} for
  * operations with no return type.
  */
-public interface SubduceVisitor<T> extends ParseTreeVisitor<T> {
+public interface SubduceParserVisitor<T> extends ParseTreeVisitor<T> {
 	/**
 	 * Visit a parse tree produced by {@link SubduceParser#program}.
 	 * @param ctx the parse tree
@@ -64,4 +64,16 @@ public interface SubduceVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFunctionCall(SubduceParser.FunctionCallContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SubduceParser#string}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitString(SubduceParser.StringContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link SubduceParser#stringContents}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStringContents(SubduceParser.StringContentsContext ctx);
 }

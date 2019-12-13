@@ -1,4 +1,4 @@
-// Generated from /Users/mdelmonaco/Documents/GitHub/Subduce/java/SubduceLanguage/src/Subduce.g4 by ANTLR 4.7.2
+// Generated from /Users/mdelmonaco/Documents/GitHub/Subduce/java/SubduceLanguage/src/SubduceParser.g4 by ANTLR 4.7.2
 package language.grammar;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  * This interface defines a complete listener for a parse tree produced by
  * {@link SubduceParser}.
  */
-public interface SubduceListener extends ParseTreeListener {
+public interface SubduceParserListener extends ParseTreeListener {
 	/**
 	 * Enter a parse tree produced by {@link SubduceParser#program}.
 	 * @param ctx the parse tree
@@ -97,4 +97,24 @@ public interface SubduceListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFunctionCall(SubduceParser.FunctionCallContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SubduceParser#string}.
+	 * @param ctx the parse tree
+	 */
+	void enterString(SubduceParser.StringContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SubduceParser#string}.
+	 * @param ctx the parse tree
+	 */
+	void exitString(SubduceParser.StringContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link SubduceParser#stringContents}.
+	 * @param ctx the parse tree
+	 */
+	void enterStringContents(SubduceParser.StringContentsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SubduceParser#stringContents}.
+	 * @param ctx the parse tree
+	 */
+	void exitStringContents(SubduceParser.StringContentsContext ctx);
 }
