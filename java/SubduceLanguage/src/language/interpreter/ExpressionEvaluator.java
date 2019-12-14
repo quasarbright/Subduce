@@ -3,6 +3,7 @@ package language.interpreter;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import language.interpreter.builtins.IfFunction;
@@ -27,6 +28,7 @@ import language.interpreter.expression.value.functionValue.SubduceFunctionValue;
 public class ExpressionEvaluator implements ExpressionVisitor<Value> {
   // the environment containing variable values to be used in evaluation
   private final Environment<String, Value> environment;
+  private final Supplier<Value> defaultBehavior;
 
   /**
    * Constructs an evaluator with an empty immutable environment
@@ -43,6 +45,8 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
    */
   public ExpressionEvaluator(Environment<String, Value> environment) {
     this.environment = environment;
+    // should only happen at top level so it should be fine
+    defaultBehavior = () -> null;
   }
 
   /**
@@ -161,7 +165,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
   @Override
   public Value visitSequence(List<Expression> expressions) {
     if(expressions.isEmpty()) {
-      throw new IllegalStateException();
+      return defaultBehavior.get();
     }
     // accumulate definitions into environment and then evaluate the last one according to the accumulated environment
     Environment<String, Value> accumulatedEnvironment = environment;
@@ -177,7 +181,8 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
 
   @Override
   public Value visitVariableAssignment(String name, Expression expression) {
-    return evaluate(expression);
+    evaluate(expression);
+    return defaultBehavior.get();
   }
 
   @Override

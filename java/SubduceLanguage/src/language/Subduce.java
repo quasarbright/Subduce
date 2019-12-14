@@ -29,7 +29,7 @@ public class Subduce {
 //    SubduceParser parser = new SubduceParser(tokenStream);
 //    SubduceParser.ProgramContext ctx = parser.program();
 //    Expression expression = ctx.accept(new BasicParseTreeTranslator());
-    Interpreter<Expression, Value> interpreter = new DefinitionInterpreter();
+    Interpreter<Value> interpreter = new DefinitionInterpreter();
     System.out.println(interpreter.eval("(== 1 2)"));
     interpreter.runWithInteraction(source);
     // "\"string\" \nnewline"
