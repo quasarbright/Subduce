@@ -1,27 +1,24 @@
 package language.interpreter.builtins;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Supplier;
 
-import language.interpreter.builtins.casters.CastToNumber;
 import language.interpreter.expression.value.NumberValue;
 import language.interpreter.expression.value.Value;
 
-public class AddFunction extends JavaFunctionImplementation {
-  private static final CastToNumber caster = new CastToNumber();
+public class AddFunction extends ANumberFunction {
+
   @Override
-  public Value apply(List<Value> values) {
-    double sum = 0;
-    for(Value value: values) {
-      Optional<NumberValue> maybeNumberValue = caster.cast(value);
-      if(maybeNumberValue.isEmpty()) {
-        throw new IllegalArgumentException("+ expected number arguments, got "+value);
-      } else {
-        NumberValue numberValue = maybeNumberValue.get();
-        sum += numberValue.val;
-      }
-    }
+  public Value apply(List<Value> arguments) {
+    double sum = castArguments(arguments)
+            .stream()
+            .mapToDouble(d -> d)
+            .sum();
     return new NumberValue(sum);
+  }
+
+  @Override
+  protected double defaultCastBehavior(Value value) {
+    throw new IllegalArgumentException("+ expects number arguments, got "+value);
   }
 }

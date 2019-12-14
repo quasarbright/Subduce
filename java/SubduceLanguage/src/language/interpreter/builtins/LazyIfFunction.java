@@ -4,10 +4,14 @@ import java.util.List;
 import java.util.function.Function;
 
 import language.interpreter.expression.Expression;
+import language.interpreter.expression.value.BaseValueVisitor;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
 import language.interpreter.expression.value.functionValue.FunctionValue;
 
+/**
+ * The if function, but only evaluates the branch which
+ */
 public class LazyIfFunction implements Function<List<Expression>, Value> {
   private final Function<Expression, Value> evaluator;
 
@@ -22,28 +26,7 @@ public class LazyIfFunction implements Function<List<Expression>, Value> {
     }
     Expression first = expressions.get(0);
     Value conditionValue = evaluator.apply(first);
-    boolean condition = conditionValue.accept(new ValueVisitor<Boolean>() {
-      private final RuntimeException error = new IllegalArgumentException("if expects a boolean condition as first argument");
-      @Override
-      public Boolean visitBoolean(boolean b) {
-        return b;
-      }
-
-      @Override
-      public Boolean visitNumber(double d) {
-        throw error;
-      }
-
-      @Override
-      public Boolean visitString(String s) {
-        throw error;
-      }
-
-      @Override
-      public Boolean visitFunction(FunctionValue function) {
-        throw error;
-      }
-    });
+    boolean condition = castCondition(conditionValue);
     Expression trueBranch = expressions.get(1);
     Expression falseBranch = expressions.get(2);
     if(condition) {
@@ -51,5 +34,18 @@ public class LazyIfFunction implements Function<List<Expression>, Value> {
     } else {
       return evaluator.apply(falseBranch);
     }
+  }
+
+  private boolean castCondition(Value conditionValue) {
+    RuntimeException error = new IllegalArgumentException(
+            "if expects the first argument to be a boolean, got " + conditionValue);
+
+    ValueVisitor<Boolean> caster = new BaseValueVisitor<Boolean>(error) {
+      @Override
+      public Boolean visitBoolean(boolean b) {
+        return b;
+      }
+    };
+    return conditionValue.accept(caster);
   }
 }

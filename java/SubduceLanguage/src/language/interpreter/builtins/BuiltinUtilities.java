@@ -22,6 +22,10 @@ public class BuiltinUtilities {
     addFunction("+", new AddFunction());
     addFunction("if", new IfFunction());
     addFunction("==", new NumberEqualFunction());
+    addFunction("<", new LessThanFunction());
+    addFunction("<=", new LessThanOrEqualToFunction());
+    addFunction(">", new GreaterThanFunction());
+    addFunction(">=", new GreaterThanOrEqualToFunction());
     this.baseEnvironment = baseEnvironment;
     fillBaseEnvironment();
   }

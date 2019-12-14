@@ -1,5 +1,9 @@
 package language.interpreter.expression.value;
 
+import java.util.Objects;
+
+import language.interpreter.builtins.NumberEqualFunction;
+
 public class NumberValue implements Value {
   public final double val;
 
@@ -15,5 +19,18 @@ public class NumberValue implements Value {
   @Override
   public String toString() {
     return Double.toString(val);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    return NumberEqualFunction.eq(val, ((NumberValue) obj).val);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(val);
   }
 }

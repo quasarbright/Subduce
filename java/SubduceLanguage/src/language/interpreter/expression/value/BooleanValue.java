@@ -1,5 +1,7 @@
 package language.interpreter.expression.value;
 
+import java.util.Objects;
+
 public class BooleanValue implements Value {
     public final boolean val;
 
@@ -15,5 +17,18 @@ public class BooleanValue implements Value {
     @Override
     public String toString() {
         return Boolean.toString(val);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        return val == ((BooleanValue) obj).val;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(val);
     }
 }
