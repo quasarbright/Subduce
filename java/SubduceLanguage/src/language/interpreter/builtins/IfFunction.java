@@ -9,11 +9,15 @@ import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
 
 public class IfFunction extends BaseJavaFunctionImplementation {
+  public IfFunction(String name) {
+    super(name);
+  }
+
   @Override
   public Value apply(List<Value> values) {
     if(values.size() != 3) {
       // TODO fix
-      throw new IllegalArgumentException("if expects 3 arguments, found "+values.size());
+      throw new IllegalArgumentException(name+" expects 3 arguments, found "+values.size());
     }
 
     Value conditionValue = values.get(0);

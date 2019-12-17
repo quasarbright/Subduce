@@ -14,6 +14,12 @@ import language.interpreter.expression.value.functionValue.JavaFunctionValue;
  * implementation written in java
  */
 public abstract class BaseJavaFunctionImplementation implements JavaFunctionValue.JavaFunctionImplementation {
+  protected final String name;
+
+  public BaseJavaFunctionImplementation(String name) {
+    this.name = name;
+  }
+
   @Override
   public boolean equals(Object other) {
     return other != null && getClass() == other.getClass();
@@ -40,4 +46,9 @@ public abstract class BaseJavaFunctionImplementation implements JavaFunctionValu
   }
 
   protected abstract Value apply(List<Value> arguments);
+
+  @Override
+  public String toString() {
+    return "[function "+name+" at "+hashCode()+"]";
+  }
 }

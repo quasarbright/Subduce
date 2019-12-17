@@ -9,11 +9,6 @@ import language.interpreter.expression.value.Value;
 public class NumberEqualFunction extends ANumberComparisonFunction {
   public static final double TOLERANCE = .000001;
 
-  /**
-   * Construct a number comparison function with a given name.
-   *
-   * @param name the function name
-   */
   public NumberEqualFunction(String name) {
     super(name);
   }

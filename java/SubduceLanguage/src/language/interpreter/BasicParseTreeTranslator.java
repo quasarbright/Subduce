@@ -27,7 +27,7 @@ import language.interpreter.expression.value.StringValue;
 import language.interpreter.expression.value.functionValue.JavaFunctionValue;
 
 public class BasicParseTreeTranslator extends SubduceParserBaseVisitor<Expression> implements ParseTreeTranslator {
-  private static final JavaFunctionValue printFunctionValue = new JavaFunctionValue(new PrintFunction());
+  private static final JavaFunctionValue printFunctionValue = new JavaFunctionValue(new PrintFunction("print"));
   @Override
   public Expression fromParseTree(SubduceParser.ProgramContext ctx) {
     return ctx.accept(this);

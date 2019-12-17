@@ -26,7 +26,7 @@ public class DefinitionEvaluator implements ExpressionVisitor<Environment<String
 
   @Override
   public Environment<String, Value> visitFunctionDefinition(String name, List<String> argnames, Expression body) {
-    SubduceFunctionValue function = new SubduceFunctionValue(argnames, body, environment);
+    SubduceFunctionValue function = new SubduceFunctionValue(argnames, body, environment, name);
     Environment<String, Value> newEnvironment = environment.withNewVariable(name, function);
     function.setEnvironment(newEnvironment);
     return newEnvironment;

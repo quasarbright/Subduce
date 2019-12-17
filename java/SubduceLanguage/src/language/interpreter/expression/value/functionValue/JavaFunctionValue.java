@@ -25,7 +25,7 @@ public class JavaFunctionValue implements FunctionValue {
 
   @Override
   public String toString() {
-    return "[function "+hashCode()+"]";
+    return "[function "+implementation+" at "+hashCode()+"]";
   }
 
   @Override

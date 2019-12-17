@@ -5,6 +5,10 @@ import java.util.List;
 import language.interpreter.expression.value.Value;
 
 public class PrintFunction extends BaseJavaFunctionImplementation {
+  public PrintFunction(String name) {
+    super("print");
+  }
+
   @Override
   public Value apply(List<Value> valueList) {
     if(valueList.size() == 0) {

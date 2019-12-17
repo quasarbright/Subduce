@@ -6,16 +6,27 @@ import language.interpreter.expression.value.Value;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class SubduceFunctionValue implements FunctionValue {
   private final List<String> argnames;
   private final Expression body;
   private Environment<String, Value> environment;
+  private final Optional<String> maybeName;
 
   public SubduceFunctionValue(List<String> argnames, Expression body, Environment environment) {
+    this(argnames, body, environment, Optional.empty());
+  }
+
+  public SubduceFunctionValue(List<String> argnames, Expression body, Environment environment, String name) {
+    this(argnames, body, environment, Optional.of(name));
+  }
+
+  private SubduceFunctionValue(List<String> argnames, Expression body, Environment<String, Value> environment, Optional<String> maybeName) {
     this.argnames = argnames;
     this.body = body;
     this.environment = environment;
+    this.maybeName = maybeName;
   }
 
   @Override
@@ -33,6 +44,7 @@ public class SubduceFunctionValue implements FunctionValue {
 
   @Override
   public String toString() {
-    return "[function "+hashCode()+"]";
+    return maybeName.map(name -> "[function " + name + " at " + hashCode() + "]")
+            .orElseGet(() -> "[function at " + hashCode() + "]");
   }
 }

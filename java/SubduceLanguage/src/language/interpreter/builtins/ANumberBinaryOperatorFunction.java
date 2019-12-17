@@ -10,6 +10,7 @@ public class ANumberBinaryOperatorFunction extends ANumberFunction {
   private final BinaryOperator<Double> operator;
   private final double identity;
   private final boolean isAssociative;
+
   public ANumberBinaryOperatorFunction(BinaryOperator<Double> operator, double identity, String name, boolean isAssociative) {
     super(name);
     this.operator = operator;

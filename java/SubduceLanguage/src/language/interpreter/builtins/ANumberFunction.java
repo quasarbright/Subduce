@@ -7,10 +7,9 @@ import language.interpreter.expression.value.BaseValueVisitor;
 import language.interpreter.expression.value.Value;
 
 public abstract class ANumberFunction extends BaseJavaFunctionImplementation {
-  protected final String name;
 
-  protected ANumberFunction(String name) {
-    this.name = name;
+  public ANumberFunction(String name) {
+    super(name);
   }
 
   protected List<Double> castArguments(List<Value> arguments) {

@@ -2,6 +2,7 @@ package language.interpreter.builtins;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import language.interpreter.Environment;
 import language.interpreter.ImmutableVariableEnvironment;
@@ -18,21 +19,22 @@ public class BuiltinUtilities {
 
   public BuiltinUtilities(Environment<String, Value> baseEnvironment) {
     builtinValues = new HashMap<>();
-    addFunction("+", new AddFunction("+"));
-    addFunction("-", new SubtractFunction("-"));
-    addFunction("/", new DivideFunction("/"));
-    addFunction("if", new IfFunction());
-    addFunction("==", new NumberEqualFunction("=="));
-    addFunction("<", new LessThanFunction("<"));
-    addFunction("<=", new LessThanOrEqualToFunction("<="));
-    addFunction(">", new GreaterThanFunction(">"));
-    addFunction(">=", new GreaterThanOrEqualToFunction(">="));
+    addFunction("+", AddFunction::new);
+    addFunction("*", MultiplyFunction::new);
+    addFunction("-", SubtractFunction::new);
+    addFunction("/", DivideFunction::new);
+    addFunction("if", IfFunction::new);
+    addFunction("==", NumberEqualFunction::new);
+    addFunction("<", LessThanFunction::new);
+    addFunction("<=", LessThanOrEqualToFunction::new);
+    addFunction(">", GreaterThanFunction::new);
+    addFunction(">=", GreaterThanOrEqualToFunction::new);
     this.baseEnvironment = baseEnvironment;
     fillBaseEnvironment();
   }
 
-  private void addFunction(String name, BaseJavaFunctionImplementation function) {
-    addValue(name, new JavaFunctionValue(function));
+  private void addFunction(String name, Function<String, BaseJavaFunctionImplementation> functionFactory) {
+    addValue(name, new JavaFunctionValue(functionFactory.apply(name)));
   }
 
   private void addValue(String name, Value value) {
