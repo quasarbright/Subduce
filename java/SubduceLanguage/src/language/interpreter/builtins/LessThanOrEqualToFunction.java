@@ -1,8 +1,14 @@
 package language.interpreter.builtins;
 
 public class LessThanOrEqualToFunction extends ANumberComparisonFunction {
-  public LessThanOrEqualToFunction() {
-    super("<");
+
+  /**
+   * Construct a number comparison function with a given name.
+   *
+   * @param name the function name
+   */
+  public LessThanOrEqualToFunction(String name) {
+    super(name);
   }
 
   @Override

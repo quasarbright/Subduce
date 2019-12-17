@@ -9,20 +9,12 @@ import language.interpreter.expression.value.Value;
 public class ANumberBinaryOperatorFunction extends ANumberFunction {
   private final BinaryOperator<Double> operator;
   private final double identity;
-  private final String name;
   private final boolean isAssociative;
   public ANumberBinaryOperatorFunction(BinaryOperator<Double> operator, double identity, String name, boolean isAssociative) {
+    super(name);
     this.operator = operator;
     this.identity = identity;
-    this.name = name;
     this.isAssociative = isAssociative;
-  }
-
-
-  @Override
-  protected double defaultCastBehavior(Value value) {
-    // TODO fix
-    throw new IllegalArgumentException(name+" expects number arguments, got "+value);
   }
 
   @Override

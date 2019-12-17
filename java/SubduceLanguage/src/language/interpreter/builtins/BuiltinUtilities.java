@@ -18,19 +18,21 @@ public class BuiltinUtilities {
 
   public BuiltinUtilities(Environment<String, Value> baseEnvironment) {
     builtinValues = new HashMap<>();
-    addFunction("+", new AddFunction());
+    addFunction("+", new AddFunction("+"));
+    addFunction("-", new SubtractFunction("-"));
+    addFunction("/", new DivideFunction("/"));
     addFunction("if", new IfFunction());
-    addFunction("==", new NumberEqualFunction());
-    addFunction("<", new LessThanFunction());
-    addFunction("<=", new LessThanOrEqualToFunction());
-    addFunction(">", new GreaterThanFunction());
-    addFunction(">=", new GreaterThanOrEqualToFunction());
+    addFunction("==", new NumberEqualFunction("=="));
+    addFunction("<", new LessThanFunction("<"));
+    addFunction("<=", new LessThanOrEqualToFunction("<="));
+    addFunction(">", new GreaterThanFunction(">"));
+    addFunction(">=", new GreaterThanOrEqualToFunction(">="));
     this.baseEnvironment = baseEnvironment;
     fillBaseEnvironment();
   }
 
   private void addFunction(String name, BaseJavaFunctionImplementation function) {
-    builtinValues.put(name, new JavaFunctionValue(function));
+    addValue(name, new JavaFunctionValue(function));
   }
 
   private void addValue(String name, Value value) {

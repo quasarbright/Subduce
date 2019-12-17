@@ -1,8 +1,14 @@
 package language.interpreter.builtins;
 
 public class GreaterThanFunction extends ANumberComparisonFunction {
-  public GreaterThanFunction() {
-    super(">");
+
+  /**
+   * Construct a number comparison function with a given name.
+   *
+   * @param name the function name
+   */
+  public GreaterThanFunction(String name) {
+    super(name);
   }
 
   @Override

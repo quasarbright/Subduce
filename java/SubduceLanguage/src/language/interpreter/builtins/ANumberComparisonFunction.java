@@ -13,26 +13,19 @@ import language.interpreter.expression.value.Value;
  * works for <, <=, >, >=, ==, NOT !=
  */
 public abstract class ANumberComparisonFunction extends ANumberFunction {
-  private final String name;
-
   /**
    * Construct a number comparison function with a given name.
    *
    * @param name the function name
    */
   public ANumberComparisonFunction(String name) {
-    this.name = name;
-  }
-
-  @Override
-  protected double defaultCastBehavior(Value value) {
-    throw new IllegalArgumentException(name+" expects number arguments, got "+value);
+    super(name);
   }
 
   @Override
   public Value apply(List<Value> values) {
     if(values.size() < 2) {
-      throw new IllegalArgumentException("< expects at least two arguments, got "+values.size());
+      throw new IllegalArgumentException(name+" expects at least two arguments, got "+values.size());
     }
     List<Double> numericalArguments = castArguments(values);
     double prev = numericalArguments.get(0);
