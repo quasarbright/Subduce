@@ -7,6 +7,6 @@ public class GreaterThanOrEqualToFunction extends ANumberComparisonFunction {
 
   @Override
   protected boolean compare(double first, double second) {
-    return first >= second;
+    return first > second || NumberEqualFunction.eq(first, second);
   }
 }

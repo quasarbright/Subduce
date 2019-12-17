@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.io.StringReader;
 import java.util.function.Function;
 
+
 import static org.junit.Assert.*;
 
 public abstract class RuntimeTest<StatementType, ExpressionType, ValueType> {
@@ -28,7 +29,7 @@ public abstract class RuntimeTest<StatementType, ExpressionType, ValueType> {
    */
   protected void testPostRunEvaluation(String source, String expression, ValueType expected) {
     setup();
-    runtime.run(expression);
+    runtime.run(source);
     testEvaluation(runtime, expression, expected);
   }
 

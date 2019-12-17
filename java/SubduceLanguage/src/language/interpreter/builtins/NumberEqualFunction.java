@@ -7,7 +7,7 @@ import language.interpreter.expression.value.BooleanValue;
 import language.interpreter.expression.value.Value;
 
 public class NumberEqualFunction extends ANumberComparisonFunction {
-  private static final double TOLERANCE = .000001;
+  public static final double TOLERANCE = .000001;
 
   public NumberEqualFunction() {
     super("==");

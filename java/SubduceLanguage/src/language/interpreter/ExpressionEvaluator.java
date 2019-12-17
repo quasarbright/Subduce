@@ -2,16 +2,11 @@ package language.interpreter;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import language.interpreter.builtins.IfFunction;
-import language.interpreter.builtins.LazyIfFunction;
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
-import language.interpreter.expression.FunctionDefinitionExpression;
-import language.interpreter.expression.VariableAssignmentExpression;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
 import language.interpreter.expression.value.functionValue.FunctionValue;
@@ -70,7 +65,21 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
     return expression.accept(this);
   }
 
-  private Value applyFunction(FunctionValue functionValue, List<Value> arguments) {
+  public List<Value> evaluateAll(List<Expression> expressions) {
+    return expressions.stream()
+            .map(this::evaluate)
+            .collect(Collectors.toList());
+  }
+
+  /**
+   * Apply the function to the given expressions. For subduce functions, evaluate before passing.
+   * For java functions, give them the expressions so they could possibly lazily evaluate.
+   *
+   * @param functionValue the function to apply the arguments to
+   * @param arguments the arguments to pass to the function
+   * @return the output of the function
+   */
+  private Value applyFunction(FunctionValue functionValue, List<Expression> arguments) {
     return functionValue.accept(new FunctionValueVisitor<Value>() {
       @Override
       public Value visitSubduceFunction(List<String> argnames, Expression body, Environment<String, Value> environment) {
@@ -82,18 +91,19 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
         // add arguments with values to environment and evaluate body
 
         // add new scope for function body
+        List<Value> evaluatedArguents = evaluateAll(arguments);
         environment = environment.withNewScope();
         for(int i = 0; i < argnames.size(); i++) {
           String argname = argnames.get(i);
-          Value argument = arguments.get(i);
-          environment = environment.withNewVariable(argname, argument);
+          Value argumentValue = evaluatedArguents.get(i);
+          environment = environment.withNewVariable(argname, argumentValue);
         }
         return evaluate(body, environment);
       }
 
       @Override
-      public Value visitJavaFunction(Function<List<Value>, Value> function) {
-        return function.apply(arguments);
+      public Value visitJavaFunction(JavaFunctionValue.JavaFunctionImplementation function) {
+        return function.apply(ExpressionEvaluator.this::evaluate, arguments);
       }
     });
   }
@@ -103,7 +113,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
     Value evaluatedFunction = evaluate(function);
     FunctionValue functionValue = evaluatedFunction.accept(new ValueVisitor<FunctionValue>() {
       // TODO fix
-      private final RuntimeException error = new IllegalStateException("expected a function");
+      private final RuntimeException error = new IllegalStateException("cannot call non-functions: "+function);
 
       @Override
       public FunctionValue visitBoolean(boolean b) {
@@ -126,27 +136,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
       }
     });
 
-    if(shouldLazyEvaluate(functionValue)) {
-      return lazyEvaluate(functionValue, arguments);
-    }
-
-    List<Value> evaluatedArguments = arguments.stream()
-            .map(this::evaluate)
-            .collect(Collectors.toList());
-    return applyFunction(functionValue, evaluatedArguments);
-  }
-
-  private boolean shouldLazyEvaluate(FunctionValue function) {
-    // TODO
-    return function.equals(new JavaFunctionValue(new IfFunction()));
-  }
-
-  private Value lazyEvaluate(FunctionValue function, List<Expression> arguments) {
-    if(function.equals(new JavaFunctionValue(new IfFunction()))) {
-      return new LazyIfFunction(this::evaluate).apply(arguments);
-    } else {
-      throw new IllegalStateException();
-    }
+    return applyFunction(functionValue, arguments);
   }
 
   @Override

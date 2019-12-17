@@ -5,7 +5,6 @@ import java.util.Map;
 
 import language.interpreter.Environment;
 import language.interpreter.ImmutableVariableEnvironment;
-import language.interpreter.expression.value.NumberValue;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.JavaFunctionValue;
 
@@ -30,7 +29,7 @@ public class BuiltinUtilities {
     fillBaseEnvironment();
   }
 
-  private void addFunction(String name, JavaFunctionImplementation function) {
+  private void addFunction(String name, BaseJavaFunctionImplementation function) {
     builtinValues.put(name, new JavaFunctionValue(function));
   }
 
