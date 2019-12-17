@@ -1,9 +1,11 @@
 package language.interpreter.builtins;
 
 import java.util.List;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 import language.interpreter.expression.value.BaseValueVisitor;
+import language.interpreter.expression.value.NumberValue;
 import language.interpreter.expression.value.Value;
 
 public abstract class ANumberFunction extends BaseJavaFunctionImplementation {
