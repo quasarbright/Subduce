@@ -102,4 +102,45 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     // if a == b, a < b should be false even if it's "really" true
     testEvaluation("(< 1 "+num+" "+(num + ltEpsilon)+")", toValue(false));
   }
+
+  @Test
+  public void testMutualRecursion() {
+    String source =
+            "def (foo a) { return (if (== a 0) 0 (+ a (bar (- a 1)))) }\n" +
+            "def (bar a) { return (if (== a 0) 0 (+ a (foo (- a 1)))) }\n"+
+            "(foo 100)";
+    testPostRunEvaluation(source, "(foo 100)", toValue(5050));
+    testPostRunEvaluation(source, "(bar 100)", toValue(5050));
+  }
+
+  @Test
+  public void testVariableUseFunctionBeforeDefinition() {
+    String source =
+            "x = (foo 2)\n" +
+            "def (foo a) { return (+ 1 a) }\n";
+    testPostRunEvaluation(source, "x", toValue(3));
+    /// left off here thinking about distinguishing between statements and expressions to avoid
+    // all of this confusion
+  }
+
+  @Test
+  public void testVeryMutualRecursion() {
+    String source =
+            "x = (f1 4)" + // should be 10
+            "def (f1 a) { return (if (== a 0) a (+ a (f2 (- a 1))))}\n" +
+            "def (f3 a) { return (f4 a) }\n" +
+            "def (f2 a) { return (f3 a) }\n" +
+            "def (f4 a) { return (f1 a) }\n";
+    testPostRunEvaluation(source, "x", toValue(10));
+  }
+
+
+
+
+
+  @Test
+  public void testEmptyProgram() {
+    String source = "";
+    testPostRunEvaluation(source, "(+ 1 2)", toValue(3));
+  }
 }

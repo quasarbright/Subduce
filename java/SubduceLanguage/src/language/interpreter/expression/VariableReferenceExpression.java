@@ -11,4 +11,9 @@ public class VariableReferenceExpression implements Expression {
   public <R> R accept(ExpressionVisitor<R> visitor) {
     return visitor.visitVariableReference(name);
   }
+
+  @Override
+  public String toString() {
+    return name;
+  }
 }

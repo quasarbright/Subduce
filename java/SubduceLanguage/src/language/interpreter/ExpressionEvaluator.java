@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
+import language.interpreter.expression.SequenceExpression;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
 import language.interpreter.expression.value.functionValue.FunctionValue;
@@ -158,13 +159,13 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
       return defaultBehavior.get();
     }
     // accumulate definitions into environment and then evaluate the last one according to the accumulated environment
-    Environment<String, Value> accumulatedEnvironment = environment;
+    Environment<String, Value> accumulatedEnvironment = new SequenceExpression(expressions).accept(new DefinitionEvaluator(environment, this));
     // loop through all but last (last gets evaluated with new env and returned)
-    for(int i = 0; i < expressions.size()-1; i++) {
-      Expression currentExpression = expressions.get(i);
-      Environment<String, Value> finalAccumulatedEnvironment = accumulatedEnvironment;
-      accumulatedEnvironment = currentExpression.accept(new DefinitionEvaluator(accumulatedEnvironment, this));
-    }
+//    for(int i = 0; i < expressions.size()-1; i++) {
+//      Expression currentExpression = expressions.get(i);
+//      Environment<String, Value> finalAccumulatedEnvironment = accumulatedEnvironment;
+//      accumulatedEnvironment = currentExpression.accept(new DefinitionEvaluator(accumulatedEnvironment, this));
+//    }
     Expression returnExpression = expressions.get(expressions.size()-1);
     return evaluate(returnExpression, accumulatedEnvironment);
   }
