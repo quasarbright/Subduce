@@ -9,7 +9,7 @@ public interface StatementVisitor<R> {
   R visitExpression(Expression expression);
   R visitPrint(Expression expression);
   R visitReturn(Expression expression);
-  R visitFunctionDefinition(String name, List<String> argnames, Expression body);
+  R visitFunctionDefinition(String name, List<String> argnames, Statement body);
   R visitVariableDefinition(String name, Expression expression);
   R visitSequence(List<Statement> statements);
 }

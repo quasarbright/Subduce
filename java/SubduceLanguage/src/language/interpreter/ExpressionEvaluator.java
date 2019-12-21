@@ -140,39 +140,8 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
   }
 
   @Override
-  public Value visitFunctionDefinition(String name, List<String> argnames, Expression body) {
-    SubduceFunctionValue functionValue = new SubduceFunctionValue(argnames, body, environment);
-    Environment<String, Value> newEnvironment = environment.withNewVariable(name, functionValue);
-    functionValue.setEnvironment(newEnvironment);
-    return functionValue;
-  }
-
-  @Override
   public Value visitLambda(List<String> argnames, Expression body) {
     return new SubduceFunctionValue(argnames, body, environment);
-  }
-
-  @Override
-  public Value visitSequence(List<Expression> expressions) {
-    if(expressions.isEmpty()) {
-      return defaultBehavior.get();
-    }
-    // accumulate definitions into environment and then evaluate the last one according to the accumulated environment
-    Environment<String, Value> accumulatedEnvironment = new SequenceExpression(expressions).accept(new DefinitionEvaluator(environment, this));
-    // loop through all but last (last gets evaluated with new env and returned)
-//    for(int i = 0; i < expressions.size()-1; i++) {
-//      Expression currentExpression = expressions.get(i);
-//      Environment<String, Value> finalAccumulatedEnvironment = accumulatedEnvironment;
-//      accumulatedEnvironment = currentExpression.accept(new DefinitionEvaluator(accumulatedEnvironment, this));
-//    }
-    Expression returnExpression = expressions.get(expressions.size()-1);
-    return evaluate(returnExpression, accumulatedEnvironment);
-  }
-
-  @Override
-  public Value visitVariableAssignment(String name, Expression expression) {
-    evaluate(expression);
-    return defaultBehavior.get();
   }
 
   @Override
