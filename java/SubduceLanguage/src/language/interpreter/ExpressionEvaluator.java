@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
-import language.interpreter.expression.SequenceExpression;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
 import language.interpreter.expression.value.functionValue.FunctionValue;
@@ -149,7 +148,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
   }
 
   @Override
-  public Value visitLambdaDefinition(List<String> argnames, Expression body) {
+  public Value visitLambda(List<String> argnames, Expression body) {
     return new SubduceFunctionValue(argnames, body, environment);
   }
 

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import language.interpreter.expression.VariableAssignmentExpression;
 import language.interpreter.expression.value.Value;
 
 /**

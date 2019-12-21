@@ -3,17 +3,11 @@ package language.interpreter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
-import language.interpreter.expression.FunctionDefinitionExpression;
 import language.interpreter.expression.value.Value;
-import language.interpreter.expression.value.ValueVisitor;
-import language.interpreter.expression.value.functionValue.FunctionValue;
-import language.interpreter.expression.value.functionValue.FunctionValueVisitor;
-import language.interpreter.expression.value.functionValue.JavaFunctionValue;
 import language.interpreter.expression.value.functionValue.SubduceFunctionValue;
 
 /**
@@ -49,7 +43,7 @@ public class DefinitionEvaluator implements ExpressionVisitor<Environment<String
   }
 
   @Override
-  public Environment<String, Value> visitLambdaDefinition(List<String> argnames, Expression body) {
+  public Environment<String, Value> visitLambda(List<String> argnames, Expression body) {
     return environment;
   }
 
@@ -127,7 +121,7 @@ public class DefinitionEvaluator implements ExpressionVisitor<Environment<String
       }
 
       @Override
-      public Boolean visitLambdaDefinition(List<String> argnames, Expression body) {
+      public Boolean visitLambda(List<String> argnames, Expression body) {
         return false;
       }
 

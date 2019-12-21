@@ -16,10 +16,7 @@ import language.grammar.SubduceParserBaseVisitor;
 import language.interpreter.builtins.PrintFunction;
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.FunctionCallExpression;
-import language.interpreter.expression.FunctionDefinitionExpression;
-import language.interpreter.expression.LambdaDefinitionExpression;
-import language.interpreter.expression.SequenceExpression;
-import language.interpreter.expression.VariableAssignmentExpression;
+import language.interpreter.expression.LambdaExpression;
 import language.interpreter.expression.VariableReferenceExpression;
 import language.interpreter.expression.value.BooleanValue;
 import language.interpreter.expression.value.NumberValue;
@@ -171,7 +168,7 @@ public class BasicParseTreeTranslator extends SubduceParserBaseVisitor<Expressio
     List<String> argnames = terminalNodes.stream()
             .map(t -> t.getSymbol().getText())
             .collect(Collectors.toList());
-    return new LambdaDefinitionExpression(argnames, body);
+    return new LambdaExpression(argnames, body);
   }
   
   @Override
