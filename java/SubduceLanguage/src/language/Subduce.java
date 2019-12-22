@@ -1,8 +1,7 @@
 package language;
 
-import language.interpreter.DefinitionInterpreter;
+import language.interpreter.StatementInterpreter;
 import language.interpreter.Interpreter;
-import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.Value;
 
 public class Subduce {
@@ -29,7 +28,7 @@ public class Subduce {
 //    SubduceParser parser = new SubduceParser(tokenStream);
 //    SubduceParser.ProgramContext ctx = parser.program();
 //    Expression expression = ctx.accept(new BasicParseTreeTranslator());
-    Interpreter<Value> interpreter = new DefinitionInterpreter();
+    Interpreter<Value> interpreter = new StatementInterpreter();
     System.out.println(interpreter.eval("(== 1 2)"));
     interpreter.runWithInteraction(source);
     // "\"string\" \nnewline"

@@ -15,11 +15,11 @@ import language.interpreter.expression.value.Value;
 import language.interpreter.statement.BaseStatementVisitor;
 import language.interpreter.statement.Statement;
 
-public class DefinitionRuntime implements Runtime<Statement, Expression, Value> {
+public class StatementRuntime implements Runtime<Statement, Expression, Value> {
 
   private Environment<String, Value> environment;
 
-  public DefinitionRuntime() {
+  public StatementRuntime() {
     environment = new BuiltinUtilities().getBaseEnvironment();
   }
 

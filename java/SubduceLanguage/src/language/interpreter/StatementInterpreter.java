@@ -7,21 +7,21 @@ import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.Value;
 import language.interpreter.statement.Statement;
 
-public class DefinitionInterpreter implements Interpreter<Value> {
+public class StatementInterpreter implements Interpreter<Value> {
   private final Scanner in;
 
-  public DefinitionInterpreter() {
+  public StatementInterpreter() {
     in = new Scanner(System.in);
   }
 
   @Override
   public void run(String source) {
-    new DefinitionRuntime().run(source);
+    new StatementRuntime().run(source);
   }
 
   @Override
   public void runWithInteraction(String source) {
-    Runtime<Statement, Expression, Value> runtime = new DefinitionRuntime();
+    Runtime<Statement, Expression, Value> runtime = new StatementRuntime();
     System.out.println("enter expressions or definitions to evaluate them");
     System.out.println("exit by typing \"exit\" and pressing enter");
     System.out.print("In: ");
@@ -43,6 +43,6 @@ public class DefinitionInterpreter implements Interpreter<Value> {
 
   @Override
   public Value eval(String expressionString) {
-    return new DefinitionRuntime().evaluate(expressionString);
+    return new StatementRuntime().evaluate(expressionString);
   }
 }
