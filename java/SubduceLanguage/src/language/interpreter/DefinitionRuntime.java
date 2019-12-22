@@ -14,7 +14,6 @@ import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.Value;
 import language.interpreter.statement.BaseStatementVisitor;
 import language.interpreter.statement.Statement;
-import language.interpreter.statement.StatementVisitor;
 
 public class DefinitionRuntime implements Runtime<Statement, Expression, Value> {
 
@@ -58,7 +57,7 @@ public class DefinitionRuntime implements Runtime<Statement, Expression, Value> 
   @Override
   public Optional<Value> run(Statement statement) {
     ExpressionEvaluator evaluator = getEvaluator();
-    DefinitionEvaluator runner = getRunner();
+    StatementRunner runner = getRunner();
 
     // evaluate if expression statement
     Optional<Value> ans = statement.accept(new BaseStatementVisitor<>(Optional.empty()) {
@@ -92,7 +91,7 @@ public class DefinitionRuntime implements Runtime<Statement, Expression, Value> 
     return new ExpressionEvaluator(environment);
   }
 
-  private DefinitionEvaluator getRunner() {
-    return new DefinitionEvaluator(environment, getEvaluator());
+  private StatementRunner getRunner() {
+    return new StatementRunner(environment, getEvaluator());
   }
 }

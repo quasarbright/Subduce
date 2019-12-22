@@ -20,100 +20,18 @@ import language.interpreter.statement.StatementVisitor;
  * Adds definition to environment if there is any.
  * Stateful.
  */
-public class DefinitionEvaluator implements StatementVisitor<Environment<String, Value>> {
+public class StatementRunner implements StatementVisitor<Environment<String, Value>> {
   private final Environment<String, Value> environment;
   // the variables added in this visitor's lifetime
   private final Map<String, SubduceFunctionValue> addedFunctions;
   private final ExpressionEvaluator evaluator;
 
-  public DefinitionEvaluator(Environment<String, Value> environment, ExpressionEvaluator evaluator) {
+  public StatementRunner(Environment<String, Value> environment, ExpressionEvaluator evaluator) {
     this.environment = environment;
     addedFunctions = new HashMap<>();
     this.evaluator = evaluator;
   }
 
-//  @Override
-//  public Environment<String, Value> visitFunctionCall(Expression function, List<Expression> arguments) {
-//    return environment;
-//  }
-//
-//  @Override
-//  public Environment<String, Value> visitFunctionDefinition(String name, List<String> argnames, Expression body) {
-//    SubduceFunctionValue function = new SubduceFunctionValue(argnames, body, environment, name);
-//    addedFunctions.put(name, function);
-//    Environment<String, Value> newEnvironment = environment.withNewVariable(name, function);
-//    // even though sequence will handle this, you still have to do it here in case the program is
-//    // just one function definition. Then, it won't be a sequence
-//    function.setEnvironment(newEnvironment);
-//    return newEnvironment;
-//  }
-//
-//  @Override
-//  public Environment<String, Value> visitLambda(List<String> argnames, Expression body) {
-//    return environment;
-//  }
-//
-//  @Override
-//  public Environment<String, Value> visitSequence(List<Expression> expressions) {
-//    Environment<String, Value> accumulatedEnvironment = environment;
-//    // do function definitions first
-//    List<Expression> functionDefinitions = justFunctionDefinitions(expressions);
-//    List<Expression> notFunctionDefinitions = noFunctionDefinitions(expressions);
-//
-//
-//    // do the function definitions
-//    for(Expression functionDefinitionExpression: functionDefinitions) {
-//      DefinitionEvaluator currentDefinitionEvaluator = new DefinitionEvaluator(accumulatedEnvironment, evaluator);
-//      accumulatedEnvironment = functionDefinitionExpression.accept(currentDefinitionEvaluator);
-//
-//      // record the functions which were defined in this sequence.
-//      Map<String, SubduceFunctionValue> currentAddedFunctions = currentDefinitionEvaluator.addedFunctions;
-//      for(Map.Entry<String, SubduceFunctionValue> functionDefinition: currentAddedFunctions.entrySet()) {
-//        addedFunctions.put(functionDefinition.getKey(), functionDefinition.getValue());
-//      }
-//    }
-//
-//
-//    // make sure the functions know about each other and themselves so the variables can use
-//    // them even if they're recursive
-//    // this allows mutual recursion
-//    for(SubduceFunctionValue functionValue: addedFunctions.values()) {
-//      functionValue.setEnvironment(accumulatedEnvironment);
-//    }
-//
-//    // do everything else that isn't a function definition
-//    // now variable assignments can use the functions defined in the same scope
-//    for(Expression expression: notFunctionDefinitions) {
-//      DefinitionEvaluator currentDefinitionEvaluator = new DefinitionEvaluator(accumulatedEnvironment, evaluator);
-//      accumulatedEnvironment = expression.accept(currentDefinitionEvaluator);
-//    }
-//
-//    // ok, we added all the definitions. Now add all the variables we just added into the functions'
-//    // environments if there were any. That way functions can use themselves and each other.
-//    // this means they can also use non-function variables defined in the same scope, regardless of order
-//    for(SubduceFunctionValue functionValue: addedFunctions.values()) {
-//      functionValue.setEnvironment(accumulatedEnvironment);
-//    }
-//
-//    return accumulatedEnvironment;
-//  }
-//
-//  @Override
-//  public Environment<String, Value> visitVariableAssignment(String name, Expression expression) {
-//    Value variableValue = evaluator.evaluate(expression, environment);
-//    return environment.withNewVariable(name, variableValue);
-//  }
-//
-//  @Override
-//  public Environment<String, Value> visitValue(Value value) {
-//    return environment;
-//  }
-//
-//  @Override
-//  public Environment<String, Value> visitVariableReference(String name) {
-//    return environment;
-//  }
-//
   private List<FunctionDefinitionStatement> justFunctionDefinitions(List<Statement> statements) {
     return statements.stream()
             .map((Statement statement) -> {
@@ -240,7 +158,6 @@ public class DefinitionEvaluator implements StatementVisitor<Environment<String,
       functionValues.add(functionValue);
     }
 
-    Environment<String, Value> finalAccumulatedEnvironment = accumulatedEnvironment;
     Consumer<Environment<String, Value>> updateFunctionEnvironments = (Environment<String, Value> env) -> {
       // update function environments to include all definitions in the given environment
       for (SubduceFunctionValue functionValue : functionValues) {
@@ -251,7 +168,7 @@ public class DefinitionEvaluator implements StatementVisitor<Environment<String,
 
     // now define variables in order, adding them each to all the functions' environments
     for(Statement statement: notFunctionDefinitions) {
-      accumulatedEnvironment = statement.accept(new DefinitionEvaluator(accumulatedEnvironment, new ExpressionEvaluator(accumulatedEnvironment)));
+      accumulatedEnvironment = statement.accept(new StatementRunner(accumulatedEnvironment, new ExpressionEvaluator(accumulatedEnvironment)));
       updateFunctionEnvironments.accept(accumulatedEnvironment);
     }
 

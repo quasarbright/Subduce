@@ -16,7 +16,6 @@ import language.interpreter.expression.value.functionValue.SubduceFunctionValue;
 import language.interpreter.statement.BaseStatementVisitor;
 import language.interpreter.statement.ReturnStatement;
 import language.interpreter.statement.Statement;
-import language.interpreter.statement.StatementVisitor;
 
 /**
  * Evaluates expressions.
@@ -102,7 +101,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
           environment = environment.withNewVariable(argnames.get(i), evaluatedArguents.get(i));
         }
         // run statements in body
-        environment = body.accept(new DefinitionEvaluator(environment, ExpressionEvaluator.this));
+        environment = body.accept(new StatementRunner(environment, ExpressionEvaluator.this));
 
         // evaluate function body
         return evaluateFunctionBody(body, environment);
