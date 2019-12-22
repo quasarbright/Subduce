@@ -36,6 +36,8 @@ public class BuiltinUtilities {
     addValue("empty", ListValue.fromValues(Collections.emptyList()));
     addFunction("first", FirstFunction::new);
     addFunction("rest", RestFunction::new);
+    addFunction("cons?", ConsHuhFunction::new);
+    addFunction("empty?", EmptyHuhFunction::new);
     this.baseEnvironment = baseEnvironment;
     fillBaseEnvironment();
   }

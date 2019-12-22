@@ -176,6 +176,29 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
   }
 
   @Test
+  public void testConsHuh() {
+    testEvaluation("(cons? (list 0 1 2))", toValue(true));
+    testEvaluation("(cons? (list 0))", toValue(true));
+    testEvaluation("(cons? empty)", toValue(false));
+    testEvaluation("(cons? (list empty)))", toValue(true));
+    testEvaluation("(cons? 15)", toValue(false));
+    testEvaluation("(cons? \"hello\")", toValue(false));
+    testEvaluation("(cons? true)", toValue(false));
+  }
+
+  @Test
+  public void testEmptyHuh() {
+    testEvaluation("(empty? (list 0 1 2))", toValue(false));
+    testEvaluation("(empty? (list 0))", toValue(false));
+    testEvaluation("(empty? empty)", toValue(true));
+    testEvaluation("(empty? (list empty)))", toValue(false));
+    testEvaluation("(empty? 12)", toValue(false));
+    testEvaluation("(empty? \"hello\")", toValue(false));
+    testEvaluation("(empty? true)", toValue(false));
+
+  }
+
+  @Test
   public void testMutualRecursion() {
     String source =
             "def (foo a) { return (if (== a 0) 0 (+ a (bar (- a 1)))) }\n" +

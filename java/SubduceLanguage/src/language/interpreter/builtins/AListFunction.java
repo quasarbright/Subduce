@@ -21,7 +21,7 @@ public abstract class AListFunction extends BaseJavaFunctionImplementation {
       throw new IllegalArgumentException(name+" expects 1 argument, got "+arguments.size());
     }
     Value argument = arguments.get(0);
-    return argument.accept(new BaseValueVisitor<>(new IllegalArgumentException(name+" expects a list, got "+argument)) {
+    return argument.accept(new BaseValueVisitor<>(() -> onNonList(argument)) {
       @Override
       public Value visitList(ListValue list) {
         return list.accept(new ListValueVisitor<>() {
@@ -37,6 +37,10 @@ public abstract class AListFunction extends BaseJavaFunctionImplementation {
         });
       }
     });
+  }
+
+  protected Value onNonList(Value argument) {
+    throw new IllegalArgumentException(name+" expects a list, got "+argument);
   }
 
   protected abstract Value onEmpty();
