@@ -23,12 +23,10 @@ import language.interpreter.statement.StatementVisitor;
 public class StatementRunner implements StatementVisitor<Environment<String, Value>> {
   private final Environment<String, Value> environment;
   // the variables added in this visitor's lifetime
-  private final Map<String, SubduceFunctionValue> addedFunctions;
   private final ExpressionEvaluator evaluator;
 
   public StatementRunner(Environment<String, Value> environment, ExpressionEvaluator evaluator) {
     this.environment = environment;
-    addedFunctions = new HashMap<>();
     this.evaluator = evaluator;
   }
 
