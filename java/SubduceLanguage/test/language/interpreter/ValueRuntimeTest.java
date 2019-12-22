@@ -108,9 +108,9 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     String source =
             "def (foo a) { return (if (== a 0) 0 (+ a (bar (- a 1)))) }\n" +
             "def (bar a) { return (if (== a 0) 0 (+ a (foo (- a 1)))) }\n"+
-            "(foo 100)";
+            "x = (foo 100)";
+    testPostRunEvaluation(source, "x", toValue(5050));
     testPostRunEvaluation(source, "(foo 100)", toValue(5050));
-    testPostRunEvaluation(source, "(bar 100)", toValue(5050));
   }
 
   @Test
@@ -124,14 +124,31 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
   }
 
   @Test
+  public void testFunctionUsingVariable() {
+    String source = makeSource(
+            "x = 2",
+            "def (foo a) { return (+ x a) }"
+    );
+    testPostRunEvaluation(source, "(foo 3)", toValue(5.0));
+    source = makeSource(
+            "x = 2",
+            "y = (foo 3)",
+            "def (foo a) { return (+ x a) }"
+    );
+    testPostRunEvaluation(source, "y", toValue(5.0));
+    testPostRunEvaluation(source, "(foo 3)", toValue(5.0));
+  }
+
+  @Test
   public void testVeryMutualRecursion() {
     String source =
-            "x = (f1 4)" + // should be 10
-            "def (f1 a) { return (if (== a 0) a (+ a (f2 (- a 1))))}\n" +
+            "x = 1\n" +
+            "y = (f1 4)\n" + // should be 10
+            "def (f1 a) { return (if (== a 0) a (+ a (f2 (- a x))))}\n" +
             "def (f3 a) { return (f4 a) }\n" +
             "def (f2 a) { return (f3 a) }\n" +
             "def (f4 a) { return (f1 a) }\n";
-    testPostRunEvaluation(source, "x", toValue(10));
+    testPostRunEvaluation(source, "y", toValue(10));
   }
 
 

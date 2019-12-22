@@ -3,6 +3,7 @@ package language.interpreter.expression.value.functionValue;
 import language.interpreter.Environment;
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.Value;
+import language.interpreter.statement.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,19 +11,19 @@ import java.util.Optional;
 
 public class SubduceFunctionValue implements FunctionValue {
   private final List<String> argnames;
-  private final Expression body;
+  private final Statement body;
   private Environment<String, Value> environment;
   private final Optional<String> maybeName;
 
-  public SubduceFunctionValue(List<String> argnames, Expression body, Environment environment) {
+  public SubduceFunctionValue(List<String> argnames, Statement body, Environment environment) {
     this(argnames, body, environment, Optional.empty());
   }
 
-  public SubduceFunctionValue(List<String> argnames, Expression body, Environment environment, String name) {
+  public SubduceFunctionValue(List<String> argnames, Statement body, Environment environment, String name) {
     this(argnames, body, environment, Optional.of(name));
   }
 
-  private SubduceFunctionValue(List<String> argnames, Expression body, Environment<String, Value> environment, Optional<String> maybeName) {
+  private SubduceFunctionValue(List<String> argnames, Statement body, Environment<String, Value> environment, Optional<String> maybeName) {
     this.argnames = argnames;
     this.body = body;
     this.environment = environment;
@@ -46,5 +47,9 @@ public class SubduceFunctionValue implements FunctionValue {
   public String toString() {
     return maybeName.map(name -> "[function " + name + " at " + hashCode() + "]")
             .orElseGet(() -> "[function at " + hashCode() + "]");
+  }
+
+  public String getName() {
+    return maybeName.orElse("");
   }
 }

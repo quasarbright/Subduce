@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import language.interpreter.expression.VariableAssignmentExpression;
 import language.interpreter.expression.value.Value;
 
 /**
@@ -50,11 +49,6 @@ public class ImmutableVariableEnvironment implements Environment<String, Value> 
 
   @Override
   public Environment<String, Value> withNewVariable(String name, Value value) {
-    // ignore dummy variable
-    if(name.equals(VariableAssignmentExpression.DUMMY_NAME)) {
-      return this;
-    }
-
     Map<String, Value> currentScopeCopy = new HashMap<>(scopes.get(scopes.size()-1));
     // prevent variable reassignment within scope
     if(currentScopeCopy.containsKey(name)) {

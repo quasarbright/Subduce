@@ -55,4 +55,12 @@ public abstract class RuntimeTest<StatementType, ExpressionType, ValueType> {
     ValueType actual = runtime.evaluate(expression);
     assertEquals(expected, actual);
   }
+
+  protected String makeSource(String... lines) {
+    StringBuilder ans = new StringBuilder();
+    for(String line: lines) {
+      ans.append(line).append('\n');
+    }
+    return ans.toString();
+  }
 }
