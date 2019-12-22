@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
+import language.interpreter.expression.value.BaseValueVisitor;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
 import language.interpreter.expression.value.functionValue.FunctionValue;
@@ -152,25 +153,9 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
   @Override
   public Value visitFunctionCall(Expression function, List<Expression> arguments) {
     Value evaluatedFunction = evaluate(function);
-    FunctionValue functionValue = evaluatedFunction.accept(new ValueVisitor<FunctionValue>() {
-      // TODO fix
-      private final RuntimeException error = new IllegalStateException("cannot call non-functions: "+function);
-
-      @Override
-      public FunctionValue visitBoolean(boolean b) {
-        throw error;
-      }
-
-      @Override
-      public FunctionValue visitNumber(double d) {
-        throw error;
-      }
-
-      @Override
-      public FunctionValue visitString(String s) {
-        throw error;
-      }
-
+    FunctionValue functionValue = evaluatedFunction.accept(new BaseValueVisitor<>(() -> {
+      throw new IllegalStateException("cannot call non-functions: "+function);
+    }) {
       @Override
       public FunctionValue visitFunction(FunctionValue function) {
         return function;

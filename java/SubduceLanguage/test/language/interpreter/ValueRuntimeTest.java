@@ -3,11 +3,14 @@ package language.interpreter;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import language.interpreter.builtins.NumberEqualFunction;
 import language.interpreter.expression.value.BooleanValue;
 import language.interpreter.expression.value.NumberValue;
 import language.interpreter.expression.value.StringValue;
 import language.interpreter.expression.value.Value;
+import language.interpreter.expression.value.listValue.ListValue;
 
 public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends RuntimeTest<StatementType, ExpressionType, Value> {
   protected final String sumRangeDefinition = "def (sum-range min max) { return (if (>= min max) min (+ min (sum-range (+ 1 min) max)))} print (sum-range 0 100)";
@@ -35,6 +38,10 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
 
   protected Value toValue(boolean b) {
     return new BooleanValue(b);
+  }
+
+  protected Value toListValue(Value... values) {
+    return ListValue.fromValues(Arrays.asList(values));
   }
 
   private void testEvaluation(String expression, String val) {
@@ -104,6 +111,94 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
   }
 
   @Test
+  public void testLists() {
+    testEvaluation("empty", toListValue());
+    testEvaluation("(cons 0 empty)", toListValue(toValue(0)));
+    testEvaluation(
+            "(cons 0 (cons 1 (cons 2 (cons 3 empty))))",
+            toListValue(
+                    toValue(0),
+                    toValue(1),
+                    toValue(2),
+                    toValue(3)
+            ));
+
+    testEvaluation(
+            "(cons 0 (cons \"hello\" (cons true (cons empty empty))))",
+            toListValue(
+                    toValue(0),
+                    toValue("hello"),
+                    toValue(true),
+                    toListValue()
+            ));
+
+    testPostRunEvaluation(
+            makeSource(
+                    "two = 2",
+                    "a = (cons two empty)",
+                    "b = (cons 1 a)",
+                    "c = (cons 0 b)"
+                    ),
+            "c",
+            toListValue(
+                    toValue(0),
+                    toValue(1),
+                    toValue(2)
+            )
+    );
+
+    testEvaluation("(list 0 1 2)", toListValue(toValue(0), toValue(1), toValue(2)));
+    testEvaluation(
+            "(list 0 \"hello\" true empty)",
+            toListValue(
+                    toValue(0),
+                    toValue("hello"),
+                    toValue(true),
+                    toListValue()
+            ));
+  }
+
+  @Test
+  public void testFirst() {
+    testEvaluation("(first (list 0 1 2))", toValue(0));
+    testEvaluation("(first (list 2 1 0))", toValue(2));
+    testEvaluation("(first (cons 0 empty)))", toValue(0));
+    testEvaluation("(first (cons \"hello\" empty)))", toValue("hello"));
+    testEvaluation("(first (cons true empty)))", toValue(true));
+    testEvaluation("(first (cons (list 1) empty)))", toListValue(toValue(1)));
+  }
+
+  @Test
+  public void testRest() {
+    testEvaluation("(rest (list 0 1 2))", toListValue(toValue(1), toValue(2)));
+    testEvaluation("(rest (list 1 2))", toListValue(toValue(2)));
+    testEvaluation("(rest (list (list 1 2) (list true)))", toListValue(toListValue(toValue(true))));
+  }
+
+  @Test
+  public void testConsHuh() {
+    testEvaluation("(cons? (list 0 1 2))", toValue(true));
+    testEvaluation("(cons? (list 0))", toValue(true));
+    testEvaluation("(cons? empty)", toValue(false));
+    testEvaluation("(cons? (list empty)))", toValue(true));
+    testEvaluation("(cons? 15)", toValue(false));
+    testEvaluation("(cons? \"hello\")", toValue(false));
+    testEvaluation("(cons? true)", toValue(false));
+  }
+
+  @Test
+  public void testEmptyHuh() {
+    testEvaluation("(empty? (list 0 1 2))", toValue(false));
+    testEvaluation("(empty? (list 0))", toValue(false));
+    testEvaluation("(empty? empty)", toValue(true));
+    testEvaluation("(empty? (list empty)))", toValue(false));
+    testEvaluation("(empty? 12)", toValue(false));
+    testEvaluation("(empty? \"hello\")", toValue(false));
+    testEvaluation("(empty? true)", toValue(false));
+
+  }
+
+  @Test
   public void testMutualRecursion() {
     String source =
             "def (foo a) { return (if (== a 0) 0 (+ a (bar (- a 1)))) }\n" +
@@ -150,10 +245,6 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
             "def (f4 a) { return (f1 a) }\n";
     testPostRunEvaluation(source, "y", toValue(10));
   }
-
-
-
-
 
   @Test
   public void testEmptyProgram() {

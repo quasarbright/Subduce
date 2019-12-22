@@ -1,5 +1,6 @@
 package language.interpreter.builtins;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -8,6 +9,7 @@ import language.interpreter.Environment;
 import language.interpreter.ImmutableVariableEnvironment;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.JavaFunctionValue;
+import language.interpreter.expression.value.listValue.ListValue;
 
 public class BuiltinUtilities {
   private final Map<String, Value> builtinValues;
@@ -29,6 +31,13 @@ public class BuiltinUtilities {
     addFunction("<=", LessThanOrEqualToFunction::new);
     addFunction(">", GreaterThanFunction::new);
     addFunction(">=", GreaterThanOrEqualToFunction::new);
+    addFunction("list", ListFunction::new);
+    addFunction("cons", ConsFunction::new);
+    addValue("empty", ListValue.fromValues(Collections.emptyList()));
+    addFunction("first", FirstFunction::new);
+    addFunction("rest", RestFunction::new);
+    addFunction("cons?", ConsHuhFunction::new);
+    addFunction("empty?", EmptyHuhFunction::new);
     this.baseEnvironment = baseEnvironment;
     fillBaseEnvironment();
   }
