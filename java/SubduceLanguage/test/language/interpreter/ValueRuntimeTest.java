@@ -195,7 +195,36 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testEvaluation("(empty? 12)", toValue(false));
     testEvaluation("(empty? \"hello\")", toValue(false));
     testEvaluation("(empty? true)", toValue(false));
+  }
 
+  @Test
+  public void testAnd() {
+    testEvaluation("(and true true)", toValue(true));
+    testEvaluation("(and true false)", toValue(false));
+    testEvaluation("(and false true)", toValue(false));
+    testEvaluation("(and false false)", toValue(false));
+    testEvaluation("(and true true true false)", toValue(false));
+    testEvaluation("(and false)", toValue(false));
+    testEvaluation("(and true)", toValue(true));
+    testEvaluation("(and true true true true)", toValue(true));
+  }
+
+  @Test
+  public void testOr() {
+    testEvaluation("(or true true)", toValue(true));
+    testEvaluation("(or true false)", toValue(true));
+    testEvaluation("(or false true)", toValue(true));
+    testEvaluation("(or false false)", toValue(false));
+    testEvaluation("(or true true true false)", toValue(true));
+    testEvaluation("(or false)", toValue(false));
+    testEvaluation("(or true)", toValue(true));
+    testEvaluation("(or true true true true)", toValue(true));
+  }
+
+  @Test
+  public void testNot() {
+    testEvaluation("(not true)", toValue(false));
+    testEvaluation("(not false)", toValue(true));
   }
 
   @Test
@@ -250,5 +279,23 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
   public void testEmptyProgram() {
     String source = "";
     testPostRunEvaluation(source, "(+ 1 2)", toValue(3));
+  }
+
+  @Test
+  public void testLazyEvaluation() {
+    testEvaluation("(if true 0 (not 123))", toValue(0));
+    testPostRunEvaluation(
+            makeSource(
+                    "def (foo a) { return (foo a) }",
+                    "x = (if false (foo 1) 0)"
+            ),
+            "x",
+            toValue(0)
+    );
+    String infiniteLoop = "def (foo a) { return (foo a) }\n";
+    testPostRunEvaluation(infiniteLoop, "(and false (foo a))", toValue(false));
+    testPostRunEvaluation(infiniteLoop, "(and true true false (foo a))", toValue(false));
+    testPostRunEvaluation(infiniteLoop, "(or true (foo a))", toValue(true));
+    testPostRunEvaluation(infiniteLoop, "(or false true false (foo a))", toValue(true));
   }
 }

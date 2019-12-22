@@ -38,6 +38,9 @@ public class BuiltinUtilities {
     addFunction("rest", RestFunction::new);
     addFunction("cons?", ConsHuhFunction::new);
     addFunction("empty?", EmptyHuhFunction::new);
+    addFunction("and", AndFunction::new);
+    addFunction("or", OrFunction::new);
+    addFunction("not", NotFunction::new);
     this.baseEnvironment = baseEnvironment;
     fillBaseEnvironment();
   }
