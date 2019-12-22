@@ -159,6 +159,23 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
   }
 
   @Test
+  public void testFirst() {
+    testEvaluation("(first (list 0 1 2))", toValue(0));
+    testEvaluation("(first (list 2 1 0))", toValue(2));
+    testEvaluation("(first (cons 0 empty)))", toValue(0));
+    testEvaluation("(first (cons \"hello\" empty)))", toValue("hello"));
+    testEvaluation("(first (cons true empty)))", toValue(true));
+    testEvaluation("(first (cons (list 1) empty)))", toListValue(toValue(1)));
+  }
+
+  @Test
+  public void testRest() {
+    testEvaluation("(rest (list 0 1 2))", toListValue(toValue(1), toValue(2)));
+    testEvaluation("(rest (list 1 2))", toListValue(toValue(2)));
+    testEvaluation("(rest (list (list 1 2) (list true)))", toListValue(toListValue(toValue(true))));
+  }
+
+  @Test
   public void testMutualRecursion() {
     String source =
             "def (foo a) { return (if (== a 0) 0 (+ a (bar (- a 1)))) }\n" +
