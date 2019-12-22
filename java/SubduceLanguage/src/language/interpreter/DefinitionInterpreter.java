@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.Value;
+import language.interpreter.statement.Statement;
 
 public class DefinitionInterpreter implements Interpreter<Value> {
   private final Scanner in;
@@ -20,7 +21,7 @@ public class DefinitionInterpreter implements Interpreter<Value> {
 
   @Override
   public void runWithInteraction(String source) {
-    Runtime<Expression, Expression, Value> runtime = new DefinitionRuntime();
+    Runtime<Statement, Expression, Value> runtime = new DefinitionRuntime();
     System.out.println("enter expressions or definitions to evaluate them");
     System.out.println("exit by typing \"exit\" and pressing enter");
     System.out.print("In: ");

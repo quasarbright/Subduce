@@ -12,8 +12,11 @@ import language.grammar.SubduceParser;
 import language.interpreter.builtins.BuiltinUtilities;
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.Value;
+import language.interpreter.statement.BaseStatementVisitor;
+import language.interpreter.statement.Statement;
+import language.interpreter.statement.StatementVisitor;
 
-public class DefinitionRuntime implements Runtime<Expression, Expression, Value> {
+public class DefinitionRuntime implements Runtime<Statement, Expression, Value> {
 
   private Environment<String, Value> environment;
 
@@ -29,36 +32,49 @@ public class DefinitionRuntime implements Runtime<Expression, Expression, Value>
     return new SubduceParser(tokenStream);
   }
 
-  private Expression parseProgram(String source) {
+  private Statement parseProgram(String source) {
     CharStream stream = CharStreams.fromString(source);
     SubduceLexer lexer = new SubduceLexer(stream);
     TokenStream tokenStream = new CommonTokenStream(lexer);
     SubduceParser parser = new SubduceParser(tokenStream);
     SubduceParser.ProgramContext ctx = parser.program();
-    Expression expression = ctx.accept(new BasicParseTreeTranslator());
-    return expression;
+    Statement statement = ctx.accept(new ParseTreeToStatement());
+    return statement;
   }
 
   private Expression parseExpression(String expressionString) {
     SubduceParser parser = getParser(expressionString);
     SubduceParser.ExpressionContext ctx = parser.expression();
-    return ctx.accept(new BasicParseTreeTranslator());
+    return ctx.accept(new ParseTreeToExpression());
   }
 
 
   @Override
   public Optional<Value> run(String source) {
-    Expression program = parseProgram(source);
+    Statement program = parseProgram(source);
     return run(program);
   }
 
   @Override
-  public Optional<Value> run(Expression statement) {
+  public Optional<Value> run(Statement statement) {
     ExpressionEvaluator evaluator = getEvaluator();
-    Value ans = evaluator.evaluate(statement);
     DefinitionEvaluator runner = getRunner();
-    environment = statement.accept(runner);
-    return Optional.ofNullable(ans);
+
+    // evaluate if expression statement
+    Optional<Value> ans = statement.accept(new BaseStatementVisitor<>(Optional.empty()) {
+      @Override
+      public Optional<Value> visitExpression(Expression expression) {
+        return Optional.of(evaluator.evaluate(expression));
+      }
+    });
+
+    // only run statement if it's not an expression statement
+    // otherwise, we'll evaluate twice
+    if(ans.isEmpty()) {
+      environment = statement.accept(runner);
+    }
+
+    return ans;
   }
 
   @Override

@@ -14,6 +14,7 @@ import language.interpreter.expression.Expression;
 import language.interpreter.statement.ExpressionStatement;
 import language.interpreter.statement.FunctionDefinitionStatement;
 import language.interpreter.statement.PrintStatement;
+import language.interpreter.statement.ReturnStatement;
 import language.interpreter.statement.SequenceStatement;
 import language.interpreter.statement.Statement;
 import language.interpreter.statement.VariableDefinitionStatement;
@@ -67,7 +68,8 @@ public class ParseTreeToStatement extends SubduceParserBaseVisitor<Statement> {
 
   @Override
   public Statement visitReturnStatement(SubduceParser.ReturnStatementContext ctx) {
-    return ctx.expression().accept(this);
+    Expression expression = ctx.expression().accept(new ParseTreeToExpression());
+    return new ReturnStatement(expression);
   }
 
   @Override

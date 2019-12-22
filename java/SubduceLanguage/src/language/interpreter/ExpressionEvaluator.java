@@ -13,6 +13,10 @@ import language.interpreter.expression.value.functionValue.FunctionValue;
 import language.interpreter.expression.value.functionValue.FunctionValueVisitor;
 import language.interpreter.expression.value.functionValue.JavaFunctionValue;
 import language.interpreter.expression.value.functionValue.SubduceFunctionValue;
+import language.interpreter.statement.BaseStatementVisitor;
+import language.interpreter.statement.ReturnStatement;
+import language.interpreter.statement.Statement;
+import language.interpreter.statement.StatementVisitor;
 
 /**
  * Evaluates expressions.
@@ -82,7 +86,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
   private Value applyFunction(FunctionValue functionValue, List<Expression> arguments) {
     return functionValue.accept(new FunctionValueVisitor<Value>() {
       @Override
-      public Value visitSubduceFunction(List<String> argnames, Expression body, Environment<String, Value> environment) {
+      public Value visitSubduceFunction(List<String> argnames, Statement body, Environment<String, Value> environment) {
         // make sure argument names and arguments are the same length
         if(argnames.size() != arguments.size()) {
           // TODO fix
@@ -91,19 +95,57 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
         // add arguments with values to environment and evaluate body
 
         // add new scope for function body
-        List<Value> evaluatedArguents = evaluateAll(arguments);
         environment = environment.withNewScope();
-        for(int i = 0; i < argnames.size(); i++) {
-          String argname = argnames.get(i);
-          Value argumentValue = evaluatedArguents.get(i);
-          environment = environment.withNewVariable(argname, argumentValue);
+        // add evaluated arguments to scope
+        List<Value> evaluatedArguents = evaluateAll(arguments);
+        for(int i = 0; i < evaluatedArguents.size(); i++) {
+          environment = environment.withNewVariable(argnames.get(i), evaluatedArguents.get(i));
         }
-        return evaluate(body, environment);
+        // run statements in body
+        environment = body.accept(new DefinitionEvaluator(environment, ExpressionEvaluator.this));
+
+        // evaluate function body
+        return evaluateFunctionBody(body, environment);
       }
 
       @Override
       public Value visitJavaFunction(JavaFunctionValue.JavaFunctionImplementation function) {
         return function.apply(ExpressionEvaluator.this::evaluate, arguments);
+      }
+    });
+  }
+
+  private Value evaluateFunctionBody(Statement body, Environment<String, Value> environment) {
+    // if the body is just a return statement, evaluate it
+    // otherwise, it better be a sequence where the last statement is a return statement.
+    // in that case, evaluate it
+    return body.accept(new BaseStatementVisitor<>(() -> {throw new IllegalStateException();}) {
+      @Override
+      public Value visitReturn(Expression expression) {
+        return visitReturnHelp(expression);
+      }
+
+      private Value visitReturnHelp(Expression expression) {
+        // I define this so I can use it in the inner visitor
+        // (jank)
+        return evaluate(expression, environment);
+      }
+
+      @Override
+      public Value visitSequence(List<Statement> statements) {
+        if(statements.isEmpty()) {
+          // should be prevented by the parser
+          throw new IllegalArgumentException("function body must be non-empty");
+        }
+        Statement lastState = statements.get(statements.size()-1);
+        return lastState.accept(new BaseStatementVisitor<>(() -> {
+          throw new IllegalArgumentException("function body must end in a return statement");
+        }) {
+          @Override
+          public Value visitReturn(Expression expression) {
+            return visitReturnHelp(expression);
+          }
+        });
       }
     });
   }
@@ -141,7 +183,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
 
   @Override
   public Value visitLambda(List<String> argnames, Expression body) {
-    return new SubduceFunctionValue(argnames, body, environment);
+    return new SubduceFunctionValue(argnames, new ReturnStatement(body), environment);
   }
 
   @Override
