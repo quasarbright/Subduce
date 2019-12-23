@@ -87,20 +87,19 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
     return functionValue.accept(new FunctionValueVisitor<Value>() {
       @Override
       public Value visitSubduceFunction(List<String> argnames, Statement body, Environment<String, Value> environment, FunctionSignature signature) {
-        // make sure argument names and arguments are the same length
-        if(argnames.size() != arguments.size()) {
-          // TODO fix
-          throw new IllegalArgumentException("function got unexpected number of arguments");
-        }
+        List<Value> evaluatedArguments = evaluateAll(arguments);
+        signature.validateArguments(evaluatedArguments);
+
         // add arguments with values to environment and evaluate body
 
         // add new scope for function body
         environment = environment.withNewScope();
+
         // add evaluated arguments to scope
-        List<Value> evaluatedArguents = evaluateAll(arguments);
-        for(int i = 0; i < evaluatedArguents.size(); i++) {
-          environment = environment.withNewVariable(argnames.get(i), evaluatedArguents.get(i));
+        for(int i = 0; i < evaluatedArguments.size(); i++) {
+          environment = environment.withNewVariable(argnames.get(i), evaluatedArguments.get(i));
         }
+
         // run statements in body
         environment = body.accept(new StatementRunner(environment, ExpressionEvaluator.this));
 
