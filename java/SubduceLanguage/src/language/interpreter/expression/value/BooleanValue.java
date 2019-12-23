@@ -2,6 +2,9 @@ package language.interpreter.expression.value;
 
 import java.util.Objects;
 
+import language.typing.BuiltInType;
+import language.typing.ValueType;
+
 public class BooleanValue implements Value {
     public final boolean val;
 
@@ -30,5 +33,10 @@ public class BooleanValue implements Value {
     @Override
     public int hashCode() {
         return Objects.hash(val);
+    }
+
+    @Override
+    public ValueType getType() {
+        return BuiltInType.BOOLEAN;
     }
 }

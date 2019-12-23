@@ -6,6 +6,8 @@ import java.util.function.Supplier;
 
 import language.interpreter.expression.value.BooleanValue;
 import language.interpreter.expression.value.Value;
+import language.interpreter.expression.value.functionValue.signature.RepeatedTypeSignature;
+import language.typing.BuiltInType;
 
 /**
  * Abstract number comparison function. Operator must be transitive, so != won't work.
@@ -19,14 +21,12 @@ public abstract class ANumberComparisonFunction extends ANumberFunction {
    * @param name the function name
    */
   public ANumberComparisonFunction(String name) {
-    super(name);
+    super(name, new RepeatedTypeSignature(name, BuiltInType.NUMBER, 2));
   }
 
   @Override
   public Value apply(List<Value> values) {
-    if(values.size() < 2) {
-      throw new IllegalArgumentException(name+" expects at least two arguments, got "+values.size());
-    }
+    validateArguments(values);
     List<Double> numericalArguments = castArguments(values);
     double prev = numericalArguments.get(0);
     for(int i = 1; i < numericalArguments.size(); i++) {

@@ -4,24 +4,25 @@ import java.util.List;
 
 import language.interpreter.expression.value.BaseValueVisitor;
 import language.interpreter.expression.value.Value;
+import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
 import language.interpreter.expression.value.listValue.ListValue;
 import language.interpreter.expression.value.listValue.ListValueVisitor;
+import language.typing.AnyType;
+import language.typing.BuiltInType;
 
 /**
  * Abstract class for functions that take in a single list.
  */
 public abstract class AListFunction extends BaseJavaFunctionImplementation {
   public AListFunction(String name) {
-    super(name);
+    super(name, new TypeSequenceSignature(name, BuiltInType.LIST));
   }
 
   @Override
   protected Value apply(List<Value> arguments) {
-    if(arguments.isEmpty()) {
-      throw new IllegalArgumentException(name+" expects 1 argument, got "+arguments.size());
-    }
+    validateArguments(arguments);
     Value argument = arguments.get(0);
-    return argument.accept(new BaseValueVisitor<>(() -> onNonList(argument)) {
+    return argument.accept(new BaseValueVisitor<>(new IllegalStateException("signature should've been validated")) {
       @Override
       public Value visitList(ListValue list) {
         return list.accept(new ListValueVisitor<>() {
@@ -37,10 +38,6 @@ public abstract class AListFunction extends BaseJavaFunctionImplementation {
         });
       }
     });
-  }
-
-  protected Value onNonList(Value argument) {
-    throw new IllegalArgumentException(name+" expects a list, got "+argument);
   }
 
   protected abstract Value onEmpty();

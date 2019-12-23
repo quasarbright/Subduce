@@ -9,7 +9,7 @@ import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
 import language.interpreter.expression.value.BaseValueVisitor;
 import language.interpreter.expression.value.Value;
-import language.interpreter.expression.value.ValueVisitor;
+import language.interpreter.expression.value.functionValue.signature.FunctionSignature;
 import language.interpreter.expression.value.functionValue.FunctionValue;
 import language.interpreter.expression.value.functionValue.FunctionValueVisitor;
 import language.interpreter.expression.value.functionValue.JavaFunctionValue;
@@ -86,7 +86,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
   private Value applyFunction(FunctionValue functionValue, List<Expression> arguments) {
     return functionValue.accept(new FunctionValueVisitor<Value>() {
       @Override
-      public Value visitSubduceFunction(List<String> argnames, Statement body, Environment<String, Value> environment) {
+      public Value visitSubduceFunction(List<String> argnames, Statement body, Environment<String, Value> environment, FunctionSignature signature) {
         // make sure argument names and arguments are the same length
         if(argnames.size() != arguments.size()) {
           // TODO fix
@@ -167,7 +167,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
 
   @Override
   public Value visitLambda(List<String> argnames, Expression body) {
-    return new SubduceFunctionValue(argnames, new ReturnStatement(body), environment);
+    return new SubduceFunctionValue.SubduceFunctionBuilder(argnames, new ReturnStatement(body), environment).get();
   }
 
   @Override

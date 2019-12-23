@@ -4,6 +4,8 @@ import java.util.List;
 
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
+import language.typing.BuiltInType;
+import language.typing.ValueType;
 
 /**
  * Represents a cons-list.
@@ -26,5 +28,10 @@ public interface ListValue extends Value {
       ans = new ConsList(value, ans);
     }
     return ans;
+  }
+
+  @Override
+  default ValueType getType() {
+    return BuiltInType.LIST;
   }
 }

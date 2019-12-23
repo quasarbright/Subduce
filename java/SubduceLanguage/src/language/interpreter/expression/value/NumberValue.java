@@ -3,6 +3,8 @@ package language.interpreter.expression.value;
 import java.util.Objects;
 
 import language.interpreter.builtins.NumberEqualFunction;
+import language.typing.BuiltInType;
+import language.typing.ValueType;
 
 public class NumberValue implements Value {
   public final double val;
@@ -14,6 +16,11 @@ public class NumberValue implements Value {
   @Override
   public <R> R accept(ValueVisitor<R> visitor) {
     return visitor.visitNumber(val);
+  }
+
+  @Override
+  public ValueType getType() {
+    return BuiltInType.NUMBER;
   }
 
   @Override

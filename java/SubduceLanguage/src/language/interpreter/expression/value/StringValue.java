@@ -2,6 +2,9 @@ package language.interpreter.expression.value;
 
 import java.util.Objects;
 
+import language.typing.BuiltInType;
+import language.typing.ValueType;
+
 public class StringValue implements Value {
     public final String val;
 
@@ -12,6 +15,11 @@ public class StringValue implements Value {
     @Override
     public <R> R accept(ValueVisitor<R> visitor) {
         return visitor.visitString(val);
+    }
+
+    @Override
+    public ValueType getType() {
+        return BuiltInType.STRING;
     }
 
     @Override

@@ -94,7 +94,9 @@ public class StatementRunner implements StatementVisitor<Environment<String, Val
   }
 
   private SubduceFunctionValue makeFunction(String name, List<String> argnames, Statement body) {
-    return new SubduceFunctionValue(argnames, body, environment, name);
+    return new SubduceFunctionValue.SubduceFunctionBuilder(argnames, body, environment)
+            .setName(name)
+            .get();
   }
 
   private SubduceFunctionValue makeFunction(FunctionDefinitionStatement functionDefinitionStatement) {

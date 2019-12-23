@@ -18,9 +18,4 @@ public class ConsHuhFunction extends AListFunction {
   protected Value onCons(Value first, ListValue rest) {
     return new BooleanValue(true);
   }
-
-  @Override
-  protected Value onNonList(Value argument) {
-    return new BooleanValue(false);
-  }
 }

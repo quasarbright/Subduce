@@ -4,23 +4,22 @@ import java.util.List;
 
 import language.interpreter.expression.value.BaseValueVisitor;
 import language.interpreter.expression.value.Value;
+import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
 import language.interpreter.expression.value.listValue.ConsList;
 import language.interpreter.expression.value.listValue.ListValue;
+import language.typing.AnyType;
+import language.typing.BuiltInType;
 
 public class ConsFunction extends BaseJavaFunctionImplementation {
   public ConsFunction(String name) {
-    super(name);
+    super(name, new TypeSequenceSignature(name, new AnyType(), BuiltInType.LIST));
   }
 
   @Override
   protected Value apply(List<Value> arguments) {
-    if(arguments.size() != 2) {
-      throw new IllegalArgumentException(name+" expects 2 arguments, got "+arguments.size());
-    }
+    validateArguments(arguments);
     Value first = arguments.get(0);
-    ListValue rest = arguments.get(1).accept(new BaseValueVisitor<ListValue>(() -> {
-      throw new IllegalArgumentException(name+" expects a list as its second argument, got "+arguments.get(1));
-    }) {
+    ListValue rest = arguments.get(1).accept(new BaseValueVisitor<ListValue>(new IllegalArgumentException("arguments should've been validated")) {
       @Override
       public ListValue visitList(ListValue list) {
         return list;

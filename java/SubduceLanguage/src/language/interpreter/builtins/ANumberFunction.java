@@ -5,11 +5,12 @@ import java.util.stream.Collectors;
 
 import language.interpreter.expression.value.BaseValueVisitor;
 import language.interpreter.expression.value.Value;
+import language.interpreter.expression.value.functionValue.signature.FunctionSignature;
 
 public abstract class ANumberFunction extends BaseJavaFunctionImplementation {
 
-  public ANumberFunction(String name) {
-    super(name);
+  public ANumberFunction(String name, FunctionSignature signature) {
+    super(name, signature);
   }
 
   protected List<Double> castArguments(List<Value> arguments) {
@@ -19,16 +20,11 @@ public abstract class ANumberFunction extends BaseJavaFunctionImplementation {
   }
 
   protected double castArgument(Value argument) {
-    return argument.accept(new BaseValueVisitor<Double>(() -> defaultCastBehavior(argument)) {
+    return argument.accept(new BaseValueVisitor<Double>(new IllegalStateException("signature should've been validated")) {
       @Override
       public Double visitNumber(double d) {
         return d;
       }
     });
-  }
-
-  protected double defaultCastBehavior(Value value) {
-    // TODO fix
-    throw new IllegalArgumentException(name+" expected number arguments, got "+value);
   }
 }

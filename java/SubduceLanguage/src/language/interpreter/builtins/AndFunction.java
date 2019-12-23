@@ -7,10 +7,13 @@ import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.BaseValueVisitor;
 import language.interpreter.expression.value.BooleanValue;
 import language.interpreter.expression.value.Value;
+import language.interpreter.expression.value.functionValue.signature.RepeatedTypeSignature;
+import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
+import language.typing.BuiltInType;
 
 public class AndFunction extends BaseJavaFunctionImplementation {
   public AndFunction(String name) {
-    super(name);
+    super(name, new RepeatedTypeSignature(name, BuiltInType.BOOLEAN, 2));
   }
 
   @Override
@@ -35,6 +38,7 @@ public class AndFunction extends BaseJavaFunctionImplementation {
 
   @Override
   protected Value apply(List<Value> arguments) {
+    validateArguments(arguments);
     for(Value argument: arguments) {
       boolean b = getBool(argument);
       if(!b) {

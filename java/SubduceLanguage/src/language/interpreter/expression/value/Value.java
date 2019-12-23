@@ -2,6 +2,7 @@ package language.interpreter.expression.value;
 
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
+import language.typing.ValueType;
 
 public interface Value extends Expression {
   <R> R accept(ValueVisitor<R> visitor);
@@ -10,4 +11,6 @@ public interface Value extends Expression {
   default <R> R accept(ExpressionVisitor<R> visitor) {
     return visitor.visitValue(this);
   }
+
+  ValueType getType();
 }

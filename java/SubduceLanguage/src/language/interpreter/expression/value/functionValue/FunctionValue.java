@@ -2,6 +2,9 @@ package language.interpreter.expression.value.functionValue;
 
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
+import language.interpreter.expression.value.functionValue.signature.FunctionSignature;
+import language.typing.BuiltInType;
+import language.typing.ValueType;
 
 public interface FunctionValue extends Value {
   <R> R accept(FunctionValueVisitor<R> visitor);
@@ -10,4 +13,11 @@ public interface FunctionValue extends Value {
   default <R> R accept(ValueVisitor<R> visitor) {
     return visitor.visitFunction(this);
   }
+
+  @Override
+  default ValueType getType() {
+    return BuiltInType.FUNCTION;
+  }
+
+  FunctionSignature getSignature();
 }

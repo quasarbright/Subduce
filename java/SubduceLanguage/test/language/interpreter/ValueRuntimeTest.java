@@ -181,9 +181,6 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testEvaluation("(cons? (list 0))", toValue(true));
     testEvaluation("(cons? empty)", toValue(false));
     testEvaluation("(cons? (list empty)))", toValue(true));
-    testEvaluation("(cons? 15)", toValue(false));
-    testEvaluation("(cons? \"hello\")", toValue(false));
-    testEvaluation("(cons? true)", toValue(false));
   }
 
   @Test
@@ -192,9 +189,6 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testEvaluation("(empty? (list 0))", toValue(false));
     testEvaluation("(empty? empty)", toValue(true));
     testEvaluation("(empty? (list empty)))", toValue(false));
-    testEvaluation("(empty? 12)", toValue(false));
-    testEvaluation("(empty? \"hello\")", toValue(false));
-    testEvaluation("(empty? true)", toValue(false));
   }
 
   @Test

@@ -1,12 +1,12 @@
 package language.interpreter.builtins;
 
 import java.util.List;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.Value;
+import language.interpreter.expression.value.functionValue.signature.FunctionSignature;
 import language.interpreter.expression.value.functionValue.JavaFunctionValue;
 
 /**
@@ -15,9 +15,11 @@ import language.interpreter.expression.value.functionValue.JavaFunctionValue;
  */
 public abstract class BaseJavaFunctionImplementation implements JavaFunctionValue.JavaFunctionImplementation {
   protected final String name;
+  protected final FunctionSignature signature;
 
-  public BaseJavaFunctionImplementation(String name) {
+  public BaseJavaFunctionImplementation(String name, FunctionSignature signature) {
     this.name = name;
+    this.signature = signature;
   }
 
   @Override
@@ -46,6 +48,15 @@ public abstract class BaseJavaFunctionImplementation implements JavaFunctionValu
   }
 
   protected abstract Value apply(List<Value> arguments);
+
+  @Override
+  public FunctionSignature getSignature() {
+    return signature;
+  }
+
+  protected void validateArguments(List<Value> arguments) {
+    getSignature().validateArguments(arguments);
+  }
 
   @Override
   public String toString() {

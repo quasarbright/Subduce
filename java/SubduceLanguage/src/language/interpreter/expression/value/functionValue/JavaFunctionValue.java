@@ -2,10 +2,9 @@ package language.interpreter.expression.value.functionValue;
 
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.Value;
+import language.interpreter.expression.value.functionValue.signature.FunctionSignature;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -21,6 +20,11 @@ public class JavaFunctionValue implements FunctionValue {
   @Override
   public <R> R accept(FunctionValueVisitor<R> visitor) {
     return visitor.visitJavaFunction(implementation);
+  }
+
+  @Override
+  public FunctionSignature getSignature() {
+    return implementation.getSignature();
   }
 
   @Override
@@ -41,8 +45,8 @@ public class JavaFunctionValue implements FunctionValue {
     return implementation.hashCode();
   }
 
-  @FunctionalInterface
   public interface JavaFunctionImplementation {
+    FunctionSignature getSignature();
     Value apply(Function<Expression, Value> evaluator, List<Expression> expressions);
   }
 }
