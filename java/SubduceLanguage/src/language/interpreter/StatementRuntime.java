@@ -94,4 +94,9 @@ public class StatementRuntime implements Runtime<Statement, Expression, Value> {
   private StatementRunner getRunner() {
     return new StatementRunner(environment, getEvaluator());
   }
+
+  @Override
+  public Environment<String, Value> getEnvironment() {
+    return environment;
+  }
 }

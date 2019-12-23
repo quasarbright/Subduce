@@ -43,4 +43,6 @@ public interface Runtime<StatementType, ExpressionType, ValueType> {
    * @return the evaluated value of this expression
    */
   ValueType evaluate(ExpressionType expression);
+
+  Environment<String, ValueType> getEnvironment();
 }

@@ -1,0 +1,108 @@
+// foldr : (X Y) [X Y -> Y] Y [List X] -> Y
+// reduce the list by applying the combiner to the elements of the list.
+
+/*
+the combiner takes in the current list element (an X) and the result of the reduction on
+the rest of the list, and combines the two into a new result.
+
+for example, (foldr + 0 (list 1 2 3)) sums the numbers 1, 2, and 3.
+X and Y are number.
+
+for example, (foldr cons empty (list 1 2 3) returns (list 1 2 3).
+X is number and Y is [List number].
+
+in general, for (list a b c),
+(combiner a (combiner b (combiner c base))).
+*/
+def (foldr combiner base lox) {
+  return (if (empty? lox)
+             base
+             (combiner (first lox) (foldr combiner base (rest lox))))
+}
+
+
+// foldl : (X Y) [X Y -> Y] Y [List X] -> Y
+// reduce the list by applying the combiner to the elements of the list.
+
+/*
+like foldr, but in calls combiner in "reverse" order
+
+foldl cons empty (list 1 2 3) returns (list 3 2 1)
+
+for (list a b c),
+(combiner c (combiner b (combiner a base)))
+*/
+def (foldl combiner base lox) {
+  return (if (empty? lox)
+             base
+             (foldl combiner (combiner (first lox) base) (rest lox)))
+}
+
+
+// append : [List Any] [List Any] -> [List Any]
+// adds the second list to the end of the first one
+def (append l1 l2) {
+  return (foldr cons l2 l1)
+}
+
+// map : (X Y) [X -> Y] [List X] -> [List Y]
+// apply the function to each element
+def (map x->y lox) {
+  return (foldr (lam (current result) (cons (x->y current) result)) empty lox))
+}
+
+// ormap : (X) [X -> boolean] [List X] -> boolean
+def (ormap f lox) {
+  return (foldr (lam (x result) (or (f x) result)) false lox)
+}
+
+// andmap : (X) [X -> boolean] [List X] -> boolean
+def (andmap f lox) {
+return (foldr (lam (x result) (and (f x) result)) true lox)
+}
+
+// filter : (X) [X -> boolean] [List X] -> [List X]
+// filters the list to only contain elements which the function returns true for
+def (filter should-keep? lox) {
+  return (foldr (lam (x result) (if (should-keep? x) (cons x result) result)) empty lox)
+}
+
+// range : number number -> [List number]
+// makes a list of integers from min to max excluding max
+
+/*
+example: (range 0 3) returns (list 0 1 2)
+*/
+def (range min max) {
+  return (if (>= min max)
+             empty
+             (cons min (range (+ 1 min) max)))
+}
+
+// build-list : (X) [number -> X] -> [List X]
+// maps the function onto the numbers 0 to max excluding max
+
+/*
+example: (build-list add1 3) returns (list 1 2 3)
+*/
+def (build-list number->x max) {
+  return (map number->x (range 0 max))
+}
+
+// add1 : number -> number
+// add 1 to the number
+def (add1 num) {
+  return (+ num 1)
+}
+
+// subtract 1 from the number
+// sub1 : number -> number
+def (sub1 num) {
+  return (- num 1)
+}
+
+// id : Any -> Any
+// identity function. Returns whatever is given to it
+def (id x) {
+  return x
+}
