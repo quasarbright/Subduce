@@ -3,8 +3,8 @@ package language.interpreter.expression.value;
 import java.util.Objects;
 
 import language.interpreter.builtins.NumberEqualFunction;
-import language.typing.BuiltInType;
-import language.typing.ValueType;
+import language.interpreter.typing.BuiltInType;
+import language.interpreter.typing.ValueType;
 
 public class NumberValue implements Value {
   public final double val;

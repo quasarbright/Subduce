@@ -1,6 +1,4 @@
-package language.typing;
-
-import java.util.List;
+package language.interpreter.typing;
 
 /**
  * Built-in value types. Does not distinguish between user-defined struct types. (treats all structs

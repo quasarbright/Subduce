@@ -6,7 +6,7 @@ import language.interpreter.expression.value.BaseValueVisitor;
 import language.interpreter.expression.value.BooleanValue;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
-import language.typing.BuiltInType;
+import language.interpreter.typing.BuiltInType;
 
 public class NotFunction extends BaseJavaFunctionImplementation {
   public NotFunction(String name) {

@@ -3,8 +3,8 @@ package language.interpreter.expression.value.functionValue;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
 import language.interpreter.expression.value.functionValue.signature.FunctionSignature;
-import language.typing.BuiltInType;
-import language.typing.ValueType;
+import language.interpreter.typing.BuiltInType;
+import language.interpreter.typing.ValueType;
 
 public interface FunctionValue extends Value {
   <R> R accept(FunctionValueVisitor<R> visitor);

@@ -8,8 +8,8 @@ import language.interpreter.expression.value.BaseValueVisitor;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
 import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
-import language.typing.AnyType;
-import language.typing.BuiltInType;
+import language.interpreter.typing.AnyType;
+import language.interpreter.typing.BuiltInType;
 
 public class IfFunction extends BaseJavaFunctionImplementation {
   public IfFunction(String name) {

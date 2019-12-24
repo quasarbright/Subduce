@@ -1,4 +1,4 @@
-package language.typing;
+package language.interpreter.typing;
 
 import java.util.ArrayList;
 import java.util.Arrays;

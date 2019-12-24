@@ -1,13 +1,11 @@
 package language.interpreter.builtins;
 
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 import language.interpreter.expression.value.BooleanValue;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.RepeatedTypeSignature;
-import language.typing.BuiltInType;
+import language.interpreter.typing.BuiltInType;
 
 /**
  * Abstract number comparison function. Operator must be transitive, so != won't work.

@@ -7,8 +7,8 @@ import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
 import language.interpreter.expression.value.listValue.ConsList;
 import language.interpreter.expression.value.listValue.ListValue;
-import language.typing.AnyType;
-import language.typing.BuiltInType;
+import language.interpreter.typing.AnyType;
+import language.interpreter.typing.BuiltInType;
 
 public class ConsFunction extends BaseJavaFunctionImplementation {
   public ConsFunction(String name) {

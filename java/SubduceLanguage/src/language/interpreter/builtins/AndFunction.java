@@ -8,8 +8,7 @@ import language.interpreter.expression.value.BaseValueVisitor;
 import language.interpreter.expression.value.BooleanValue;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.RepeatedTypeSignature;
-import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
-import language.typing.BuiltInType;
+import language.interpreter.typing.BuiltInType;
 
 public class AndFunction extends BaseJavaFunctionImplementation {
   public AndFunction(String name) {

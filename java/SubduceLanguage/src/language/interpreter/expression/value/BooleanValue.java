@@ -2,8 +2,8 @@ package language.interpreter.expression.value;
 
 import java.util.Objects;
 
-import language.typing.BuiltInType;
-import language.typing.ValueType;
+import language.interpreter.typing.BuiltInType;
+import language.interpreter.typing.ValueType;
 
 public class BooleanValue implements Value {
     public final boolean val;

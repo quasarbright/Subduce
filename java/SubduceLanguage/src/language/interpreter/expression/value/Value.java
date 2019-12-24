@@ -2,7 +2,7 @@ package language.interpreter.expression.value;
 
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
-import language.typing.ValueType;
+import language.interpreter.typing.ValueType;
 
 public interface Value extends Expression {
   <R> R accept(ValueVisitor<R> visitor);

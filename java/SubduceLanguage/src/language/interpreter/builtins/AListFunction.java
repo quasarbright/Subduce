@@ -7,8 +7,7 @@ import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
 import language.interpreter.expression.value.listValue.ListValue;
 import language.interpreter.expression.value.listValue.ListValueVisitor;
-import language.typing.AnyType;
-import language.typing.BuiltInType;
+import language.interpreter.typing.BuiltInType;
 
 /**
  * Abstract class for functions that take in a single list.

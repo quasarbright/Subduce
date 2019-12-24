@@ -1,6 +1,4 @@
-package language.typing;
-
-import java.util.List;
+package language.interpreter.typing;
 
 import language.interpreter.expression.value.Value;
 

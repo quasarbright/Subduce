@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import language.interpreter.expression.value.Value;
-import language.typing.ValueType;
+import language.interpreter.typing.ValueType;
 
 /**
  * For when a function can accept an arbitrary number of arguments of a given type.

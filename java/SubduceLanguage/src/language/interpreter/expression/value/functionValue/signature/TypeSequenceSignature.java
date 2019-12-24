@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import language.interpreter.expression.value.Value;
-import language.typing.ValueType;
+import language.interpreter.typing.ValueType;
 
 /**
  * For specifying each argument's expected type for a fixed number of arguments.

@@ -1,4 +1,4 @@
-package language.typing;
+package language.interpreter.typing;
 
 import language.interpreter.expression.value.Value;
 

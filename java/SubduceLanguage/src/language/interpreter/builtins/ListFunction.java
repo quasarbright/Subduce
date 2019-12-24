@@ -5,8 +5,7 @@ import java.util.List;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.RepeatedTypeSignature;
 import language.interpreter.expression.value.listValue.ListValue;
-import language.typing.AnyType;
-import language.typing.BuiltInType;
+import language.interpreter.typing.AnyType;
 
 public class ListFunction extends BaseJavaFunctionImplementation {
   public ListFunction(String name) {

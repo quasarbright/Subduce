@@ -8,7 +8,7 @@ import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.FunctionSignature;
 import language.interpreter.expression.value.functionValue.signature.RepeatedTypeSignature;
 import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
-import language.typing.BuiltInType;
+import language.interpreter.typing.BuiltInType;
 
 /**
  * A numerical function based on a binary operator like + or - or * or /.

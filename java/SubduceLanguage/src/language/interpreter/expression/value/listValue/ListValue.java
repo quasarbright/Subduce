@@ -4,8 +4,8 @@ import java.util.List;
 
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
-import language.typing.BuiltInType;
-import language.typing.ValueType;
+import language.interpreter.typing.BuiltInType;
+import language.interpreter.typing.ValueType;
 
 /**
  * Represents a cons-list.
