@@ -11,5 +11,6 @@ public interface StatementVisitor<R> {
   R visitReturn(Expression expression);
   R visitFunctionDefinition(String name, List<String> argnames, Statement body);
   R visitVariableDefinition(String name, Expression expression);
+  R visitStructDefinition(String name, List<String> fieldNames);
   R visitSequence(List<Statement> statements);
 }

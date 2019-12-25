@@ -18,17 +18,18 @@ public class SubduceParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		EQ=1, LPAREN=2, RPAREN=3, LBRACE=4, RBRACE=5, LAM=6, DEF=7, PRINT=8, RETURN=9, 
-		NUMBER=10, BOOLEAN=11, IDENTIFIER=12, WS=13, QUOTE=14, NORMAL_CHARACTER=15, 
-		ESCAPED_CHARACTER=16;
+		DEFINE_STRUCT=10, NUMBER=11, BOOLEAN=12, IDENTIFIER=13, WS=14, QUOTE=15, 
+		NORMAL_CHARACTER=16, ESCAPED_CHARACTER=17;
 	public static final int
 		RULE_program = 0, RULE_statement = 1, RULE_variableAssignment = 2, RULE_functionDefinition = 3, 
-		RULE_returnStatement = 4, RULE_printStatement = 5, RULE_expression = 6, 
-		RULE_lambdaDefinition = 7, RULE_functionCall = 8, RULE_string = 9, RULE_stringContents = 10;
+		RULE_structDefinition = 4, RULE_returnStatement = 5, RULE_printStatement = 6, 
+		RULE_expression = 7, RULE_lambdaDefinition = 8, RULE_functionCall = 9, 
+		RULE_string = 10, RULE_stringContents = 11;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"program", "statement", "variableAssignment", "functionDefinition", "returnStatement", 
-			"printStatement", "expression", "lambdaDefinition", "functionCall", "string", 
-			"stringContents"
+			"program", "statement", "variableAssignment", "functionDefinition", "structDefinition", 
+			"returnStatement", "printStatement", "expression", "lambdaDefinition", 
+			"functionCall", "string", "stringContents"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -36,15 +37,15 @@ public class SubduceParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'='", "'('", "')'", "'{'", "'}'", "'lam'", "'def'", "'print'", 
-			"'return'"
+			"'return'", "'define-struct'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, "EQ", "LPAREN", "RPAREN", "LBRACE", "RBRACE", "LAM", "DEF", "PRINT", 
-			"RETURN", "NUMBER", "BOOLEAN", "IDENTIFIER", "WS", "QUOTE", "NORMAL_CHARACTER", 
-			"ESCAPED_CHARACTER"
+			"RETURN", "DEFINE_STRUCT", "NUMBER", "BOOLEAN", "IDENTIFIER", "WS", "QUOTE", 
+			"NORMAL_CHARACTER", "ESCAPED_CHARACTER"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -131,17 +132,17 @@ public class SubduceParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(25);
+			setState(27);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAREN) | (1L << DEF) | (1L << PRINT) | (1L << NUMBER) | (1L << BOOLEAN) | (1L << IDENTIFIER) | (1L << QUOTE))) != 0)) {
 				{
 				{
-				setState(22);
+				setState(24);
 				statement();
 				}
 				}
-				setState(27);
+				setState(29);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -164,6 +165,9 @@ public class SubduceParser extends Parser {
 		}
 		public FunctionDefinitionContext functionDefinition() {
 			return getRuleContext(FunctionDefinitionContext.class,0);
+		}
+		public StructDefinitionContext structDefinition() {
+			return getRuleContext(StructDefinitionContext.class,0);
 		}
 		public PrintStatementContext printStatement() {
 			return getRuleContext(PrintStatementContext.class,0);
@@ -194,34 +198,41 @@ public class SubduceParser extends Parser {
 		StatementContext _localctx = new StatementContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_statement);
 		try {
-			setState(32);
+			setState(35);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(28);
+				setState(30);
 				variableAssignment();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(29);
+				setState(31);
 				functionDefinition();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(30);
-				printStatement();
+				setState(32);
+				structDefinition();
 				}
 				break;
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(31);
+				setState(33);
+				printStatement();
+				}
+				break;
+			case 5:
+				enterOuterAlt(_localctx, 5);
+				{
+				setState(34);
 				expression();
 				}
 				break;
@@ -269,11 +280,11 @@ public class SubduceParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(34);
+			setState(37);
 			match(IDENTIFIER);
-			setState(35);
+			setState(38);
 			match(EQ);
-			setState(36);
+			setState(39);
 			expression();
 			}
 		}
@@ -333,48 +344,127 @@ public class SubduceParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(38);
+			setState(41);
 			match(DEF);
-			setState(39);
+			setState(42);
 			match(LPAREN);
-			setState(40);
+			setState(43);
 			match(IDENTIFIER);
-			setState(42); 
+			setState(45); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(41);
+				setState(44);
 				match(IDENTIFIER);
 				}
 				}
-				setState(44); 
+				setState(47); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==IDENTIFIER );
-			setState(46);
+			setState(49);
 			match(RPAREN);
-			setState(47);
+			setState(50);
 			match(LBRACE);
-			setState(51);
+			setState(54);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAREN) | (1L << DEF) | (1L << PRINT) | (1L << NUMBER) | (1L << BOOLEAN) | (1L << IDENTIFIER) | (1L << QUOTE))) != 0)) {
 				{
 				{
-				setState(48);
+				setState(51);
 				statement();
 				}
 				}
-				setState(53);
+				setState(56);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(54);
+			setState(57);
 			returnStatement();
-			setState(55);
+			setState(58);
 			match(RBRACE);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class StructDefinitionContext extends ParserRuleContext {
+		public List<TerminalNode> LPAREN() { return getTokens(SubduceParser.LPAREN); }
+		public TerminalNode LPAREN(int i) {
+			return getToken(SubduceParser.LPAREN, i);
+		}
+		public TerminalNode DEFINE_STRUCT() { return getToken(SubduceParser.DEFINE_STRUCT, 0); }
+		public List<TerminalNode> IDENTIFIER() { return getTokens(SubduceParser.IDENTIFIER); }
+		public TerminalNode IDENTIFIER(int i) {
+			return getToken(SubduceParser.IDENTIFIER, i);
+		}
+		public List<TerminalNode> RPAREN() { return getTokens(SubduceParser.RPAREN); }
+		public TerminalNode RPAREN(int i) {
+			return getToken(SubduceParser.RPAREN, i);
+		}
+		public StructDefinitionContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_structDefinition; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof SubduceParserListener ) ((SubduceParserListener)listener).enterStructDefinition(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof SubduceParserListener ) ((SubduceParserListener)listener).exitStructDefinition(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SubduceParserVisitor ) return ((SubduceParserVisitor<? extends T>)visitor).visitStructDefinition(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final StructDefinitionContext structDefinition() throws RecognitionException {
+		StructDefinitionContext _localctx = new StructDefinitionContext(_ctx, getState());
+		enterRule(_localctx, 8, RULE_structDefinition);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(60);
+			match(LPAREN);
+			setState(61);
+			match(DEFINE_STRUCT);
+			setState(62);
+			match(IDENTIFIER);
+			setState(63);
+			match(LPAREN);
+			setState(67);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			while (_la==IDENTIFIER) {
+				{
+				{
+				setState(64);
+				match(IDENTIFIER);
+				}
+				}
+				setState(69);
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			}
+			setState(70);
+			match(RPAREN);
+			setState(71);
+			match(RPAREN);
 			}
 		}
 		catch (RecognitionException re) {
@@ -414,13 +504,13 @@ public class SubduceParser extends Parser {
 
 	public final ReturnStatementContext returnStatement() throws RecognitionException {
 		ReturnStatementContext _localctx = new ReturnStatementContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_returnStatement);
+		enterRule(_localctx, 10, RULE_returnStatement);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(57);
+			setState(73);
 			match(RETURN);
-			setState(58);
+			setState(74);
 			expression();
 			}
 		}
@@ -461,13 +551,13 @@ public class SubduceParser extends Parser {
 
 	public final PrintStatementContext printStatement() throws RecognitionException {
 		PrintStatementContext _localctx = new PrintStatementContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_printStatement);
+		enterRule(_localctx, 12, RULE_printStatement);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(60);
+			setState(76);
 			match(PRINT);
-			setState(61);
+			setState(77);
 			expression();
 			}
 		}
@@ -516,50 +606,50 @@ public class SubduceParser extends Parser {
 
 	public final ExpressionContext expression() throws RecognitionException {
 		ExpressionContext _localctx = new ExpressionContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_expression);
+		enterRule(_localctx, 14, RULE_expression);
 		try {
-			setState(69);
+			setState(85);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(63);
+				setState(79);
 				lambdaDefinition();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(64);
+				setState(80);
 				functionCall();
 				}
 				break;
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(65);
+				setState(81);
 				match(IDENTIFIER);
 				}
 				break;
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(66);
+				setState(82);
 				match(NUMBER);
 				}
 				break;
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(67);
+				setState(83);
 				string();
 				}
 				break;
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(68);
+				setState(84);
 				match(BOOLEAN);
 				}
 				break;
@@ -614,36 +704,36 @@ public class SubduceParser extends Parser {
 
 	public final LambdaDefinitionContext lambdaDefinition() throws RecognitionException {
 		LambdaDefinitionContext _localctx = new LambdaDefinitionContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_lambdaDefinition);
+		enterRule(_localctx, 16, RULE_lambdaDefinition);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(71);
+			setState(87);
 			match(LPAREN);
-			setState(72);
+			setState(88);
 			match(LAM);
-			setState(73);
+			setState(89);
 			match(LPAREN);
-			setState(77);
+			setState(93);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==IDENTIFIER) {
 				{
 				{
-				setState(74);
+				setState(90);
 				match(IDENTIFIER);
 				}
 				}
-				setState(79);
+				setState(95);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(80);
+			setState(96);
 			match(RPAREN);
-			setState(81);
+			setState(97);
 			expression();
-			setState(82);
+			setState(98);
 			match(RPAREN);
 			}
 		}
@@ -688,30 +778,30 @@ public class SubduceParser extends Parser {
 
 	public final FunctionCallContext functionCall() throws RecognitionException {
 		FunctionCallContext _localctx = new FunctionCallContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_functionCall);
+		enterRule(_localctx, 18, RULE_functionCall);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(84);
+			setState(100);
 			match(LPAREN);
-			setState(85);
+			setState(101);
 			expression();
-			setState(87); 
+			setState(103); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(86);
+				setState(102);
 				expression();
 				}
 				}
-				setState(89); 
+				setState(105); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAREN) | (1L << NUMBER) | (1L << BOOLEAN) | (1L << IDENTIFIER) | (1L << QUOTE))) != 0) );
-			setState(91);
+			setState(107);
 			match(RPAREN);
 			}
 		}
@@ -758,28 +848,28 @@ public class SubduceParser extends Parser {
 
 	public final StringContext string() throws RecognitionException {
 		StringContext _localctx = new StringContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_string);
+		enterRule(_localctx, 20, RULE_string);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(93);
+			setState(109);
 			match(QUOTE);
-			setState(97);
+			setState(113);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==NORMAL_CHARACTER || _la==ESCAPED_CHARACTER) {
 				{
 				{
-				setState(94);
+				setState(110);
 				stringContents();
 				}
 				}
-				setState(99);
+				setState(115);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(100);
+			setState(116);
 			match(QUOTE);
 			}
 		}
@@ -818,12 +908,12 @@ public class SubduceParser extends Parser {
 
 	public final StringContentsContext stringContents() throws RecognitionException {
 		StringContentsContext _localctx = new StringContentsContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_stringContents);
+		enterRule(_localctx, 22, RULE_stringContents);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(102);
+			setState(118);
 			_la = _input.LA(1);
 			if ( !(_la==NORMAL_CHARACTER || _la==ESCAPED_CHARACTER) ) {
 			_errHandler.recoverInline(this);
@@ -847,32 +937,36 @@ public class SubduceParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\22k\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\23{\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
-		"\f\t\f\3\2\7\2\32\n\2\f\2\16\2\35\13\2\3\3\3\3\3\3\3\3\5\3#\n\3\3\4\3"+
-		"\4\3\4\3\4\3\5\3\5\3\5\3\5\6\5-\n\5\r\5\16\5.\3\5\3\5\3\5\7\5\64\n\5\f"+
-		"\5\16\5\67\13\5\3\5\3\5\3\5\3\6\3\6\3\6\3\7\3\7\3\7\3\b\3\b\3\b\3\b\3"+
-		"\b\3\b\5\bH\n\b\3\t\3\t\3\t\3\t\7\tN\n\t\f\t\16\tQ\13\t\3\t\3\t\3\t\3"+
-		"\t\3\n\3\n\3\n\6\nZ\n\n\r\n\16\n[\3\n\3\n\3\13\3\13\7\13b\n\13\f\13\16"+
-		"\13e\13\13\3\13\3\13\3\f\3\f\3\f\2\2\r\2\4\6\b\n\f\16\20\22\24\26\2\3"+
-		"\3\2\21\22\2m\2\33\3\2\2\2\4\"\3\2\2\2\6$\3\2\2\2\b(\3\2\2\2\n;\3\2\2"+
-		"\2\f>\3\2\2\2\16G\3\2\2\2\20I\3\2\2\2\22V\3\2\2\2\24_\3\2\2\2\26h\3\2"+
-		"\2\2\30\32\5\4\3\2\31\30\3\2\2\2\32\35\3\2\2\2\33\31\3\2\2\2\33\34\3\2"+
-		"\2\2\34\3\3\2\2\2\35\33\3\2\2\2\36#\5\6\4\2\37#\5\b\5\2 #\5\f\7\2!#\5"+
-		"\16\b\2\"\36\3\2\2\2\"\37\3\2\2\2\" \3\2\2\2\"!\3\2\2\2#\5\3\2\2\2$%\7"+
-		"\16\2\2%&\7\3\2\2&\'\5\16\b\2\'\7\3\2\2\2()\7\t\2\2)*\7\4\2\2*,\7\16\2"+
-		"\2+-\7\16\2\2,+\3\2\2\2-.\3\2\2\2.,\3\2\2\2./\3\2\2\2/\60\3\2\2\2\60\61"+
-		"\7\5\2\2\61\65\7\6\2\2\62\64\5\4\3\2\63\62\3\2\2\2\64\67\3\2\2\2\65\63"+
-		"\3\2\2\2\65\66\3\2\2\2\668\3\2\2\2\67\65\3\2\2\289\5\n\6\29:\7\7\2\2:"+
-		"\t\3\2\2\2;<\7\13\2\2<=\5\16\b\2=\13\3\2\2\2>?\7\n\2\2?@\5\16\b\2@\r\3"+
-		"\2\2\2AH\5\20\t\2BH\5\22\n\2CH\7\16\2\2DH\7\f\2\2EH\5\24\13\2FH\7\r\2"+
-		"\2GA\3\2\2\2GB\3\2\2\2GC\3\2\2\2GD\3\2\2\2GE\3\2\2\2GF\3\2\2\2H\17\3\2"+
-		"\2\2IJ\7\4\2\2JK\7\b\2\2KO\7\4\2\2LN\7\16\2\2ML\3\2\2\2NQ\3\2\2\2OM\3"+
-		"\2\2\2OP\3\2\2\2PR\3\2\2\2QO\3\2\2\2RS\7\5\2\2ST\5\16\b\2TU\7\5\2\2U\21"+
-		"\3\2\2\2VW\7\4\2\2WY\5\16\b\2XZ\5\16\b\2YX\3\2\2\2Z[\3\2\2\2[Y\3\2\2\2"+
-		"[\\\3\2\2\2\\]\3\2\2\2]^\7\5\2\2^\23\3\2\2\2_c\7\20\2\2`b\5\26\f\2a`\3"+
-		"\2\2\2be\3\2\2\2ca\3\2\2\2cd\3\2\2\2df\3\2\2\2ec\3\2\2\2fg\7\20\2\2g\25"+
-		"\3\2\2\2hi\t\2\2\2i\27\3\2\2\2\n\33\".\65GO[c";
+		"\f\t\f\4\r\t\r\3\2\7\2\34\n\2\f\2\16\2\37\13\2\3\3\3\3\3\3\3\3\3\3\5\3"+
+		"&\n\3\3\4\3\4\3\4\3\4\3\5\3\5\3\5\3\5\6\5\60\n\5\r\5\16\5\61\3\5\3\5\3"+
+		"\5\7\5\67\n\5\f\5\16\5:\13\5\3\5\3\5\3\5\3\6\3\6\3\6\3\6\3\6\7\6D\n\6"+
+		"\f\6\16\6G\13\6\3\6\3\6\3\6\3\7\3\7\3\7\3\b\3\b\3\b\3\t\3\t\3\t\3\t\3"+
+		"\t\3\t\5\tX\n\t\3\n\3\n\3\n\3\n\7\n^\n\n\f\n\16\na\13\n\3\n\3\n\3\n\3"+
+		"\n\3\13\3\13\3\13\6\13j\n\13\r\13\16\13k\3\13\3\13\3\f\3\f\7\fr\n\f\f"+
+		"\f\16\fu\13\f\3\f\3\f\3\r\3\r\3\r\2\2\16\2\4\6\b\n\f\16\20\22\24\26\30"+
+		"\2\3\3\2\22\23\2~\2\35\3\2\2\2\4%\3\2\2\2\6\'\3\2\2\2\b+\3\2\2\2\n>\3"+
+		"\2\2\2\fK\3\2\2\2\16N\3\2\2\2\20W\3\2\2\2\22Y\3\2\2\2\24f\3\2\2\2\26o"+
+		"\3\2\2\2\30x\3\2\2\2\32\34\5\4\3\2\33\32\3\2\2\2\34\37\3\2\2\2\35\33\3"+
+		"\2\2\2\35\36\3\2\2\2\36\3\3\2\2\2\37\35\3\2\2\2 &\5\6\4\2!&\5\b\5\2\""+
+		"&\5\n\6\2#&\5\16\b\2$&\5\20\t\2% \3\2\2\2%!\3\2\2\2%\"\3\2\2\2%#\3\2\2"+
+		"\2%$\3\2\2\2&\5\3\2\2\2\'(\7\17\2\2()\7\3\2\2)*\5\20\t\2*\7\3\2\2\2+,"+
+		"\7\t\2\2,-\7\4\2\2-/\7\17\2\2.\60\7\17\2\2/.\3\2\2\2\60\61\3\2\2\2\61"+
+		"/\3\2\2\2\61\62\3\2\2\2\62\63\3\2\2\2\63\64\7\5\2\2\648\7\6\2\2\65\67"+
+		"\5\4\3\2\66\65\3\2\2\2\67:\3\2\2\28\66\3\2\2\289\3\2\2\29;\3\2\2\2:8\3"+
+		"\2\2\2;<\5\f\7\2<=\7\7\2\2=\t\3\2\2\2>?\7\4\2\2?@\7\f\2\2@A\7\17\2\2A"+
+		"E\7\4\2\2BD\7\17\2\2CB\3\2\2\2DG\3\2\2\2EC\3\2\2\2EF\3\2\2\2FH\3\2\2\2"+
+		"GE\3\2\2\2HI\7\5\2\2IJ\7\5\2\2J\13\3\2\2\2KL\7\13\2\2LM\5\20\t\2M\r\3"+
+		"\2\2\2NO\7\n\2\2OP\5\20\t\2P\17\3\2\2\2QX\5\22\n\2RX\5\24\13\2SX\7\17"+
+		"\2\2TX\7\r\2\2UX\5\26\f\2VX\7\16\2\2WQ\3\2\2\2WR\3\2\2\2WS\3\2\2\2WT\3"+
+		"\2\2\2WU\3\2\2\2WV\3\2\2\2X\21\3\2\2\2YZ\7\4\2\2Z[\7\b\2\2[_\7\4\2\2\\"+
+		"^\7\17\2\2]\\\3\2\2\2^a\3\2\2\2_]\3\2\2\2_`\3\2\2\2`b\3\2\2\2a_\3\2\2"+
+		"\2bc\7\5\2\2cd\5\20\t\2de\7\5\2\2e\23\3\2\2\2fg\7\4\2\2gi\5\20\t\2hj\5"+
+		"\20\t\2ih\3\2\2\2jk\3\2\2\2ki\3\2\2\2kl\3\2\2\2lm\3\2\2\2mn\7\5\2\2n\25"+
+		"\3\2\2\2os\7\21\2\2pr\5\30\r\2qp\3\2\2\2ru\3\2\2\2sq\3\2\2\2st\3\2\2\2"+
+		"tv\3\2\2\2us\3\2\2\2vw\7\21\2\2w\27\3\2\2\2xy\t\2\2\2y\31\3\2\2\2\13\35"+
+		"%\618EW_ks";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

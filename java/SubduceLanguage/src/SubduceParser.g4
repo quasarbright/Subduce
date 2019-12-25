@@ -9,6 +9,7 @@ program : statement*;
 statement // doesn't include return statements
     : variableAssignment
     | functionDefinition
+    | structDefinition
     | printStatement
     | expression
     ;
@@ -20,6 +21,8 @@ functionDefinition :
         statement*
         returnStatement
     RBRACE;
+
+structDefinition : LPAREN DEFINE_STRUCT IDENTIFIER LPAREN IDENTIFIER* RPAREN RPAREN;
 
 returnStatement : RETURN expression;
 

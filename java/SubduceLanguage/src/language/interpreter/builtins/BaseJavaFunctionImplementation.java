@@ -59,6 +59,11 @@ public abstract class BaseJavaFunctionImplementation implements JavaFunctionValu
   }
 
   @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
   public String toString() {
     return "[function "+name+" at "+hashCode()+"]";
   }

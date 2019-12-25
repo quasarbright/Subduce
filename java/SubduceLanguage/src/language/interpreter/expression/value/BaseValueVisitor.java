@@ -1,11 +1,11 @@
 package language.interpreter.expression.value;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
-import language.interpreter.expression.value.Value;
-import language.interpreter.expression.value.ValueVisitor;
 import language.interpreter.expression.value.functionValue.FunctionValue;
 import language.interpreter.expression.value.listValue.ListValue;
+import language.interpreter.typing.StructType;
 
 /**
  * Value caster with providable default behavior. Default behavior can either return a default value
@@ -50,6 +50,11 @@ public abstract class BaseValueVisitor<T> implements ValueVisitor<T> {
 
   @Override
   public T visitList(ListValue list) {
+    return defaultBehavior.get();
+  }
+
+  @Override
+  public T visitStruct(StructType structType, Map<String, Value> data) {
     return defaultBehavior.get();
   }
 }

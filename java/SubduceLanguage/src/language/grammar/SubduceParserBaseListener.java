@@ -64,6 +64,18 @@ public class SubduceParserBaseListener implements SubduceParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStructDefinition(SubduceParser.StructDefinitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStructDefinition(SubduceParser.StructDefinitionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterReturnStatement(SubduceParser.ReturnStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}

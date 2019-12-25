@@ -1,16 +1,17 @@
 package language.interpreter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.Value;
+import language.interpreter.expression.value.functionValue.FunctionValue;
+import language.interpreter.expression.value.functionValue.JavaFunctionValue;
 import language.interpreter.expression.value.functionValue.SubduceFunctionValue;
+import language.interpreter.typing.StructType;
 import language.interpreter.statement.BaseStatementVisitor;
 import language.interpreter.statement.FunctionDefinitionStatement;
 import language.interpreter.statement.Statement;
@@ -90,6 +91,17 @@ public class StatementRunner implements StatementVisitor<Environment<String, Val
     SubduceFunctionValue functionValue = makeFunction(name, argnames, body);
     Environment<String, Value> newEnvironment =  environment.withNewVariable(name, functionValue);
     functionValue.setEnvironment(newEnvironment);
+    return newEnvironment;
+  }
+
+  @Override
+  public Environment<String, Value> visitStructDefinition(String name, List<String> fieldNames) {
+    StructType structType = new StructType(name, fieldNames);
+    List<JavaFunctionValue> structFunctions = structType.getStructFunctions();
+    Environment<String, Value> newEnvironment = environment;
+    for(JavaFunctionValue functionValue: structFunctions) {
+      newEnvironment = newEnvironment.withNewVariable(functionValue.getName(), functionValue);
+    }
     return newEnvironment;
   }
 

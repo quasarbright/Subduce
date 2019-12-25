@@ -11,6 +11,7 @@ LAM : 'lam';
 DEF : 'def';
 PRINT : 'print';
 RETURN : 'return';
+DEFINE_STRUCT: 'define-struct';
 
 NUMBER : '-'? DIGIT+ ('.' DIGIT+)?; //1, -1, 1.0, -1.0, 0.1, -12334.12453253
 fragment DIGIT : [0-9];

@@ -48,6 +48,16 @@ public interface SubduceParserListener extends ParseTreeListener {
 	 */
 	void exitFunctionDefinition(SubduceParser.FunctionDefinitionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link SubduceParser#structDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void enterStructDefinition(SubduceParser.StructDefinitionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link SubduceParser#structDefinition}.
+	 * @param ctx the parse tree
+	 */
+	void exitStructDefinition(SubduceParser.StructDefinitionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link SubduceParser#returnStatement}.
 	 * @param ctx the parse tree
 	 */

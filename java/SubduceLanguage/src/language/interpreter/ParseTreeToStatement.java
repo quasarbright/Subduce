@@ -1,5 +1,6 @@
 package language.interpreter;
 
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -17,6 +18,7 @@ import language.interpreter.statement.PrintStatement;
 import language.interpreter.statement.ReturnStatement;
 import language.interpreter.statement.SequenceStatement;
 import language.interpreter.statement.Statement;
+import language.interpreter.statement.StructDefinitionStatement;
 import language.interpreter.statement.VariableDefinitionStatement;
 
 public class ParseTreeToStatement extends SubduceParserBaseVisitor<Statement> {
@@ -64,6 +66,20 @@ public class ParseTreeToStatement extends SubduceParserBaseVisitor<Statement> {
     statements.add(returnStatementContext.accept(this));
     SequenceStatement body = new SequenceStatement(statements);
     return new FunctionDefinitionStatement(name, argnames, body);
+  }
+
+  @Override
+  public Statement visitStructDefinition(SubduceParser.StructDefinitionContext ctx) {
+    String name = ctx.IDENTIFIER(0).getSymbol().getText();
+    List<String> fieldNames = new ArrayList<>();
+    if(ctx.IDENTIFIER().size() > 1) {
+      fieldNames = ctx.IDENTIFIER().subList(1, ctx.IDENTIFIER().size())
+              .stream()
+              .map(TerminalNode::getSymbol)
+              .map(Token::getText)
+              .collect(Collectors.toList());
+    }
+    return new StructDefinitionStatement(name, fieldNames);
   }
 
   @Override

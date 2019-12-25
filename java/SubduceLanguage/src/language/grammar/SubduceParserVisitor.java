@@ -35,6 +35,12 @@ public interface SubduceParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunctionDefinition(SubduceParser.FunctionDefinitionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link SubduceParser#structDefinition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStructDefinition(SubduceParser.StructDefinitionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link SubduceParser#returnStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

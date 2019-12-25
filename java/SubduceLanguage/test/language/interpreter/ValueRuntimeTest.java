@@ -292,4 +292,19 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testPostRunEvaluation(infiniteLoop, "(or true (foo a))", toValue(true));
     testPostRunEvaluation(infiniteLoop, "(or false true false (foo a))", toValue(true));
   }
+
+  @Test
+  public void testStruct() {
+    String source = makeSource(
+            "(define-struct posn (x y))",
+            "p1 = (make-posn 0 1)",
+            "x = (posn-x p1)",
+            "y = (posn-y p1)"
+    );
+    testPostRunEvaluation(source, "x", toValue(0));
+    testPostRunEvaluation(source, "y", toValue(1));
+    testPostRunEvaluation(source, "(posn? p1)", toValue(true));
+    testPostRunEvaluation(source, "(posn? x)", toValue(false));
+    testPostRunEvaluation(source, "(posn? true)", toValue(false));
+  }
 }

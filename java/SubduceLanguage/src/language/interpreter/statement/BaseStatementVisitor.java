@@ -58,6 +58,11 @@ public class BaseStatementVisitor<R> implements StatementVisitor<R> {
   }
 
   @Override
+  public R visitStructDefinition(String name, List<String> fieldNames) {
+    return defaultBehavior();
+  }
+
+  @Override
   public R visitVariableDefinition(String name, Expression expression) {
     return defaultBehavior();
   }

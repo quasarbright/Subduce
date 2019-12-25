@@ -29,7 +29,7 @@ public class JavaFunctionValue implements FunctionValue {
 
   @Override
   public String toString() {
-    return "[function "+implementation+" at "+hashCode()+"]";
+    return "[function "+implementation.getName()+" at "+hashCode()+"]";
   }
 
   @Override
@@ -40,6 +40,10 @@ public class JavaFunctionValue implements FunctionValue {
     return implementation.equals(((JavaFunctionValue) other).implementation);
   }
 
+  public String getName() {
+    return implementation.getName();
+  }
+
   @Override
   public int hashCode() {
     return implementation.hashCode();
@@ -48,5 +52,6 @@ public class JavaFunctionValue implements FunctionValue {
   public interface JavaFunctionImplementation {
     FunctionSignature getSignature();
     Value apply(Function<Expression, Value> evaluator, List<Expression> expressions);
+    String getName();
   }
 }
