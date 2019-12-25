@@ -93,13 +93,22 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
   public void testEquals() {
     testEvaluation("(== 1 2)", toValue(false));
     testEvaluation("(== 1 1)", true);
-    testEvaluation("(== 1 1 1 1 1 1 1 1 1 1 1)", toValue(true));
-    testEvaluation("(== 1 1 1 1 1 1 2 1 1 1 1)", toValue(false));
-    testEvaluation("(== 1 1 2 2)", toValue(false));
     // test equality tolerance edge case
     testEvaluation("(== "+num+" "+(num+ltEpsilon)+")", toValue(true));
+    testEvaluation("(== "+num+" "+(num-ltEpsilon)+")", toValue(true));
     testEvaluation("(== "+num+" "+(num+gtEpsilon)+")", toValue(false));
+    testEvaluation("(== "+num+" "+(num-gtEpsilon)+")", toValue(false));
+  }
 
+  @Test
+  public void testNotEquals() {
+    testEvaluation("(!= 1 2)", toValue(true));
+    testEvaluation("(!= 1 1)", false);
+    // test equality tolerance edge case
+    testEvaluation("(!= "+num+" "+(num+ltEpsilon)+")", toValue(false));
+    testEvaluation("(!= "+num+" "+(num-ltEpsilon)+")", toValue(false));
+    testEvaluation("(!= "+num+" "+(num+gtEpsilon)+")", toValue(true));
+    testEvaluation("(!= "+num+" "+(num-gtEpsilon)+")", toValue(true));
   }
 
   @Test
@@ -297,14 +306,73 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
   public void testStruct() {
     String source = makeSource(
             "(define-struct posn (x y))",
+            "(define-struct coord (x y))",
             "p1 = (make-posn 0 1)",
+            "c1 = (make-coord 0 1)",
             "x = (posn-x p1)",
-            "y = (posn-y p1)"
+            "y = (posn-y p1)",
+            "def (make-fake-posn x y) {",
+            "  (define-struct posn (x y))",
+            "  return (make-posn x y)",
+            "}",
+            "p2 = (make-fake-posn 0 1)"
     );
     testPostRunEvaluation(source, "x", toValue(0));
     testPostRunEvaluation(source, "y", toValue(1));
     testPostRunEvaluation(source, "(posn? p1)", toValue(true));
     testPostRunEvaluation(source, "(posn? x)", toValue(false));
     testPostRunEvaluation(source, "(posn? true)", toValue(false));
+    testPostRunEvaluation(source, "(posn? c1)", toValue(false));
+    testPostRunEvaluation(source, "(posn? p2)", toValue(false));
+  }
+
+  @Test
+  public void testUniversalEquals() {
+    testEvaluation("(equal? 1 1)", toValue(true));
+    testEvaluation("(equal? 1 0)", toValue(false));
+    testEvaluation("(equal? 0 1)", toValue(false));
+    testEvaluation("(equal? true true)", toValue(true));
+    testEvaluation("(equal? false false)", toValue(true));
+    testEvaluation("(equal? false true)", toValue(false));
+    testEvaluation("(equal? \"f\" \"f\")", toValue(true));
+    testEvaluation("(equal? \"f\" \"aaaaf\")", toValue(false));
+    testEvaluation("(equal? 1 true)", toValue(false));
+    testEvaluation("(equal? 0 false)", toValue(false));
+    String source = makeSource(
+            "(define-struct posn (x y))",
+            "(define-struct coord (x y))",
+            "p1 = (make-posn 1 2)",
+            "p1* = (make-posn 1 2)",
+            "p2 = (make-posn 4 5)",
+            "c1 = (make-coord 1 2)",
+            "def (make-fake-posn x y) {",
+            "  (define-struct posn (x y))",
+            "  return (make-posn x y)",
+            "}",
+            "p3 = (make-fake-posn 1 2)"
+            );
+    testPostRunEvaluation(source, "(equal? p1 p1)", toValue(true));
+    testPostRunEvaluation(source, "(equal? p1 p1*)", toValue(true));
+    testPostRunEvaluation(source, "(equal? p1 p2)", toValue(false));
+    testPostRunEvaluation(source, "(equal? p1 p2)", toValue(false));
+    testPostRunEvaluation(source, "(equal? p1 p3)", toValue(false));
+    testPostRunEvaluation(source, "(equal? p1 c1)", toValue(false));
+    testPostRunEvaluation(source, "(equal? p1 444)", toValue(false));
+    testPostRunEvaluation(source, "(equal? 444 p1)", toValue(false));
+    // function equality (weird)
+    testEvaluation("(equal? + +)", toValue(true));
+    testEvaluation("(equal? + -)", toValue(false));
+    testPostRunEvaluation("plus = +", "(equal? plus +)", toValue(true));
+    testPostRunEvaluation("def (eq a b) { return (== a b) }", "(equal? eq ==)", toValue(false));
+    testPostRunEvaluation("def (eq a b) { return (== a b) }", "(equal? eq eq)", toValue(true));
+    testPostRunEvaluation("def (eq a b) { return (== a b) }\neeq = eq", "(equal? eq eeq)", toValue(true));
+    testPostRunEvaluation(
+            makeSource(
+                    "def (foo a) { return a }",
+                    "def (bar a) { return a }"
+            ),
+            "(equal? foo bar)",
+            toValue(false)
+    );
   }
 }
