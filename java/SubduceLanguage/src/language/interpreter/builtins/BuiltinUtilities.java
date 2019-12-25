@@ -27,6 +27,7 @@ public class BuiltinUtilities {
     addFunction("/", DivideFunction::new);
     addFunction("if", IfFunction::new);
     addFunction("==", NumberEqualFunction::new);
+    addFunction("!=", NumberNotEqualFunction::new);
     addFunction("<", LessThanFunction::new);
     addFunction("<=", LessThanOrEqualToFunction::new);
     addFunction(">", GreaterThanFunction::new);
@@ -41,6 +42,7 @@ public class BuiltinUtilities {
     addFunction("and", AndFunction::new);
     addFunction("or", OrFunction::new);
     addFunction("not", NotFunction::new);
+    addFunction("equal?", UniversalEqualFunction::new);
     this.baseEnvironment = baseEnvironment;
     fillBaseEnvironment();
   }
