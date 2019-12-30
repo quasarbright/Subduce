@@ -32,4 +32,21 @@ public class SimpleCallStack implements CallStack<FunctionCallExpression> {
   public String toString() {
     return functionCallExpressions.toString();
   }
+
+  @Override
+  public int hashCode() {
+    return functionCallExpressions.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(this == obj) {
+      return true;
+    }
+    if(obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    SimpleCallStack other = (SimpleCallStack) obj;
+    return functionCallExpressions.equals(other.functionCallExpressions);
+  }
 }

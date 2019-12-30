@@ -63,4 +63,26 @@ public class ImmutableVariableEnvironment implements Environment<String, Value> 
     scopesCopy.set(scopesCopy.size()-1, currentScopeCopy);
     return new ImmutableVariableEnvironment(scopesCopy);
   }
+
+  @Override
+  public int hashCode() {
+    return scopes.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(this == obj) {
+      return true;
+    }
+    if(obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    ImmutableVariableEnvironment other = (ImmutableVariableEnvironment) obj;
+    return scopes.equals(other.scopes);
+  }
+
+  @Override
+  public String toString() {
+    return scopes.toString();
+  }
 }
