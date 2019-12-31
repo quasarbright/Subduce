@@ -342,11 +342,13 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
 
   @Test
   public void testMutationAndScoping() {
+    // can't mutate
     testRunError(
             makeSource(
                     "x = 2",
                     "x = 3"),
             "variable x already defined in this scope");
+    // can't mutate argument variables
     testRunError(
             makeSource(
                     "def (foo a) {",
@@ -359,6 +361,7 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     );
 
 
+    // functions use the innermost definition of a variable
     String source = makeSource(
             "x = 2",
             "def (foo a) {",
@@ -370,6 +373,7 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testPostRunEvaluation(source, "x", toValue(2));
 
 
+    // functions use the innermost definition of a function
     source = makeSource(
             "def (f a) { return 1 }",
             "def (foo a) {",
@@ -379,6 +383,33 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     );
     testPostRunEvaluation(source, "(f 123)", toValue(1));
     testPostRunEvaluation(source, "(foo 123)", toValue(2));
+
+
+    // functions use the correct version of the variables and don't know about other functions'
+    // inner variables
+    source = makeSource(
+            "x = 2",
+            "def (foo a) { return x }",
+            "def (bar a) {",
+            "  x = 3 ",
+            "  return (foo a)",
+            "}"
+    );
+    testPostRunEvaluation(source, "x", toValue(2.0));
+    testPostRunEvaluation(source, "(foo 1)", toValue(2.0));
+    testPostRunEvaluation(source, "(bar 1)", toValue(2.0));
+
+    // variable assignments happen in chronological order
+    source = makeSource(
+            "x = 2",
+            "def (foo a) {",
+            "  b = x",
+            "  x = 3",
+            "  return b",
+            "}"
+    );
+    testPostRunEvaluation(source, "x", toValue(2));
+    testPostRunEvaluation(source, "(foo 123123)", toValue(2));
   }
 
   @Test
