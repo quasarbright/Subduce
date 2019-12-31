@@ -3,6 +3,7 @@ package language.interpreter.expression.value.functionValue.signature;
 import java.util.List;
 import java.util.Optional;
 
+import language.interpreter.expression.value.SubduceError;
 import language.interpreter.expression.value.Value;
 
 /**
@@ -30,7 +31,7 @@ public class ArgumentLengthSignature extends BaseFunctionSignature {
         argumentsWord = "argument";
       }
       String errorMessage = getName()+" expected "+numArgs+" "+argumentsWord+", got "+size;
-      throw new IllegalArgumentException(errorMessage);
+      throw new SubduceError(errorMessage);
     }
   }
 

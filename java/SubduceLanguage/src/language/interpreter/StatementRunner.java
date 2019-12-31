@@ -112,9 +112,7 @@ public class StatementRunner implements StatementVisitor<Environment<String, Val
   }
 
   private SubduceFunctionValue makeFunction(FunctionDefinitionStatement functionDefinitionStatement) {
-    return functionDefinitionStatement.accept(new BaseStatementVisitor<>((() -> {
-      throw new IllegalStateException();
-    })) {
+    return functionDefinitionStatement.accept(new BaseStatementVisitor<>(new IllegalStateException("expected a function definition")) {
       @Override
       public SubduceFunctionValue visitFunctionDefinition(String name, List<String> argnames, Statement body) {
         return makeFunction(name, argnames, body);
@@ -159,7 +157,7 @@ public class StatementRunner implements StatementVisitor<Environment<String, Val
     List<FunctionDefinitionStatement> functionDefinitionStatements = justFunctionDefinitions(statements);
     List<Statement> notFunctionDefinitions = noFunctionDefinitions(statements);
     if(functionDefinitionStatements.size() + notFunctionDefinitions.size() != statements.size()) {
-      throw new IllegalStateException();
+      throw new IllegalStateException("statements were not conserved in splitting function-definitions and non-function-definitions");
     }
 
     // run function definitions and keep track of their values

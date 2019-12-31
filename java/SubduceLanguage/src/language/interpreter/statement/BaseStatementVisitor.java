@@ -28,6 +28,10 @@ public class BaseStatementVisitor<R> implements StatementVisitor<R> {
     this(() -> defaultValue);
   }
 
+  public BaseStatementVisitor(RuntimeException error) {
+    this(() -> {throw error;});
+  }
+
   private R defaultBehavior() {
     return defaultBehavior.get();
   }

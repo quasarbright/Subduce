@@ -3,6 +3,7 @@ package language.interpreter.expression.value.functionValue.signature;
 import java.util.List;
 import java.util.Optional;
 
+import language.interpreter.expression.value.SubduceError;
 import language.interpreter.expression.value.Value;
 import language.interpreter.typing.ValueType;
 
@@ -29,12 +30,12 @@ public class RepeatedTypeSignature extends BaseFunctionSignature {
   public void validateArguments(List<Value> arguments) {
     int size = arguments.size();
     if(size < minArguments) {
-      throw new IllegalArgumentException(getName()+" expected at least "+minArguments+" arguments, got "+size);
+      throw new SubduceError(getName()+" expected at least "+minArguments+" arguments, got "+size);
     }
     for(int i = 0; i < arguments.size(); i++) {
       Value argument = arguments.get(i);
       if(!type.checkValueType(argument)) {
-        throw new IllegalArgumentException(getName()+" expected an argument of type "+type+" at position "+i+", got "+argument);
+        throw new SubduceError(getName()+" expected an argument of type "+type+" at position "+i+", got "+argument);
       }
     }
   }

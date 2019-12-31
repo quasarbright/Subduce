@@ -17,12 +17,6 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
   protected final double num = 1;
   protected final double gtEpsilon = NumberEqualFunction.TOLERANCE * 2.0;
   protected final double ltEpsilon = NumberEqualFunction.TOLERANCE / 2.0;
-//  @Before
-//  @Override
-//  public void setup() {
-//    super.setup();
-//
-//  }
 
   protected Value toValue(String s) {
     return new StringValue(s);

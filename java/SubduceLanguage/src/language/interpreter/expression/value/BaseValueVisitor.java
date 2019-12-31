@@ -8,10 +8,10 @@ import language.interpreter.expression.value.listValue.ListValue;
 import language.interpreter.typing.StructType;
 
 /**
- * Value caster with providable default behavior. Default behavior can either return a default value
+ * Abstract value visitor with providable default behavior. Default behavior can either return a default value
  * or throw an error depending on what you want.
  *
- * @param <T> the type to cast values to
+ * @param <T> return type
  */
 public abstract class BaseValueVisitor<T> implements ValueVisitor<T> {
   private final Supplier<T> defaultBehavior;

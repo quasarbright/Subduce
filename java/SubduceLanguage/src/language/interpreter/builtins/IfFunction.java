@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.value.BaseValueVisitor;
+import language.interpreter.expression.value.SubduceError;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.ValueVisitor;
 import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
@@ -34,8 +35,7 @@ public class IfFunction extends BaseJavaFunctionImplementation {
   @Override
   public Value apply(Function<Expression, Value> evaluator, List<Expression> expressions) {
     if(expressions.size() != 3) {
-      // TODO fix
-      throw new IllegalArgumentException("if expects 3 arguments, got "+expressions.size());
+      throw new SubduceError(name+" expects 3 arguments, got "+expressions.size());
     }
     Expression first = expressions.get(0);
     Value conditionValue = evaluator.apply(first);
@@ -50,7 +50,7 @@ public class IfFunction extends BaseJavaFunctionImplementation {
   }
 
   private boolean castCondition(Value conditionValue) {
-    RuntimeException error = new IllegalArgumentException(
+    SubduceError error = new SubduceError(
             name+" expects the argument at position 0 to be of type boolean, got "+conditionValue);
     ValueVisitor<Boolean> caster = new BaseValueVisitor<Boolean>(error) {
       @Override

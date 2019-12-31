@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import language.interpreter.expression.value.SubduceError;
 import language.interpreter.expression.value.Value;
 
 /**
@@ -53,7 +54,7 @@ public class ImmutableVariableEnvironment implements Environment<String, Value> 
     // prevent variable reassignment within scope
     if(currentScopeCopy.containsKey(name)) {
       // the name is already defined in the current scope. Error out.
-      throw new IllegalArgumentException("variable "+name+" already defined in this scope");
+      throw new SubduceError("variable "+name+" already defined in this scope");
     }
 
     // the assignment is valid. do it.

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import language.interpreter.expression.Expression;
 import language.interpreter.expression.ExpressionVisitor;
 import language.interpreter.expression.value.BaseValueVisitor;
+import language.interpreter.expression.value.SubduceError;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.FunctionSignature;
 import language.interpreter.expression.value.functionValue.FunctionValue;
@@ -118,7 +119,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
     // if the body is just a return statement, evaluate it
     // otherwise, it better be a sequence where the last statement is a return statement.
     // in that case, evaluate it
-    return body.accept(new BaseStatementVisitor<>(() -> {throw new IllegalStateException();}) {
+    return body.accept(new BaseStatementVisitor<>(new IllegalStateException("Function body did not end in a return statement")) {
       @Override
       public Value visitReturn(Expression expression) {
         return visitReturnHelp(expression);
@@ -153,7 +154,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
   public Value visitFunctionCall(Expression function, List<Expression> arguments) {
     Value evaluatedFunction = evaluate(function);
     FunctionValue functionValue = evaluatedFunction.accept(new BaseValueVisitor<>(() -> {
-      throw new IllegalStateException("cannot call non-functions: "+function);
+      throw new SubduceError("cannot call non-functions: "+function);
     }) {
       @Override
       public FunctionValue visitFunction(FunctionValue function) {
@@ -180,8 +181,7 @@ public class ExpressionEvaluator implements ExpressionVisitor<Value> {
     if(value.isPresent()) {
       return value.get();
     } else {
-      // TODO fix
-      throw new IllegalStateException("variable "+name+" is not defined");
+      throw new SubduceError("variable "+name+" is not defined");
     }
   }
 }

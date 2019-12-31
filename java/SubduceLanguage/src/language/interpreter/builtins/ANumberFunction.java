@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import language.interpreter.expression.value.BaseValueVisitor;
+import language.interpreter.expression.value.SubduceError;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.FunctionSignature;
 
@@ -20,7 +21,7 @@ public abstract class ANumberFunction extends BaseJavaFunctionImplementation {
   }
 
   protected double castArgument(Value argument) {
-    return argument.accept(new BaseValueVisitor<Double>(new IllegalStateException("signature should've been validated")) {
+    return argument.accept(new BaseValueVisitor<Double>(new SubduceError("signature should've been validated")) {
       @Override
       public Double visitNumber(double d) {
         return d;

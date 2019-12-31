@@ -3,6 +3,7 @@ package language.interpreter.builtins;
 import java.util.List;
 
 import language.interpreter.expression.value.BaseValueVisitor;
+import language.interpreter.expression.value.SubduceError;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
 import language.interpreter.expression.value.listValue.ConsList;
@@ -19,7 +20,7 @@ public class ConsFunction extends BaseJavaFunctionImplementation {
   protected Value apply(List<Value> arguments) {
     validateArguments(arguments);
     Value first = arguments.get(0);
-    ListValue rest = arguments.get(1).accept(new BaseValueVisitor<ListValue>(new IllegalArgumentException("arguments should've been validated")) {
+    ListValue rest = arguments.get(1).accept(new BaseValueVisitor<ListValue>(new IllegalStateException("arguments should've been validated")) {
       @Override
       public ListValue visitList(ListValue list) {
         return list;

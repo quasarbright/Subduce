@@ -3,6 +3,7 @@ package language.interpreter.builtins;
 import java.util.List;
 
 import language.interpreter.expression.value.BaseValueVisitor;
+import language.interpreter.expression.value.SubduceError;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
 import language.interpreter.expression.value.listValue.ListValue;
@@ -21,7 +22,7 @@ public abstract class AListFunction extends BaseJavaFunctionImplementation {
   protected Value apply(List<Value> arguments) {
     validateArguments(arguments);
     Value argument = arguments.get(0);
-    return argument.accept(new BaseValueVisitor<>(new IllegalStateException("signature should've been validated")) {
+    return argument.accept(new BaseValueVisitor<Value>(new SubduceError("signature should've been validated")) {
       @Override
       public Value visitList(ListValue list) {
         return list.accept(new ListValueVisitor<>() {
