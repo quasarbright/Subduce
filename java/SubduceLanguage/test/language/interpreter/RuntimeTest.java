@@ -45,6 +45,38 @@ public abstract class RuntimeTest<StatementType, ExpressionType, ValueType> {
   }
 
   /**
+   * Ensure that running the given code results in an error with the given message.
+   *
+   * @param source the code to run
+   * @param message the error message it should produce
+   */
+  protected void testRunError(String source, String message) {
+    setup();
+    try {
+      runtime.run(source);
+      fail("Didn't throw an error");
+    } catch (SubduceError e) {
+      assertEquals(message, e.getMessage());
+    }
+  }
+
+  /**
+   * Ensure that running the given code results in the given error.
+   *
+   * @param source the code to run
+   * @param error the error it should produce
+   */
+  protected void testRunError(String source, SubduceError error) {
+    setup();
+    try {
+      runtime.evaluate(source);
+      fail("Didn't throw an error");
+    } catch (SubduceError e) {
+      assertEquals(error, e);
+    }
+  }
+
+  /**
    * Test what the expression evaluates to in the runtime's context.
    *
    * @param runtime the runtime to evaluate the expression against

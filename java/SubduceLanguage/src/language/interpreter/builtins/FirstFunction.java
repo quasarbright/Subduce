@@ -2,6 +2,7 @@ package language.interpreter.builtins;
 
 import java.util.List;
 
+import language.interpreter.SubduceError;
 import language.interpreter.expression.value.BaseValueVisitor;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.listValue.ListValue;
@@ -14,7 +15,7 @@ public class FirstFunction extends AListFunction {
 
   @Override
   protected Value onEmpty() {
-    throw new IllegalArgumentException("cannot call "+name+"on an empty list");
+    throw new SubduceError("cannot call "+name+" on an empty list");
   }
 
   @Override

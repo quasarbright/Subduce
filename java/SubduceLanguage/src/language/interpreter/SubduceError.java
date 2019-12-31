@@ -1,4 +1,4 @@
-package language.interpreter.expression.value;
+package language.interpreter;
 
 import java.util.Objects;
 
@@ -20,5 +20,10 @@ public class SubduceError extends RuntimeException {
   @Override
   public int hashCode() {
     return Objects.hash(message);
+  }
+
+  @Override
+  public String getMessage() {
+    return message;
   }
 }

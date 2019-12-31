@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import language.interpreter.expression.value.SubduceError;
+import language.interpreter.SubduceError;
 import language.interpreter.expression.value.Value;
 import language.interpreter.typing.ValueType;
 
@@ -29,7 +29,7 @@ public class TypeSequenceSignature extends ArgumentLengthSignature {
       Value argument = arguments.get(i);
       ValueType expectedType = types.get(i);
       if(!expectedType.checkValueType(argument)) {
-        throw new SubduceError(getName()+" expects an argument of type "+expectedType+" at position "+i+", got "+argument);
+        throw new SubduceError(getName()+" expected an argument of type "+expectedType+" at position "+i+", got "+argument);
       }
     }
   }

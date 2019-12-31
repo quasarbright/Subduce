@@ -77,10 +77,20 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
   }
 
   @Test
+  public void testInfiniteRecursion() {
+    testRunError(
+            makeSource("def (loop a) { return (loop a) }", "(loop 1)"),
+            "maximum recursion depth exceeded"
+    );
+  }
+
+  @Test
   public void testAdd() {
     testEvaluation("(+ 1 2 3 4)", toValue(10));
     testEvaluation("(+ 0.1 1)", toValue(1.1));
     testEvaluation("(+ 0 -1 1 -0.1)", toValue(-0.1));
+    testRunError("(+ 1 true)", "+ expected an argument of type [type number] at position 1, got true");
+    testRunError("(+ 1 \"hello\")", "+ expected an argument of type [type number] at position 1, got \"hello\"");
   }
 
   @Test
@@ -92,6 +102,9 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testEvaluation("(== "+num+" "+(num-ltEpsilon)+")", toValue(true));
     testEvaluation("(== "+num+" "+(num+gtEpsilon)+")", toValue(false));
     testEvaluation("(== "+num+" "+(num-gtEpsilon)+")", toValue(false));
+    testRunError("(== 1 true)", "== expected an argument of type [type number] at position 1, got true");
+    testRunError("(== 1)", "== expected 2 arguments, got 1");
+    testRunError("(== 1 2 3)", "== expected 2 arguments, got 3");
   }
 
   @Test
@@ -103,6 +116,9 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testEvaluation("(!= "+num+" "+(num-ltEpsilon)+")", toValue(false));
     testEvaluation("(!= "+num+" "+(num+gtEpsilon)+")", toValue(true));
     testEvaluation("(!= "+num+" "+(num-gtEpsilon)+")", toValue(true));
+    testRunError("(!= 1 true)", "!= expected an argument of type [type number] at position 1, got true");
+    testRunError("(!= 1)", "!= expected 2 arguments, got 1");
+    testRunError("(!= 1 2 3)", "!= expected 2 arguments, got 3");
   }
 
   @Test
@@ -111,6 +127,8 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testEvaluation("(< 1 1)", toValue(false));
     // if a == b, a < b should be false even if it's "really" true
     testEvaluation("(< 1 "+num+" "+(num + ltEpsilon)+")", toValue(false));
+    testRunError("(< 1 true)", "< expected an argument of type [type number] at position 1, got true");
+    testRunError("(< 1)", "< expected at least 2 arguments, got 1");
   }
 
   @Test
@@ -159,6 +177,8 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
                     toValue(true),
                     toListValue()
             ));
+    testRunError("(cons 1 2)", "cons expected an argument of type [type list] at position 1, got 2.0");
+    testRunError("(cons 1 2 empty)", "cons expected 2 arguments, got 3");
   }
 
   @Test
@@ -169,6 +189,9 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testEvaluation("(first (cons \"hello\" empty)))", toValue("hello"));
     testEvaluation("(first (cons true empty)))", toValue(true));
     testEvaluation("(first (cons (list 1) empty)))", toListValue(toValue(1)));
+    testRunError("(first 1)", "first expected an argument of type [type list] at position 0, got 1.0");
+    testRunError("(first 1 2)", "first expected 1 argument, got 2");
+    testRunError("(first empty)", "cannot call first on an empty list");
   }
 
   @Test
@@ -176,6 +199,9 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testEvaluation("(rest (list 0 1 2))", toListValue(toValue(1), toValue(2)));
     testEvaluation("(rest (list 1 2))", toListValue(toValue(2)));
     testEvaluation("(rest (list (list 1 2) (list true)))", toListValue(toListValue(toValue(true))));
+    testRunError("(rest 1)", "rest expected an argument of type [type list] at position 0, got 1.0");
+    testRunError("(rest 1 2)", "rest expected 1 argument, got 2");
+    testRunError("(rest empty)", "cannot call rest on an empty list");
   }
 
   @Test
@@ -184,6 +210,8 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testEvaluation("(cons? (list 0))", toValue(true));
     testEvaluation("(cons? empty)", toValue(false));
     testEvaluation("(cons? (list empty)))", toValue(true));
+    testRunError("(cons? 1)", "cons? expected an argument of type [type list] at position 0, got 1.0");
+    testRunError("(cons? empty empty)", "cons? expected 1 argument, got 2");
   }
 
   @Test
@@ -192,6 +220,8 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testEvaluation("(empty? (list 0))", toValue(false));
     testEvaluation("(empty? empty)", toValue(true));
     testEvaluation("(empty? (list empty)))", toValue(false));
+    testRunError("(empty? 1)", "empty? expected an argument of type [type list] at position 0, got 1.0");
+    testRunError("(empty? empty empty)", "empty? expected 1 argument, got 2");
   }
 
   @Test
@@ -204,6 +234,7 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testEvaluation("(and false)", toValue(false));
     testEvaluation("(and true)", toValue(true));
     testEvaluation("(and true true true true)", toValue(true));
+    testRunError("(and 1)", "and expected boolean arguments, got 1.0");
   }
 
   @Test
@@ -216,12 +247,14 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testEvaluation("(or false)", toValue(false));
     testEvaluation("(or true)", toValue(true));
     testEvaluation("(or true true true true)", toValue(true));
+    testRunError("(or 1)", "or expected boolean arguments, got 1.0");
   }
 
   @Test
   public void testNot() {
     testEvaluation("(not true)", toValue(false));
     testEvaluation("(not false)", toValue(true));
+    testRunError("(not 1)", "not expected an argument of type [type boolean] at position 0, got 1.0");
   }
 
   @Test
@@ -235,20 +268,30 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
   }
 
   @Test
+  public void testBadMutualRecursion() {
+    testRunError(
+            makeSource(
+                    "def (foo a) { return (bar a) }",
+                    "def (bar a) { return (foo a) }",
+                    "x = (foo 1)"
+            ),
+            "maximum recursion depth exceeded"
+    );
+  }
+
+  @Test
   public void testVariableUseFunctionBeforeDefinition() {
     String source =
             "x = (foo 2)\n" +
             "def (foo a) { return (+ 1 a) }\n";
     testPostRunEvaluation(source, "x", toValue(3));
-    /// left off here thinking about distinguishing between statements and expressions to avoid
-    // all of this confusion
   }
 
   @Test
   public void testFunctionUsingVariable() {
     String source = makeSource(
-            "x = 2",
-            "def (foo a) { return (+ x a) }"
+            "def (foo a) { return (+ x a) }",
+            "x = 2"
     );
     testPostRunEvaluation(source, "(foo 3)", toValue(5.0));
     source = makeSource(
@@ -273,9 +316,69 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
   }
 
   @Test
+  public void testBadFunctionVariableUsage() {
+    testRunError(
+            makeSource(
+                    "y = (foo 3)",
+                    "def (foo a) { return (+ x a) }",
+                    "x = 2"
+            ),
+            "variable x is not defined"
+    );
+    testRunError(
+            makeSource(
+                    "x = (foo 2)",
+                    "def (foo a) { return x }"
+            ),
+            "variable x is not defined"
+    );
+  }
+
+  @Test
   public void testEmptyProgram() {
     String source = "";
     testPostRunEvaluation(source, "(+ 1 2)", toValue(3));
+  }
+
+  @Test
+  public void testMutationAndScoping() {
+    testRunError(
+            makeSource(
+                    "x = 2",
+                    "x = 3"),
+            "variable x already defined in this scope");
+    testRunError(
+            makeSource(
+                    "def (foo a) {",
+                    "  a = 2",
+                    " return a",
+                    "}",
+                    "(foo 12)"
+            ),
+            "variable a already defined in this scope"
+    );
+
+
+    String source = makeSource(
+            "x = 2",
+            "def (foo a) {",
+            "  x = 3",
+            "  return x",
+            "}"
+    );
+    testPostRunEvaluation(source, "(foo 5)", toValue(3));
+    testPostRunEvaluation(source, "x", toValue(2));
+
+
+    source = makeSource(
+            "def (f a) { return 1 }",
+            "def (foo a) {",
+            "  def (f a) { return 2 }",
+            "  return (f 123)",
+            "}"
+    );
+    testPostRunEvaluation(source, "(f 123)", toValue(1));
+    testPostRunEvaluation(source, "(foo 123)", toValue(2));
   }
 
   @Test
@@ -318,6 +421,28 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
     testPostRunEvaluation(source, "(posn? true)", toValue(false));
     testPostRunEvaluation(source, "(posn? c1)", toValue(false));
     testPostRunEvaluation(source, "(posn? p2)", toValue(false));
+
+    testRunError(
+            makeSource(
+                    "(define-struct posn (x y))",
+                    "(define-struct posn (x y))"
+                    ),
+            "variable posn? already defined in this scope"
+    );
+    testRunError(
+            makeSource(
+                    "def (posn? p) { return true }",
+                    "(define-struct posn (x y))"
+                    ),
+            "variable posn? already defined in this scope"
+    );
+    testRunError(
+            makeSource(
+                    "(define-struct posn (x y))",
+                    "def (posn? p) { return true }"
+                    ),
+            "variable posn? already defined in this scope"
+    );
   }
 
   @Test
@@ -368,5 +493,8 @@ public abstract class ValueRuntimeTest<StatementType, ExpressionType> extends Ru
             "(equal? foo bar)",
             toValue(false)
     );
+
+    testRunError("(equal? 1)", "equal? expected 2 arguments, got 1");
+    testRunError("(equal? 1 2 3)", "equal? expected 2 arguments, got 3");
   }
 }

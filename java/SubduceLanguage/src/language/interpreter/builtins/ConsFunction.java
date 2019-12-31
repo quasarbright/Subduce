@@ -3,7 +3,6 @@ package language.interpreter.builtins;
 import java.util.List;
 
 import language.interpreter.expression.value.BaseValueVisitor;
-import language.interpreter.expression.value.SubduceError;
 import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
 import language.interpreter.expression.value.listValue.ConsList;

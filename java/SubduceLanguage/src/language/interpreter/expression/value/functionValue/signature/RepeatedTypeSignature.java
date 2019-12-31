@@ -3,7 +3,7 @@ package language.interpreter.expression.value.functionValue.signature;
 import java.util.List;
 import java.util.Optional;
 
-import language.interpreter.expression.value.SubduceError;
+import language.interpreter.SubduceError;
 import language.interpreter.expression.value.Value;
 import language.interpreter.typing.ValueType;
 
