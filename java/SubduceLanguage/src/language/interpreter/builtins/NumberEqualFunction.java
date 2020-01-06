@@ -8,8 +8,11 @@ import language.interpreter.expression.value.Value;
 import language.interpreter.expression.value.functionValue.signature.TypeSequenceSignature;
 import language.interpreter.typing.BuiltInType;
 
+/**
+ * Uses percent-difference to determine equality
+ */
 public class NumberEqualFunction extends ANumberFunction {
-  public static final double TOLERANCE = .000001;
+  public static final double TOLERANCE = 0.00000000001;
 
   public NumberEqualFunction(String name) {
     super(name, new TypeSequenceSignature(name, BuiltInType.NUMBER, BuiltInType.NUMBER));
@@ -17,7 +20,14 @@ public class NumberEqualFunction extends ANumberFunction {
 
 
   public static boolean eq(double a, double b) {
-    return Math.abs(a-b) < TOLERANCE;
+    // guaranteed not to divide by zero
+    // if both numbers are zero, we return true
+    // if one number is not zero and the other is zero, the non-zero number will be the denominator
+    // if both are non-zero, a non-zero number will be the denominator
+    if(a == b) {
+      return true;
+    }
+    return Math.abs(a-b) / (1.0 * Math.max(Math.abs(a), Math.abs(b))) < TOLERANCE;
   }
 
 
