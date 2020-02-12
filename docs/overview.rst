@@ -86,7 +86,7 @@ number
 ------
 Integers and floating point numbers. Ex: ``234, -1.2, -.3, 4.``
 
-These will end up as python floats or integers, so they have the same behavior and properties
+These are represented as java doubles, so they have the same behavior and properties
 
 string
 ------
