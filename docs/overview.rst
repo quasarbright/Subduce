@@ -26,6 +26,7 @@ Syntax
 Example
 -------
 
+
 .. code-block::
 
     # returns the product - the sum of two numbers
@@ -47,6 +48,7 @@ Example
     (define-struct posn (x y))
     p = (make-posn 3 4)
 
+
 * Whitespace is irrelevant except for separating identifiers.
 * ``print`` and ``return`` have special syntax
 
@@ -64,6 +66,7 @@ Variables cannot start with the characters ``-.0123456789``
 
 Built-ins are treated as variables, so they cannot be overridden unless as arguments to a function. Ex:
 
+
 .. code-block::
 
     def (use-custom-add + a b):
@@ -71,6 +74,7 @@ Built-ins are treated as variables, so they cannot be overridden unless as argum
     def (double-add a b):
         return (+ (+ a b) (+ a b))
     print (use-custom-add double-add 2 4) # prints 12, not 6
+
 
 Types
 =====
@@ -90,6 +94,7 @@ No multiline strings. Strings support escaping characters.
 
 Ex:
 
+
 .. code-block:: 
 
     "hello"
@@ -97,9 +102,11 @@ Ex:
     "\"quotes\""
     "newline\n"
 
+
 function
 --------
 Use ``lam`` or ``def`` syntax:
+
 
 .. code-block::
 
@@ -107,6 +114,7 @@ Use ``lam`` or ``def`` syntax:
 
     def (add1 x):
         return (+ x 1)
+
 
 The two functions above are equivalent
 
@@ -116,11 +124,13 @@ Constructed using ``[]`` or ``cons``.
 
 Ex:
 
+
 .. code-block::
 
     [1 2 true "lisp"]
     (cons 1 (cons 2 (cons true (cons "lisp" empty))))
     empty
+
 
 The first two lists are equivalent. ``[]`` syntax is syntactic sugar for ``cons``
 
@@ -130,6 +140,7 @@ struct
 Defined with ``define-struct``.
 
 Ex:
+
 
 .. code-block::
 
@@ -146,6 +157,7 @@ Ex:
 
     p3 = (add-posn p1 p2)
     (posn? p3) # true
+
 
 Defining a struct creates a constructor, 
 field accessors, and a predicate function
