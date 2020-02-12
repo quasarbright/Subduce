@@ -12,4 +12,3 @@ Subduce is a functional programming language based on python and scheme. It is f
    :maxdepth: 3
     
    overview
-   languagePipeline
