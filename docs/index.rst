@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Subduce Documentation
+Subduce
 ===================================
 
 Subduce is a small, dynamically typed, functional programming language based on python and racket (specifically advanced student language). I'd always wanted to make a programming language, and in the summer of 2019, I thought I was finally ready to give it a shot. I didn't any real education in programming languages, so this language isn't very sophisticated. However, I had a great time making it and it was a very good learning experience.
