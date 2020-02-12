@@ -4,89 +4,51 @@
 Subduce Overview
 ****************
 
+Features
+========
+* basic primitives (numbers, strings, booleans)
+* lists
+* printing
+* structs
+* mutual recursion
+* first-class functions
+    * closures and nested functions
+* interactive mode
+    * run a program in interactive mode to use definitions
+* dynamic typing
+* short-circuiting
+* lazy if evaluation, strict otherwise
+* inclusive character set for identifiers
+
 Syntax
 ======
 
 Example
 -------
 
-.. code-block:: scheme
+.. code-block::
 
     # returns the product - the sum of two numbers
-    def (func a1 a2):
+    def (func a1 a2) {
+        # prefix operators
         sum = (+ a1 a2)
         prod = (* a1 a2)
         print (+ "prod " (number->string prod))
         return (- prod sum)
+    }
+    # variable assignment
     n = 2
+    # function application
     (func n 3) # prints 6 and outputs 1
+    # lists
     arr = [1 2 3 4]
     doubled = (map (lam (e) (* e 2)) arr)
+    # structs
+    (define-struct posn (x y))
+    p = (make-posn 3 4)
 
-Indentation and multiline expressions
--------------------------------------
-
-Tab-based indentation only. Spaces are completely ignored in indentation
-Function bodies must be indented 1 level from their header (header is def (fun arg1 arg2):). Headers must be on one line
-Expressions can be multiline, and indentation within expressions is ignored.
-
-Examples of valid indentation:
-
-.. code-block:: scheme
-
-    def (put-in-list x):
-        ans = [
-            x
-        ]
-        return ans
-    
-    def (put-in-list x):
-        ans = [
-        x
-        ]
-        return ans
-    
-    def (double x):
-    ans = (+
-            x
-            x)
-    return ans
-    
-    seven = (+
-                1
-                (*
-                    2
-                    3))
-    
-    def (put-in-list x):
-        ans = [
-    x
-        ]
-        return ans
-    
-    def (put-in-list x):
-        ans = [
-            x
-    ]
-        return ans
-    
-    seven = (+
-                1
-                (*
-            2
-                3))
-
-Examples of invalid indentation:
-
-.. code-block:: scheme
-
-    def (put-in-list x):
-        ans = [x]
-            return ans # this shouldn't be indented
-    
-    def (put-in-list x):
-    ans = [x] # this should be indented
-        return ans
+* Whitespace is irrelevant except for separating identifiers.
+* ``print`` and ``return`` have special syntax
 
 variable naming
 ---------------
@@ -96,13 +58,13 @@ Variable names can include any characters except for:
 
 whitespace (space, tab, newline, return, etc)
 
-Variables cannot have the same name as a keyword:``def, return, print, true, false``
+Variables cannot have the same name as a keyword such as``def, return, print, true, false``
 
 Variables cannot start with the characters ``-.0123456789``
 
 Built-ins are treated as variables, so they cannot be overridden unless as arguments to a function. Ex:
 
-.. code-block:: scheme
+.. code-block::
 
     def (use-custom-add + a b):
         return (+ a b)
@@ -128,7 +90,7 @@ No multiline strings. Strings support escaping characters.
 
 Ex:
 
-.. code-block:: scheme
+.. code-block:: 
 
     "hello"
     "backslash\\"
@@ -139,7 +101,7 @@ function
 --------
 Use ``lam`` or ``def`` syntax:
 
-.. code-block:: scheme
+.. code-block::
 
     add1 = (lam (x) (+ x 1))
 
@@ -154,10 +116,36 @@ Constructed using ``[]`` or ``cons``.
 
 Ex:
 
-.. code-block:: scheme
+.. code-block::
 
     [1 2 true "lisp"]
     (cons 1 (cons 2 (cons true (cons "lisp" empty))))
     empty
 
 The first two lists are equivalent. ``[]`` syntax is syntactic sugar for ``cons``
+
+
+struct
+------
+Defined with ``define-struct``.
+
+Ex:
+
+.. code-block::
+
+    (define-struct posn (x y))
+
+    p1 = (make-posn 1 2)
+    p2 = (make-posn 3 4)
+
+    def (add-posn p1 p2) {
+        x = (+ (posn-x p1) (posn-x p2))
+        y = (+ (posn-y p1) (posn-y p2))
+        (make-posn x y)
+    }
+
+    p3 = (add-posn p1 p2)
+    (posn? p3) # true
+
+Defining a struct creates a constructor, 
+field accessors, and a predicate function
