@@ -27,7 +27,7 @@ Example
 -------
 
 
-.. code-block::
+.. code-block:: scheme
 
     # returns the product - the sum of two numbers
     def (func a1 a2) {
@@ -67,7 +67,7 @@ Variables cannot start with the characters ``-.0123456789``
 Built-ins are treated as variables, so they cannot be overridden unless as arguments to a function. Ex:
 
 
-.. code-block::
+.. code-block:: scheme
 
     def (use-custom-add + a b):
         return (+ a b)
@@ -108,7 +108,7 @@ function
 Use ``lam`` or ``def`` syntax:
 
 
-.. code-block::
+.. code-block:: scheme
 
     add1 = (lam (x) (+ x 1))
 
@@ -125,7 +125,7 @@ Constructed using ``[]`` or ``cons``.
 Ex:
 
 
-.. code-block::
+.. code-block:: scheme
 
     [1 2 true "lisp"]
     (cons 1 (cons 2 (cons true (cons "lisp" empty))))
@@ -142,7 +142,7 @@ Defined with ``define-struct``.
 Ex:
 
 
-.. code-block::
+.. code-block:: scheme
 
     (define-struct posn (x y))
 
